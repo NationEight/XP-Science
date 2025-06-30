@@ -2,120 +2,119 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Timer Widget</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minimal Timer</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
   <style>
     body {
       background-color: #191919;
-      font-family: monospace;
+      font-family: 'Press Start 2P', monospace;
       margin: 0;
       padding: 20px;
+      color: cyan;
     }
 
-    .section {
+    .timer-container {
       display: flex;
       align-items: center;
       gap: 6px;
       background-color: #191919;
-      color: white;
       width: fit-content;
     }
 
     #display {
-      font-size: 24px;
-      color: cyan;
-      min-width: 50px;
-    }
-
-    input[type="text"] {
-      font-size: 10px;
+      font-size: 16px;
+      min-width: 65px;
       text-align: center;
-      width: 35px;
-      padding: 5px 2px;
-      border: 1px solid gray;
-      color: #2D2D32;
     }
 
     button {
-      padding: 5px 10px;
-      font-size: 14px;
-      color: white;
+      width: 32px;
+      height: 32px;
+      font-size: 16px;
       border: none;
+      border-radius: 6px;
+      background-color: #2c2c2c;
+      color: white;
       cursor: pointer;
-      transition: background-color 0.2s;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+      transition: background-color 0.1s;
     }
 
-    .start {
-      background-color: #8bc34a;
-    }
-
-    .stop {
-      background-color: #c95945;
+    button:hover {
+      background-color: #3a3a3a;
     }
 
     button:active {
-      transform: scale(0.97);
+      transform: scale(0.96);
     }
   </style>
 </head>
-
 <body>
-  <section class="section">
-    <div id="display">0:00</div>
-    <input type="text" id="input" placeholder="MIN" />
-    <input type="text" id="input2" placeholder="SEC" />
-    <button class="start" onclick="start()">▶</button>
-    <button class="stop" onclick="cancel()">∎</button>
-  </section>
+
+  <div class="timer-container">
+    <div id="display">00:00</div>
+    <button onclick="decrease()">-</button>
+    <button onclick="increase()">+</button>
+    <button onclick="start()">▶</button>
+    <button onclick="stop()">∎</button>
+  </div>
 
   <script>
-    let timer = null;
+    let totalSeconds = 0;
+    let interval = null;
     let endTime = null;
 
-    function start() {
-      let minutes = parseInt(document.getElementById("input").value, 10);
-      let seconds = parseInt(document.getElementById("input2").value, 10);
-
-      if (isNaN(minutes)) minutes = 0;
-      if (isNaN(seconds)) seconds = 0;
-
-      const totalSeconds = minutes * 60 + seconds;
-
-      if (totalSeconds <= 0) return;
-
-      endTime = Date.now() + totalSeconds * 1000;
-
-      updateDisplay(); // call immediately
-      clearInterval(timer);
-      timer = setInterval(updateDisplay, 200); // check every 200ms for accuracy
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }
 
     function updateDisplay() {
       const now = Date.now();
       const remaining = Math.max(0, Math.floor((endTime - now) / 1000));
-
-      const mins = Math.floor(remaining / 60);
-      const secs = remaining % 60;
-      const formattedSecs = secs < 10 ? '0' + secs : secs;
-
-      document.getElementById("display").textContent = `${mins}:${formattedSecs}`;
+      document.getElementById('display').textContent = formatTime(remaining);
 
       if (remaining <= 0) {
-        clearInterval(timer);
+        clearInterval(interval);
+        interval = null;
         beep();
       }
     }
 
-    function cancel() {
-      clearInterval(timer);
-      document.getElementById("display").textContent = "0:00";
+    function increase() {
+      if (interval) return; // bloquer pendant exécution
+      totalSeconds += 60;
+      document.getElementById('display').textContent = formatTime(totalSeconds);
+    }
+
+    function decrease() {
+      if (interval) return;
+      totalSeconds = Math.max(0, totalSeconds - 60);
+      document.getElementById('display').textContent = formatTime(totalSeconds);
+    }
+
+    function start() {
+      if (totalSeconds <= 0 || interval) return;
+      endTime = Date.now() + totalSeconds * 1000;
+      interval = setInterval(updateDisplay, 250);
+    }
+
+    function stop() {
+      clearInterval(interval);
+      interval = null;
+      totalSeconds = 0;
+      document.getElementById('display').textContent = formatTime(0);
     }
 
     function beep() {
-      const snd = new Audio("https://www.soundjay.com/button/beep-07.wav");
-      snd.play();
+      const sound = new Audio('https://www.soundjay.com/button/beep-07.wav');
+      sound.play();
     }
   </script>
+
 </body>
 </html>
