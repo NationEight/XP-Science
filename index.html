@@ -8,60 +8,53 @@
   <style>
     body {
       background-color: #191919;
+      font-family: monospace;
+      margin: 0;
+      padding: 20px;
     }
 
     .section {
-      background-color: #191919;
-      padding: 2px;
-      width: fit-content;
       display: flex;
       align-items: center;
-      gap: 4px;
-      font-family: monospace;
+      gap: 6px;
+      background-color: #191919;
+      color: white;
+      width: fit-content;
     }
 
     #display {
-      font-size: 20px;
-      color: blue;
+      font-size: 24px;
+      color: cyan;
     }
 
-    .section input {
-      font-size: 8px;
-      color: #2D2D32;
+    input[type="text"] {
+      font-size: 10px;
       text-align: center;
+      width: 35px;
+      padding: 5px 2px;
       border: 1px solid gray;
-      width: 30px;
-      padding: 5px 1px;
+      color: #2D2D32;
     }
 
-    .buttons {
-      display: flex;
-      gap: 4px;
-    }
-
-    .buttons button {
+    button {
       padding: 5px 10px;
-      background-color: #d8d8d8;
-      border: none;
+      font-size: 14px;
       color: white;
-      font-size: 15px;
+      border: none;
       cursor: pointer;
-      outline: none;
-      transition: 0.1s;
+      transition: background-color 0.2s;
     }
 
-    .buttons button:active {
-      box-shadow: 0 3px 3px -2px rgba(0, 0, 0, .1),
-                  0 3px 4px 0 rgba(0, 0, 0, .14),
-                  0 1px 8px 0 rgba(0, 0, 0, .12);
-    }
-
-    .buttons button:nth-child(1) {
+    .start {
       background-color: #8bc34a;
     }
 
-    .buttons button:nth-child(2) {
-      background-color: rgb(201, 89, 69);
+    .stop {
+      background-color: #c95945;
+    }
+
+    button:active {
+      transform: scale(0.97);
     }
   </style>
 </head>
@@ -69,67 +62,49 @@
 <body>
   <section class="section">
     <div id="display">0:00</div>
-    <input type="text" id="input" name="input" placeholder="MIN">
-    <input type="text" id="input2" name="input2" placeholder="SEC">
-    <div class="buttons">
-      <button onclick="start()">▶</button>
-      <button onclick="cancel()">∎</button>
-    </div>
+    <input type="text" id="input" placeholder="MIN" />
+    <input type="text" id="input2" placeholder="SEC" />
+    <button class="start" onclick="start()">▶</button>
+    <button class="stop" onclick="cancel()">∎</button>
   </section>
 
   <script>
-    let timer;
-    let display = document.getElementById("display");
-    let minute, seconds, seconds1;
-
-    function beep() {
-      var snd = new Audio("bell.mp3");
-      snd.play();
-    }
+    let timer = null;
+    let totalSeconds = 0;
 
     function start() {
-      var input = document.getElementById("input").value;
-      var input2 = document.getElementById("input2").value;
+      let minutes = parseInt(document.getElementById("input").value);
+      let seconds = parseInt(document.getElementById("input2").value);
 
-      minute = parseInt(input);
-      seconds1 = parseInt(input2);
+      if (isNaN(minutes)) minutes = 0;
+      if (isNaN(seconds)) seconds = 0;
 
-      if (isNaN(seconds1)) seconds1 = 0;
-      if (isNaN(minute)) minute = 0;
+      totalSeconds = minutes * 60 + seconds;
 
-      seconds = minute * 60 + seconds1;
+      if (totalSeconds <= 0) return;
 
-      if (seconds === 0) return;
+      updateDisplay(totalSeconds);
 
-      let textSec = seconds1 < 10 ? '0' + seconds1 : seconds1;
+      if (timer) clearInterval(timer);
 
-      display.innerHTML = minute + ':' + textSec;
-      let statSec = seconds1;
+      timer = setInterval(() => {
+        totalSeconds--;
 
-      timer = setInterval(function () {
-        seconds--;
-
-        if (statSec !== 0) {
-          statSec--;
-        } else {
-          statSec = 59;
-        }
-
-        textSec = statSec < 10 ? '0' + statSec : statSec;
-
-        display.innerHTML = Math.floor(seconds / 60) + ':' + textSec;
-
-        if (seconds === 0) {
-          beep();
+        if (totalSeconds < 0) {
           clearInterval(timer);
+          beep();
+          return;
         }
+
+        updateDisplay(totalSeconds);
       }, 1000);
     }
 
-    function cancel() {
-      clearInterval(timer);
-      display.innerHTML = '0:00';
+    function updateDisplay(sec) {
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      const sStr = s < 10 ? '0' + s : s;
+      document.getElementById("display").textContent = `${m}:${sStr}`;
     }
-  </script>
-</body>
-</html>
+
+    func
