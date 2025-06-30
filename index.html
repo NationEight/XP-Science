@@ -25,6 +25,7 @@
     #display {
       font-size: 24px;
       color: cyan;
+      min-width: 50px;
     }
 
     input[type="text"] {
@@ -70,41 +71,21 @@
 
   <script>
     let timer = null;
-    let totalSeconds = 0;
+    let remainingSeconds = 0;
 
     function start() {
-      let minutes = parseInt(document.getElementById("input").value);
-      let seconds = parseInt(document.getElementById("input2").value);
+      let minInput = parseInt(document.getElementById("input").value, 10);
+      let secInput = parseInt(document.getElementById("input2").value, 10);
 
-      if (isNaN(minutes)) minutes = 0;
-      if (isNaN(seconds)) seconds = 0;
+      if (isNaN(minInput)) minInput = 0;
+      if (isNaN(secInput)) secInput = 0;
 
-      totalSeconds = minutes * 60 + seconds;
+      remainingSeconds = minInput * 60 + secInput;
 
-      if (totalSeconds <= 0) return;
+      if (remainingSeconds <= 0) return;
 
-      updateDisplay(totalSeconds);
-
-      if (timer) clearInterval(timer);
+      clearInterval(timer);
+      updateDisplay(remainingSeconds);
 
       timer = setInterval(() => {
-        totalSeconds--;
-
-        if (totalSeconds < 0) {
-          clearInterval(timer);
-          beep();
-          return;
-        }
-
-        updateDisplay(totalSeconds);
-      }, 1000);
-    }
-
-    function updateDisplay(sec) {
-      const m = Math.floor(sec / 60);
-      const s = sec % 60;
-      const sStr = s < 10 ? '0' + s : s;
-      document.getElementById("display").textContent = `${m}:${sStr}`;
-    }
-
-    func
+        remainingSeconds--;
