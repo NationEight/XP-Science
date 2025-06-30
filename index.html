@@ -71,21 +71,51 @@
 
   <script>
     let timer = null;
-    let remainingSeconds = 0;
+    let endTime = null;
 
     function start() {
-      let minInput = parseInt(document.getElementById("input").value, 10);
-      let secInput = parseInt(document.getElementById("input2").value, 10);
+      let minutes = parseInt(document.getElementById("input").value, 10);
+      let seconds = parseInt(document.getElementById("input2").value, 10);
 
-      if (isNaN(minInput)) minInput = 0;
-      if (isNaN(secInput)) secInput = 0;
+      if (isNaN(minutes)) minutes = 0;
+      if (isNaN(seconds)) seconds = 0;
 
-      remainingSeconds = minInput * 60 + secInput;
+      const totalSeconds = minutes * 60 + seconds;
 
-      if (remainingSeconds <= 0) return;
+      if (totalSeconds <= 0) return;
 
+      endTime = Date.now() + totalSeconds * 1000;
+
+      updateDisplay(); // call immediately
       clearInterval(timer);
-      updateDisplay(remainingSeconds);
+      timer = setInterval(updateDisplay, 200); // check every 200ms for accuracy
+    }
 
-      timer = setInterval(() => {
-        remainingSeconds--;
+    function updateDisplay() {
+      const now = Date.now();
+      const remaining = Math.max(0, Math.floor((endTime - now) / 1000));
+
+      const mins = Math.floor(remaining / 60);
+      const secs = remaining % 60;
+      const formattedSecs = secs < 10 ? '0' + secs : secs;
+
+      document.getElementById("display").textContent = `${mins}:${formattedSecs}`;
+
+      if (remaining <= 0) {
+        clearInterval(timer);
+        beep();
+      }
+    }
+
+    function cancel() {
+      clearInterval(timer);
+      document.getElementById("display").textContent = "0:00";
+    }
+
+    function beep() {
+      const snd = new Audio("https://www.soundjay.com/button/beep-07.wav");
+      snd.play();
+    }
+  </script>
+</body>
+</html>
