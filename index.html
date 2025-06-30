@@ -1,62 +1,70 @@
-<style>
-  body {
-    background-color: #191919;
-  }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Timer Widget</title>
 
-  .section {
-    background-color: #191919;
-    padding: 2px;
-    width: fit-content;
-    display: flex;
-    align-items: center; /* align verticalement */
-    gap: 4px; /* espace entre les éléments */
-    font-family: monospace;
-  }
+  <style>
+    body {
+      background-color: #191919;
+    }
 
-  #display {
-    font-size: 20px;
-    color: blue;
-  }
+    .section {
+      background-color: #191919;
+      padding: 2px;
+      width: fit-content;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-family: monospace;
+    }
 
-  .section input {
-    font-size: 8px;
-    color: #2D2D32;
-    text-align: center;
-    border: 1px solid gray;
-    width: 30px;
-    padding: 5px 1px;
-  }
+    #display {
+      font-size: 20px;
+      color: blue;
+    }
 
-  .buttons {
-    display: flex;
-    gap: 4px;
-  }
+    .section input {
+      font-size: 8px;
+      color: #2D2D32;
+      text-align: center;
+      border: 1px solid gray;
+      width: 30px;
+      padding: 5px 1px;
+    }
 
-  .buttons button {
-    padding: 5px 10px;
-    background-color: #d8d8d8;
-    border: none;
-    color: white;
-    font-size: 15px;
-    cursor: pointer;
-    outline: none;
-    transition: 0.1s;
-  }
+    .buttons {
+      display: flex;
+      gap: 4px;
+    }
 
-  .buttons button:active {
-    box-shadow: 0 3px 3px -2px rgba(0, 0, 0, .1),
-                0 3px 4px 0 rgba(0, 0, 0, .14),
-                0 1px 8px 0 rgba(0, 0, 0, .12);
-  }
+    .buttons button {
+      padding: 5px 10px;
+      background-color: #d8d8d8;
+      border: none;
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+      outline: none;
+      transition: 0.1s;
+    }
 
-  .buttons button:nth-child(1) {
-    background-color: #8bc34a;
-  }
+    .buttons button:active {
+      box-shadow: 0 3px 3px -2px rgba(0, 0, 0, .1),
+                  0 3px 4px 0 rgba(0, 0, 0, .14),
+                  0 1px 8px 0 rgba(0, 0, 0, .12);
+    }
 
-  .buttons button:nth-child(2) {
-    background-color: rgb(201, 89, 69);
-  }
-</style>
+    .buttons button:nth-child(1) {
+      background-color: #8bc34a;
+    }
+
+    .buttons button:nth-child(2) {
+      background-color: rgb(201, 89, 69);
+    }
+  </style>
+</head>
 
 <body>
   <section class="section">
@@ -68,4 +76,60 @@
       <button onclick="cancel()">∎</button>
     </div>
   </section>
+
+  <script>
+    let timer;
+    let display = document.getElementById("display");
+    let minute, seconds, seconds1;
+
+    function beep() {
+      var snd = new Audio("bell.mp3");
+      snd.play();
+    }
+
+    function start() {
+      var input = document.getElementById("input").value;
+      var input2 = document.getElementById("input2").value;
+
+      minute = parseInt(input);
+      seconds1 = parseInt(input2);
+
+      if (isNaN(seconds1)) seconds1 = 0;
+      if (isNaN(minute)) minute = 0;
+
+      seconds = minute * 60 + seconds1;
+
+      if (seconds === 0) return;
+
+      let textSec = seconds1 < 10 ? '0' + seconds1 : seconds1;
+
+      display.innerHTML = minute + ':' + textSec;
+      let statSec = seconds1;
+
+      timer = setInterval(function () {
+        seconds--;
+
+        if (statSec !== 0) {
+          statSec--;
+        } else {
+          statSec = 59;
+        }
+
+        textSec = statSec < 10 ? '0' + statSec : statSec;
+
+        display.innerHTML = Math.floor(seconds / 60) + ':' + textSec;
+
+        if (seconds === 0) {
+          beep();
+          clearInterval(timer);
+        }
+      }, 1000);
+    }
+
+    function cancel() {
+      clearInterval(timer);
+      display.innerHTML = '0:00';
+    }
+  </script>
 </body>
+</html>
