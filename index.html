@@ -125,21 +125,25 @@
       const filledBars = currentTime === 0 ? 0 : Math.floor(progress / total * barsTotal);
 
       for (let i = 0; i < barsTotal; i++) {
-        const span = document.createElement('span');
-        span.classList.add('bar-segment');
+      const span = document.createElement('span');
+      span.classList.add('bar-segment');
 
-        if (i < filledBars) {
-          span.classList.add('filled');
-        } else {
-          span.classList.add('empty');
-        }
+      if (i < filledBars) {
+      if (filledBars === 1 && i === 0) {
+      span.classList.add('first-filled');
+    } else if (i === filledBars - 1) {
+      span.classList.add('last-filled');
+    } else {
+      span.classList.add('filled');
+    }
+  }   else {
+      span.classList.add('empty');
+    }
 
-        if (i === 0 && filledBars > 0) span.classList.add('first-filled');
-        if (i === filledBars - 1 && filledBars > 0) span.classList.add('last-filled');
+      span.textContent = barChar;
+      progressBar.appendChild(span);
+    }
 
-        span.textContent = barChar;
-        progressBar.appendChild(span);
-      }
     }
 
     function adjustTime(min) {
