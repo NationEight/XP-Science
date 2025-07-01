@@ -2,25 +2,34 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Compact Timer</title>
+  <title>Timer Compact</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
   <style>
     body {
       background-color: #191919;
       font-family: 'Roboto Mono', monospace;
       color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: start;
       padding: 10px;
     }
 
-    .timer-container {
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      font-size: 16px;
+    }
+
+    .left-controls {
       display: flex;
       align-items: center;
       gap: 4px;
-      margin-bottom: 4px;
-      font-size: 16px;
+    }
+
+    .right-controls {
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .timer-button {
@@ -52,7 +61,6 @@
       display: flex;
       gap: 1px;
       width: 100%;
-      max-width: 400px;
       height: 20px;
       margin-top: 2px;
     }
@@ -60,10 +68,6 @@
     .bar {
       flex: 1;
       background-color: #555;
-    }
-
-    .bar.first-filled {
-      background-color: green;
     }
 
     .bar.filled {
@@ -76,13 +80,18 @@
   </style>
 </head>
 <body>
-  <div class="timer-container">
-    <div id="time">25:00</div>
-    <button class="timer-button" onclick="adjustTime(5)">+</button>
-    <button class="timer-button" onclick="adjustTime(-5)">-</button>
-    <button class="timer-button" onclick="startTimer()">▸</button>
-    <button class="timer-button" onclick="pauseTimer()">⏸</button>
-    <button class="timer-button" onclick="resetTimer()">▪</button>
+
+  <div class="top-row">
+    <div class="left-controls">
+      <div id="time">25:00</div>
+      <button class="timer-button" onclick="adjustTime(5)">+</button>
+      <button class="timer-button" onclick="adjustTime(-5)">-</button>
+    </div>
+    <div class="right-controls">
+      <button class="timer-button" onclick="startTimer()">▸</button>
+      <button class="timer-button" onclick="pauseTimer()">⏸</button>
+      <button class="timer-button" onclick="resetTimer()">▪</button>
+    </div>
   </div>
 
   <div class="progress-bar" id="progress"></div>
@@ -104,7 +113,7 @@
 
     function updateProgress() {
       progressEl.innerHTML = '';
-      const total = defaultTime;
+      const total = defaultTime || 1;
       const progress = total - currentTime;
       const bars = 60;
       const filledBars = Math.floor(progress / total * bars);
@@ -112,11 +121,10 @@
       for (let i = 0; i < bars; i++) {
         const bar = document.createElement('div');
         bar.classList.add('bar');
-        if (i === 0 && filledBars > 0) {
-          bar.classList.add('first-filled');
-        } else if (i < filledBars - 1) {
+        if (i < filledBars) {
           bar.classList.add('filled');
-        } else if (i === filledBars - 1) {
+        }
+        if (i === filledBars - 1) {
           bar.classList.add('last-filled');
         }
         progressEl.appendChild(bar);
@@ -125,12 +133,17 @@
 
     function adjustTime(min) {
       if (isRunning) return;
-      const newTime = defaultTime + min * 60;
-      if (newTime > 60 * 60) {
+      let newTime = defaultTime + min * 60;
+
+      // Cycle around if limits are reached
+      if (newTime < 0) {
+        defaultTime = 60 * 60;
+      } else if (newTime > 60 * 60) {
         defaultTime = 0;
       } else {
-        defaultTime = Math.max(0, newTime);
+        defaultTime = newTime;
       }
+
       currentTime = defaultTime;
       updateTimeDisplay();
       updateProgress();
