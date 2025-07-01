@@ -2,36 +2,59 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Timer Compact</title>
+  <title>Timer Compact Final</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
   <style>
     body {
       background-color: #191919;
       color: white;
-      font-family: 'Roboto Mono', monospace;
+      font-family: 'Roboto Mono', monospace; /* Changer la police ici */
       margin: 0;
-      padding: 4px;
+      padding: 4px 4px; /* Marges générales */
+    }
+
+    .progress-bar {
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      height: 20px; /* Hauteur de la barre */
+      margin-bottom: 4px; /* Espace entre barre et timer */
+      line-height: 1;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .bar-segment {
+      display: inline-block;
+    }
+
+    .filled {
+      color: white;
+    }
+
+    .first-filled {
+      color: limegreen;
+    }
+
+    .last-filled {
+      color: red;
+    }
+
+    .empty {
+      color: #2b2b2b;
     }
 
     .top-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 6px;
+      gap: 4px; /* Ajuster espace entre les boutons */
       font-size: 16px;
-      margin-bottom: 4px; /* espace entre timer et barre */
     }
 
-    .left-controls {
+    .left-controls, .right-controls {
       display: flex;
       align-items: center;
-      gap: 4px;
-    }
-
-    .right-controls {
-      display: flex;
-      align-items: center;
-      gap: 4px;
+      gap: 4px; /* Ajuster espace entre les boutons */
     }
 
     .timer-button {
@@ -51,41 +74,19 @@
     }
 
     .timer-button:hover {
-      background-color: orange;
+      background-color: orange; /* Couleur au survol */
     }
 
     #time {
       min-width: 50px;
       text-align: right;
     }
-
-    .progress-bar {
-      display: flex;
-      gap: 1px;
-      width: 100%;
-      height: 24px;
-      font-family: 'Courier New', monospace;
-    }
-
-    .bar {
-      flex: 1;
-      background-color: #444;
-    }
-
-    .bar.filled {
-      background-color: white;
-    }
-
-    .bar.last-filled {
-      background-color: red;
-    }
-
-    .bar.empty {
-      background-color: #2b2b2b;
-    }
   </style>
 </head>
 <body>
+
+  <!-- Barre de progression en haut -->
+  <div class="progress-bar" id="progressBar"></div>
 
   <div class="top-row">
     <div class="left-controls">
@@ -100,16 +101,16 @@
     </div>
   </div>
 
-  <div class="progress-bar" id="progress"></div>
-
   <script>
     let defaultTime = 25 * 60;
     let currentTime = defaultTime;
     let isRunning = false;
     let interval;
+    const barsTotal = 35; // Nombre total de barres
+    const barChar = '█'; // Caractère de la barre de progression
 
     const timeEl = document.getElementById('time');
-    const progressEl = document.getElementById('progress');
+    const progressBar = document.getElementById('progressBar');
 
     function updateTimeDisplay() {
       const min = Math.floor(currentTime / 60).toString().padStart(2, '0');
@@ -117,23 +118,27 @@
       timeEl.textContent = `${min}:${sec}`;
     }
 
-    function updateProgress() {
-      progressEl.innerHTML = '';
+    function updateProgressBar() {
+      progressBar.innerHTML = '';
       const total = defaultTime || 1;
       const progress = total - currentTime;
-      const bars = 60;
-      const filledBars = currentTime === 0 ? bars : Math.floor(progress / total * bars);
+      const filledBars = currentTime === 0 ? 0 : Math.floor(progress / total * barsTotal);
 
-      for (let i = 0; i < bars; i++) {
-        const bar = document.createElement('div');
-        bar.classList.add('bar');
+      for (let i = 0; i < barsTotal; i++) {
+        const span = document.createElement('span');
+        span.classList.add('bar-segment');
+
         if (i < filledBars) {
-          bar.classList.add('filled');
+          span.classList.add('filled');
+        } else {
+          span.classList.add('empty');
         }
-        if (i === filledBars - 1 && filledBars > 0) {
-          bar.classList.add('last-filled');
-        }
-        progressEl.appendChild(bar);
+
+        if (i === 0 && filledBars > 0) span.classList.add('first-filled');
+        if (i === filledBars - 1 && filledBars > 0) span.classList.add('last-filled');
+
+        span.textContent = barChar;
+        progressBar.appendChild(span);
       }
     }
 
@@ -151,7 +156,7 @@
 
       currentTime = defaultTime;
       updateTimeDisplay();
-      updateProgress();
+      updateProgressBar();
     }
 
     function startTimer() {
@@ -161,7 +166,7 @@
         if (currentTime > 0) {
           currentTime--;
           updateTimeDisplay();
-          updateProgress();
+          updateProgressBar();
         } else {
           clearInterval(interval);
           isRunning = false;
@@ -179,12 +184,12 @@
       isRunning = false;
       currentTime = defaultTime;
       updateTimeDisplay();
-      updateProgress();
+      updateProgressBar();
     }
 
     // Init
     updateTimeDisplay();
-    updateProgress();
+    updateProgressBar();
   </script>
 
 </body>
