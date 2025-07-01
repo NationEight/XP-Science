@@ -7,9 +7,10 @@
   <style>
     body {
       background-color: #191919;
-      font-family: 'Roboto Mono', monospace;
       color: white;
-      padding: 10px;
+      font-family: 'Roboto Mono', monospace;
+      margin: 0;
+      padding: 4px;
     }
 
     .top-row {
@@ -18,6 +19,7 @@
       align-items: center;
       gap: 6px;
       font-size: 16px;
+      margin-bottom: 2px; /* espace entre timer et barre */
     }
 
     .left-controls {
@@ -61,13 +63,13 @@
       display: flex;
       gap: 1px;
       width: 100%;
-      height: 20px;
-      margin-top: 2px;
+      height: 24px;
+      font-family: 'Courier New', monospace;
     }
 
     .bar {
       flex: 1;
-      background-color: #555;
+      background-color: #444;
     }
 
     .bar.filled {
@@ -76,6 +78,10 @@
 
     .bar.last-filled {
       background-color: red;
+    }
+
+    .bar.empty {
+      background-color: #2b2b2b;
     }
   </style>
 </head>
@@ -116,7 +122,7 @@
       const total = defaultTime || 1;
       const progress = total - currentTime;
       const bars = 60;
-      const filledBars = Math.floor(progress / total * bars);
+      const filledBars = currentTime === 0 ? bars : Math.floor(progress / total * bars);
 
       for (let i = 0; i < bars; i++) {
         const bar = document.createElement('div');
@@ -124,7 +130,7 @@
         if (i < filledBars) {
           bar.classList.add('filled');
         }
-        if (i === filledBars - 1) {
+        if (i === filledBars - 1 && filledBars > 0) {
           bar.classList.add('last-filled');
         }
         progressEl.appendChild(bar);
@@ -135,7 +141,6 @@
       if (isRunning) return;
       let newTime = defaultTime + min * 60;
 
-      // Cycle around if limits are reached
       if (newTime < 0) {
         defaultTime = 60 * 60;
       } else if (newTime > 60 * 60) {
@@ -181,5 +186,6 @@
     updateTimeDisplay();
     updateProgress();
   </script>
+
 </body>
 </html>
