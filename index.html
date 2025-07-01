@@ -1,189 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Compact Timer</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <style>
-    body {
-      background-color: #191919;
-      font-family: 'Press Start 2P', monospace;
-      color: white;
-      padding: 20px;
-    }
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
 
-    .container {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      width: fit-content;
-    }
+<style>
+  body {
+    font-family: 'Space Mono', monospace;
+    font-size: 20px;
+    color: white;
+    background-color: #191919;
+  }
+</style>
 
-    .controls {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 14px;
-      flex-wrap: wrap;
-    }
-
-    #display {
-      min-width: 60px;
-      text-align: center;
-    }
-
-    button {
-      font-size: 14px;
-      font-family: 'Press Start 2P', monospace;
-      background-color: #2c2c2c;
-      color: white;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.5);
-      transition: background-color 0.2s;
-    }
-
-    button:hover {
-      background-color: orange;
-    }
-
-    .progress {
-      font-size: 14px;
-      line-height: 1.2;
-      white-space: nowrap;
-    }
-
-    .bar-red {
-      color: red;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="controls">
-      <div id="display">00:00</div>
-      <button onclick="increase()">+</button>
-      <button onclick="decrease()">-</button>
-      <button onclick="setPreset(25)">25</button>
-      <span>𝄀</span>
-      <button onclick="setPreset(50)">50</button>
-      <button onclick="start()">▸</button>
-      <button onclick="pause()">⏸</button>
-      <button onclick="stop()">▪</button>
-    </div>
-    <div class="progress" id="progressBar"></div>
-  </div>
-
-  <script>
-    let totalSeconds = 0;
-    let remainingSeconds = 0;
-    let interval = null;
-    let paused = false;
-    let endTime = null;
-
-    const maxTime = 99 * 60 + 59;
-    const barLength = 70;
-
-    function formatTime(seconds) {
-      const mins = Math.floor(seconds / 60);
-      const secs = seconds % 60;
-      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    }
-
-    function updateDisplay() {
-      const now = Date.now();
-      const remaining = Math.max(0, Math.floor((endTime - now) / 1000));
-      remainingSeconds = remaining;
-      document.getElementById('display').textContent = formatTime(remaining);
-
-      updateBar();
-
-      if (remaining <= 0) {
-        clearInterval(interval);
-        interval = null;
-        beep();
-      }
-    }
-
-    function updateBar() {
-      const bar = document.getElementById('progressBar');
-      if (totalSeconds === 0) {
-        bar.innerHTML = '';
-        return;
-      }
-
-      const percent = (totalSeconds - remainingSeconds) / totalSeconds;
-      const filled = Math.min(barLength, Math.floor(percent * barLength));
-      let line = '';
-
-      for (let i = 0; i < barLength; i++) {
-        if (i < filled - 1) {
-          line += '𝄀';
-        } else if (i === filled - 1) {
-          line += '<span class="bar-red">𝄀</span>';
-        } else {
-          line += '<span style="color: #444">𝄀</span>';
-        }
-      }
-
-      bar.innerHTML = line;
-    }
-
-    function increase() {
-      if (interval || paused) return;
-      totalSeconds = Math.min(maxTime, totalSeconds + 60);
-      remainingSeconds = totalSeconds;
-      document.getElementById('display').textContent = formatTime(totalSeconds);
-      updateBar();
-    }
-
-    function decrease() {
-      if (interval || paused) return;
-      totalSeconds = Math.max(0, totalSeconds - 60);
-      remainingSeconds = totalSeconds;
-      document.getElementById('display').textContent = formatTime(totalSeconds);
-      updateBar();
-    }
-
-    function setPreset(minutes) {
-      if (interval || paused) return;
-      totalSeconds = Math.min(maxTime, minutes * 60);
-      remainingSeconds = totalSeconds;
-      document.getElementById('display').textContent = formatTime(totalSeconds);
-      updateBar();
-    }
-
-    function start() {
-      if (totalSeconds <= 0 || interval) return;
-      endTime = Date.now() + remainingSeconds * 1000;
-      interval = setInterval(updateDisplay, 250);
-      paused = false;
-    }
-
-    function pause() {
-      if (!interval) return;
-      clearInterval(interval);
-      interval = null;
-      paused = true;
-      totalSeconds = remainingSeconds;
-    }
-
-    function stop() {
-      clearInterval(interval);
-      interval = null;
-      totalSeconds = 0;
-      remainingSeconds = 0;
-      paused = false;
-      document.getElementById('display').textContent = '00:00';
-      document.getElementById('progressBar').innerHTML = '';
-    }
-
-    function beep() {
-      const sound = new Audio('https://www.soundjay.com/button/beep-07.wav');
-      sound.play();
-    }
-  </script>
-</body>
-</html>
+<div style="display:flex; gap:8px; align-items:center;">
+  <span>19:42</span>
+  <span>+</span>
+  <span>-</span>
+  <span>25</span>
+  <span>𝄀</span>
+  <span>50</span>
+  <span>▸</span>
+  <span>⏸</span>
+  <span>▪</span>
+</div>
