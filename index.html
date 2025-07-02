@@ -8,15 +8,15 @@
     body {
       background-color: #191919;
       color: white;
-      font-family: 'Roboto Mono', monospace; /* Changer la police ici */
+      font-family: 'JetBrains_Mono', monospace; /* Changer la police ici */
       margin: 0;
-      padding: 1px 1px; /* Marges générales */
+      padding: 0px 0px; /* Marges générales */
     }
 
     .progress-bar {
       font-family: 'Courier New', monospace;
       font-size: 14px;
-      height: 40px; /* Hauteur de la barre */
+      height: 25px; /* Hauteur de la barre */
       margin-bottom: 4px; /* Espace entre barre et timer */
       line-height: 1;
       white-space: nowrap;
@@ -107,7 +107,7 @@
     let isRunning = false;
     let interval;
     const barsTotal = 35; // Nombre total de barres
-    const barChar = '█'; // Caractère de la barre de progression
+    const barChar = '|'; // Caractère de la barre de progression
 
     const timeEl = document.getElementById('time');
     const progressBar = document.getElementById('progressBar');
