@@ -5,29 +5,38 @@
   <title>Pomodoro Widget</title>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
   <style>
-    body {
+    html, body {
       margin: 0;
-      background-color: #191919;
-      color: white;
+      padding: 0;
+      background: #191919;
       font-family: 'JetBrains Mono', monospace;
+      color: white;
     }
 
     .widget {
-      width: 640px;
-      height: 180px;
-      padding: 10px 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
+      width: 600px;
+      height: 160px;
+      padding: 0;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      grid-template-rows: auto auto;
+      align-items: center;
+      justify-items: center;
+      position: relative;
       box-sizing: border-box;
+      overflow: hidden;
     }
 
-    .top-controls {
+    /* --- TOP LEFT BUTTONS --- */
+    .controls {
+      grid-row: 1;
+      grid-column: 1;
       display: flex;
+      flex-direction: row;
+      gap: 10px;
       align-items: center;
-      margin-bottom: 8px;
-      gap: 12px;
+      justify-content: flex-start;
+      padding-left: 10px;
     }
 
     .button {
@@ -39,45 +48,45 @@
       font-family: 'JetBrains Mono', monospace;
       cursor: pointer;
       padding: 0;
-      margin: 0;
     }
 
+    /* --- TIMER CENTER --- */
     .time-display {
-      font-size: 28px;
+      grid-row: 1;
+      grid-column: 2 / 3;
+      font-size: 26px;
       font-weight: bold;
-      line-height: 1;
-      display: flex;
-      align-items: flex-start;
+      text-align: center;
+      position: relative;
+      margin-bottom: 5px;
     }
 
     #ms {
       font-size: 12px;
       margin-left: 4px;
-      transform: translateY(2px);
+      vertical-align: top;
       opacity: 0.7;
     }
 
-    .bottom-row {
-      display: flex;
-      align-items: center;
+    /* --- PROGRESS BAR SECTION --- */
+    .bar-wrapper {
+      grid-column: 1 / 4;
+      grid-row: 2;
       width: 100%;
-      justify-content: space-between;
-    }
-
-    .progress-wrapper {
       display: flex;
       align-items: center;
-      justify-content: center;
-      flex-grow: 1;
-      margin: 0 10px;
+      justify-content: space-between;
+      padding: 0 10px;
     }
 
     .progress-bar {
       font-size: 16px;
       display: flex;
-      line-height: 0.8;
       white-space: nowrap;
       overflow: hidden;
+      line-height: 0.8;
+      flex-grow: 1;
+      justify-content: center;
     }
 
     .bar-segment {
@@ -91,33 +100,34 @@
 
     .last-filled {
       color: #00f9e9;
-      text-shadow: 0 0 4px #00f9e9, 0 0 8px #00f9e9;
+      text-shadow: 0 0 3px #00f9e9, 0 0 6px #00f9e9;
     }
 
     .empty {
       color: #2b2b2b;
     }
+
   </style>
 </head>
 <body>
 
   <div class="widget">
-    <!-- Top row: Controls -->
-    <div class="top-controls">
+    <!-- Controls -->
+    <div class="controls">
       <button class="button" id="playPauseBtn" onclick="togglePlay()">▶</button>
       <button class="button" onclick="resetTimer()">⭯</button>
-      <div class="time-display">
-        <span id="mainTime">25:00</span>
-        <span id="ms">00</span>
-      </div>
     </div>
 
-    <!-- Bottom row: Progress -->
-    <div class="bottom-row">
+    <!-- Timer -->
+    <div class="time-display">
+      <span id="mainTime">25:00</span>
+      <span id="ms">00</span>
+    </div>
+
+    <!-- Progress + + / - -->
+    <div class="bar-wrapper">
       <button class="button" onclick="adjustTime(-5)">−</button>
-      <div class="progress-wrapper">
-        <div class="progress-bar" id="progressBar"></div>
-      </div>
+      <div class="progress-bar" id="progressBar"></div>
       <button class="button" onclick="adjustTime(5)">＋</button>
     </div>
   </div>
@@ -129,7 +139,7 @@
     let interval, msInterval;
     const maxTime = 60 * 60;
     const minTime = 5 * 60;
-    const barsTotal = 40;
+    const barsTotal = 60;
     const barChar = '𑪛';
 
     const timeEl = document.getElementById('mainTime');
@@ -147,7 +157,7 @@
       if (msInterval) clearInterval(msInterval);
       msInterval = setInterval(() => {
         msEl.textContent = Math.floor(Math.random() * 100).toString().padStart(2, '0');
-      }, 50);
+      }, 100); // un peu plus lent
     }
 
     function stopMilliseconds() {
@@ -236,7 +246,7 @@
       playPauseBtn.textContent = '▶';
     }
 
-    // Initial
+    // Init
     updateTimeDisplay();
     updateProgressBar();
   </script>
