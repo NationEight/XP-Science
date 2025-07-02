@@ -2,79 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Pomodoro</title>
+  <title>Pomodoro Minimal</title>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
   <style>
-    body {
+    html, body {
       margin: 0;
-      padding: 20px;
-      font-family: 'JetBrains Mono', monospace;
+      padding: 0;
       background-color: #1a1a1a;
       color: white;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
     }
 
-    .widget {
-      max-width: 600px;
-    }
-
-    .top-row {
+    .row {
       display: flex;
       align-items: center;
+      justify-content: center;
+    }
+
+    .row:first-child {
       margin-bottom: 5px;
     }
 
-    .left-buttons {
-      width: 50px;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .left-buttons button {
+    .btn {
       background: none;
       border: none;
       color: white;
       font-size: 16px;
-      margin-bottom: 6px;
       cursor: pointer;
-    }
-
-    .timer-container {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      position: relative;
+      margin-right: 8px;
     }
 
     .timer {
-      font-size: 24px;
       display: flex;
-      align-items: flex-end;
+      align-items: baseline;
     }
 
     .milliseconds {
       font-size: 10px;
-      margin-left: 5px;
-      margin-bottom: 4px;
-    }
-
-    .bottom-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .side-button {
-      font-size: 16px;
-      font-weight: bold;
-      margin: 0 5px;
-      cursor: pointer;
+      margin-left: 4px;
     }
 
     .bar {
       display: flex;
       height: 20px;
+      margin: 0 10px;
     }
 
     .segment {
@@ -92,44 +64,43 @@
       background-color: #00f9e9;
       box-shadow: 0 0 4px #00f9e9;
     }
+
+    .control {
+      cursor: pointer;
+      font-size: 16px;
+      user-select: none;
+    }
   </style>
 </head>
 <body>
-  <div class="widget">
-    <div class="top-row">
-      <div class="left-buttons">
-        <button id="playPause" onclick="toggleTimer()">▶</button>
-        <button onclick="resetTimer()">⭯</button>
-      </div>
-      <div class="timer-container">
-        <div class="timer" id="timer">
-          25:00
-          <span class="milliseconds" id="millis">00</span>
-        </div>
-      </div>
-    </div>
 
-    <div class="bottom-row">
-      <div class="side-button" onclick="decreaseTime()">-</div>
-      <div class="bar" id="bar"></div>
-      <div class="side-button" onclick="increaseTime()">+</div>
+  <div class="row">
+    <button id="playPause" class="btn" onclick="toggleTimer()">▶</button>
+    <div class="timer">
+      <span id="timer">25:00</span>
+      <span class="milliseconds" id="millis">00</span>
     </div>
   </div>
 
+  <div class="row">
+    <span class="control" onclick="decreaseTime()">-</span>
+    <div class="bar" id="bar"></div>
+    <span class="control" onclick="increaseTime()">+</span>
+  </div>
+
   <script>
-    const maxTime = 60; // in minutes
+    const maxTime = 60;
     let totalTime = 25 * 60;
     let timeLeft = totalTime;
     let running = false;
     let timerInterval = null;
     let millisInterval = null;
 
-    const timerDisplay = document.getElementById("timer");
-    const millisDisplay = document.getElementById("millis");
-    const bar = document.getElementById("bar");
-    const playPause = document.getElementById("playPause");
-
     const totalBars = 40;
+    const bar = document.getElementById("bar");
+    const timerText = document.getElementById("timer");
+    const millisText = document.getElementById("millis");
+    const playPause = document.getElementById("playPause");
 
     function formatTime(sec) {
       const m = String(Math.floor(sec / 60)).padStart(2, "0");
@@ -138,7 +109,7 @@
     }
 
     function updateDisplay() {
-      timerDisplay.firstChild.nodeValue = formatTime(timeLeft);
+      timerText.textContent = formatTime(timeLeft);
       updateBar();
     }
 
@@ -174,8 +145,8 @@
         }, 1000);
 
         millisInterval = setInterval(() => {
-          millisDisplay.textContent = String(Math.floor(Math.random() * 90) + 10);
-        }, 50); // RAPIDE, pour effet visuel
+          millisText.textContent = String(Math.floor(Math.random() * 90) + 10);
+        }, 50);
 
         playPause.textContent = "⏸";
       }
@@ -189,7 +160,7 @@
       timeLeft = totalTime;
       playPause.textContent = "▶";
       updateDisplay();
-      millisDisplay.textContent = "00";
+      millisText.textContent = "00";
     }
 
     function increaseTime() {
