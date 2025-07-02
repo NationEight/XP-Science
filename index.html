@@ -9,24 +9,24 @@
     body {
       background-color: #191919;
       color: white;
-      font-family: 'JetBrains Mono', monospace; /* 🖋️ Police principale */
+      font-family: 'JetBrains Mono', monospace;
       margin: 0;
-      padding: 8px 0; /* ⬆️⬇️ Ajuster la marge globale ici */
+      padding: 8px 0; /* Marge haut/bas */
     }
 
     /* 📊 Barre de progression */
     .progress-bar {
-      font-family: 'Courier New', monospace; /* 🅰️ Changer police de la barre ici */
-      font-size: 22px; /* 📏 Taille des barres (verticales) */
-      height: 25px; /* 📏 Hauteur de la ligne */
-      margin-bottom: 4px; /* ↕️ Espace entre barre et boutons */
+      font-family: 'Courier New', monospace;
+      font-size: 22px;
+      height: 25px;
+      margin-bottom: 4px;
       line-height: 1;
       white-space: nowrap;
       overflow: hidden;
     }
 
     .bar-segment {
-      font-weight: bold; /* 🅱️ Mettre en gras */
+      font-weight: 900; /* ➕ Gras renforcé */
       display: inline-block;
     }
 
@@ -35,36 +35,36 @@
     }
 
     .last-filled {
-      color: green; /* 🔴 Dernière barre = rouge */
+      color: green;
     }
 
     .empty {
-      color: #2b2b2b; /* ⚫ Barres vides */
+      color: #2b2b2b;
     }
 
-    /* 🧩 Bloc contenant timer + boutons */
+    /* 🧩 Bloc timer + boutons */
     .top-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 5px; /* ↔️ Espace entre tous les blocs */
+      gap: 5px;
       font-size: 15px;
     }
 
     .left-controls, .right-controls {
       display: flex;
       align-items: center;
-      gap: 4px; /* 🔧 Modifier l’espace entre les boutons */
+      gap: 4px;
     }
 
-    /* 🔘 Boutons (modifiable en image) */
+    /* 🔘 Boutons */
     .timer-button {
-      width: 25px;  /* 📏 Largeur du bouton */
-      height: 25px; /* 📏 Hauteur du bouton */
+      width: 25px;
+      height: 25px;
       font-size: 15px;
       background-color: #2c2c2c;
       border: none;
-      border-radius: 3px;
+      border-radius: 4px;
       box-shadow: 1px 1px 2px rgba(0,0,0,0.4);
       color: white;
       cursor: pointer;
@@ -76,7 +76,7 @@
     }
 
     .timer-button:hover {
-      background-color: green; /* 🎨 Couleur au survol */
+      background-color: green;
     }
 
     #time {
@@ -84,8 +84,7 @@
       text-align: right;
     }
 
-    /* 🖼️ Exemple pour remplacer les symboles par des images */
-    /*
+    /* 🖼️ Exemple pour images plus tard
     .timer-button img {
       width: 100%;
       height: 100%;
@@ -107,23 +106,20 @@
       <button class="timer-button" onclick="adjustTime(-5)">-</button>
     </div>
     <div class="right-controls">
-      <!-- Remplacer ▸ ⏸ ⭯ par des images si besoin -->
-      <!-- Exemple :
-      <button class="timer-button"><img src="play.png" alt="Play"></button>
-      -->
+      <!-- Icônes à remplacer par images plus tard -->
       <button class="timer-button" onclick="startTimer()">▸</button>
       <button class="timer-button" onclick="pauseTimer()">⏸</button>
       <button class="timer-button" onclick="resetTimer()">⭯</button>
     </div>
   </div>
 
- <script>
+  <script>
     let defaultTime = 25 * 60;
     let currentTime = defaultTime;
     let isRunning = false;
     let interval;
-    const barsTotal = 100; // 📏 Nombre total de barres
-    const barChar = '𑪛';  // 🔣 Caractère unicode de la barre
+    const barsTotal = 100;
+    const barChar = '𑪛';
 
     const timeEl = document.getElementById('time');
     const progressBar = document.getElementById('progressBar');
@@ -138,18 +134,14 @@
       progressBar.innerHTML = '';
       const total = defaultTime || 1;
       const progress = total - currentTime;
-      const filledBars = (currentTime === 0 || total === 0) ? barsTotal : Math.floor(progress / total * barsTotal);
+      const filledBars = (currentTime === 0 || total === 0) ? 0 : Math.floor(progress / total * barsTotal);
 
       for (let i = 0; i < barsTotal; i++) {
         const span = document.createElement('span');
         span.classList.add('bar-segment');
 
         if (i < filledBars) {
-          if (i === filledBars - 1) {
-            span.classList.add('last-filled'); // 🔴 Barre rouge
-          } else {
-            span.classList.add('filled'); // ⚪ Barres blanches
-          }
+          span.classList.add(i === filledBars - 1 ? 'last-filled' : 'filled');
         } else {
           span.classList.add('empty');
         }
@@ -164,9 +156,9 @@
       let newTime = defaultTime + min * 60;
 
       if (newTime < 0) {
-        defaultTime = 60 * 60; // 🔁 Revient à 60:00 si < 0
+        defaultTime = 60 * 60;
       } else if (newTime > 60 * 60) {
-        defaultTime = 0; // 🔁 Revient à 00:00 si > 60:00
+        defaultTime = 0;
       } else {
         defaultTime = newTime;
       }
@@ -204,9 +196,10 @@
       updateProgressBar();
     }
 
-    // ▶️ Initialisation
+    // Initialisation
     updateTimeDisplay();
     updateProgressBar();
   </script>
+
 </body>
 </html>
