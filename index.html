@@ -117,13 +117,13 @@
     </div>
   </div>
 
-  <script>
+ <script>
     let defaultTime = 25 * 60;
     let currentTime = defaultTime;
     let isRunning = false;
     let interval;
-    const barsTotal = 100; // 📏 Nombre total de barres
-    const barChar = '𑪛';  // 🔣 Caractère unicode de la barre
+    const barsTotal = 35; // 📏 Nombre total de barres
+    const barChar = '█';  // 🔣 Caractère unicode de la barre
 
     const timeEl = document.getElementById('time');
     const progressBar = document.getElementById('progressBar');
@@ -141,4 +141,72 @@
       const filledBars = (currentTime === 0 || total === 0) ? barsTotal : Math.floor(progress / total * barsTotal);
 
       for (let i = 0; i < barsTotal; i++) {
-        const span = docum
+        const span = document.createElement('span');
+        span.classList.add('bar-segment');
+
+        if (i < filledBars) {
+          if (i === filledBars - 1) {
+            span.classList.add('last-filled'); // 🔴 Barre rouge
+          } else {
+            span.classList.add('filled'); // ⚪ Barres blanches
+          }
+        } else {
+          span.classList.add('empty');
+        }
+
+        span.textContent = barChar;
+        progressBar.appendChild(span);
+      }
+    }
+
+    function adjustTime(min) {
+      if (isRunning) return;
+      let newTime = defaultTime + min * 60;
+
+      if (newTime < 0) {
+        defaultTime = 60 * 60; // 🔁 Revient à 60:00 si < 0
+      } else if (newTime > 60 * 60) {
+        defaultTime = 0; // 🔁 Revient à 00:00 si > 60:00
+      } else {
+        defaultTime = newTime;
+      }
+
+      currentTime = defaultTime;
+      updateTimeDisplay();
+      updateProgressBar();
+    }
+
+    function startTimer() {
+      if (isRunning || currentTime <= 0) return;
+      isRunning = true;
+      interval = setInterval(() => {
+        if (currentTime > 0) {
+          currentTime--;
+          updateTimeDisplay();
+          updateProgressBar();
+        } else {
+          clearInterval(interval);
+          isRunning = false;
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      clearInterval(interval);
+      isRunning = false;
+    }
+
+    function resetTimer() {
+      clearInterval(interval);
+      isRunning = false;
+      currentTime = defaultTime;
+      updateTimeDisplay();
+      updateProgressBar();
+    }
+
+    // ▶️ Initialisation
+    updateTimeDisplay();
+    updateProgressBar();
+  </script>
+</body>
+</html>
