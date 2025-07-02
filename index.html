@@ -2,227 +2,204 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Pomodoro Widget</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <style>
-    @font-face {
-      font-family: 'JetBrains Mono';
-      src: url('https://fonts.gstatic.com/s/jetbrainsmono/v7/primary.woff2') format('woff2');
-    }
-
     body {
       margin: 0;
-      background-color: #111;
-      color: white;
+      padding: 10px;
       font-family: 'JetBrains Mono', monospace;
-      overflow: hidden;
+      background-color: #1a1a1a;
+      color: white;
+      font-weight: 700;
     }
 
     .container {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      padding: 10px;
-      width: 600px;
-      box-sizing: border-box;
+      width: 100%;
+      max-width: 600px;
     }
 
     .controls {
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 18px;
+      margin-bottom: 5px;
+      line-height: 1;
     }
 
-    .icon-btn {
-      background: none;
-      border: none;
-      color: white;
-      font-family: 'JetBrains Mono';
-      font-weight: bold;
+    .left-controls {
+      width: 60px;
+    }
+
+    .left-controls span {
       font-size: 18px;
+      display: block;
+      margin-bottom: 6px;
       cursor: pointer;
-      padding: 0;
+    }
+
+    .center {
+      flex: 1;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      position: relative;
     }
 
     .time {
+      font-size: 26px;
       display: flex;
-      align-items: baseline;
-      font-size: 32px;
-      font-weight: bold;
-      line-height: 1;
+      align-items: flex-start;
     }
 
     .milliseconds {
       font-size: 10px;
       margin-left: 4px;
-      position: relative;
-      top: -2px;
+      margin-top: 2px;
     }
 
-    .progress-container {
+    .bar-container {
       display: flex;
       align-items: center;
-      margin-top: 8px;
+      justify-content: flex-start;
+      margin-top: -4px;
     }
 
-    .bar-controls {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 20px;
+    .side-button {
+      font-size: 16px;
+      margin: 0 4px;
       font-weight: bold;
+      cursor: pointer;
     }
 
-    .progress {
+    .bar {
       display: flex;
-      align-items: center;
-      gap: 1px;
-      margin: 0 6px;
+      height: 20px;
+      flex-wrap: nowrap;
     }
 
     .segment {
-      width: 2px;
-      height: 18px;
+      width: 3px;
+      margin: 0 1px;
       background-color: #444;
+      transition: background-color 0.2s;
     }
 
-    .segment.active {
+    .segment.filled {
       background-color: white;
     }
 
-    .segment.current {
+    .segment.last {
       background-color: #00f9e9;
-      box-shadow: 0 0 6px #00f9e9;
+      box-shadow: 0 0 5px #00f9e9;
     }
+
+    .spacer {
+      width: 40px;
+      display: inline-block;
+    }
+
   </style>
 </head>
 <body>
   <div class="container">
     <div class="controls">
-      <button id="playPause" class="icon-btn">▶</button>
-      <button id="reset" class="icon-btn">↺</button>
-      <div class="time" id="time">
-        <span id="minutes">25</span>:<span id="seconds">00</span>
-        <span class="milliseconds" id="ms">00</span>
+      <div class="left-controls">
+        <span id="play-pause" onclick="toggleTimer()">▶</span>
+        <span onclick="resetTimer()">⭯</span>
+      </div>
+      <div class="center">
+        <div class="time" id="time-display">25:00<span class="milliseconds" id="milliseconds">00</span></div>
       </div>
     </div>
-    <div class="progress-container">
-      <div class="bar-controls">
-        <button id="decrease" class="icon-btn">-</button>
-      </div>
-      <div class="progress" id="progressBar"></div>
-      <div class="bar-controls">
-        <button id="increase" class="icon-btn">+</button>
-      </div>
+    <div class="bar-container">
+      <span class="side-button" onclick="decreaseTime()">-</span>
+      <div class="bar" id="bar"></div>
+      <span class="side-button" onclick="increaseTime()">+</span>
     </div>
   </div>
 
   <script>
-    const playPauseBtn = document.getElementById("playPause");
-    const resetBtn = document.getElementById("reset");
-    const minutesEl = document.getElementById("minutes");
-    const secondsEl = document.getElementById("seconds");
-    const msEl = document.getElementById("ms");
-    const progressBar = document.getElementById("progressBar");
-    const decreaseBtn = document.getElementById("decrease");
-    const increaseBtn = document.getElementById("increase");
-
-    let duration = 25 * 60 * 1000;
-    let remaining = duration;
+    const totalBars = 80;
+    const maxTime = 60; // minutes
+    let time = 25 * 60;
+    let remaining = time;
     let interval = null;
-    let animInterval = null;
-    let isRunning = false;
-    let barCount = 60;
+    let running = false;
 
-    function format(n) {
-      return n.toString().padStart(2, "0");
+    const timeDisplay = document.getElementById('time-display');
+    const millisDisplay = document.getElementById('milliseconds');
+    const bar = document.getElementById('bar');
+    const playPauseBtn = document.getElementById('play-pause');
+
+    function formatTime(sec) {
+      const m = String(Math.floor(sec / 60)).padStart(2, '0');
+      const s = String(sec % 60).padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function renderBar() {
+      bar.innerHTML = '';
+      const fillCount = Math.round((remaining / (maxTime * 60)) * totalBars);
+      for (let i = 0; i < totalBars; i++) {
+        const segment = document.createElement('div');
+        segment.classList.add('segment');
+        if (i < fillCount - 1) segment.classList.add('filled');
+        else if (i === fillCount - 1) segment.classList.add('last');
+        bar.appendChild(segment);
+      }
     }
 
     function updateDisplay() {
-      const mins = Math.floor(remaining / 60000);
-      const secs = Math.floor((remaining % 60000) / 1000);
-      minutesEl.textContent = format(mins);
-      secondsEl.textContent = format(secs);
+      timeDisplay.innerHTML = `${formatTime(remaining)}<span class="milliseconds" id="milliseconds">${String(Math.floor(Math.random()*90)+10)}</span>`;
+      renderBar();
     }
 
-    function animateMilliseconds() {
-      msEl.textContent = Math.floor(Math.random() * 100).toString().padStart(2, "0");
-    }
-
-    function updateProgress() {
-      const percent = remaining / (60 * 60 * 1000);
-      const activeBars = Math.floor(percent * barCount);
-      progressBar.innerHTML = "";
-
-      for (let i = 0; i < barCount; i++) {
-        const span = document.createElement("span");
-        span.classList.add("segment");
-        if (i < activeBars) span.classList.add("active");
-        if (i === activeBars) span.classList.add("current");
-        progressBar.appendChild(span);
-      }
-    }
-
-    function tick() {
-      if (remaining <= 0) {
+    function toggleTimer() {
+      if (running) {
         clearInterval(interval);
-        clearInterval(animInterval);
-        isRunning = false;
-        playPauseBtn.textContent = "▶";
-        remaining = duration;
-        updateDisplay();
-        updateProgress();
-        return;
-      }
-      remaining -= 100;
-      updateDisplay();
-      updateProgress();
-    }
-
-    playPauseBtn.onclick = () => {
-      if (!isRunning) {
-        interval = setInterval(tick, 100);
-        animInterval = setInterval(animateMilliseconds, 80);
-        isRunning = true;
-        playPauseBtn.textContent = "▍▍"; // Unicode pause style compatible with mono fonts
+        playPauseBtn.innerText = '▶';
       } else {
-        clearInterval(interval);
-        clearInterval(animInterval);
-        isRunning = false;
-        playPauseBtn.textContent = "▶";
+        interval = setInterval(() => {
+          if (remaining > 0) {
+            remaining--;
+            updateDisplay();
+          } else {
+            clearInterval(interval);
+            playPauseBtn.innerText = '▶';
+            running = false;
+          }
+        }, 1000);
+        playPauseBtn.innerText = '⏸';
       }
-    };
+      running = !running;
+    }
 
-    resetBtn.onclick = () => {
+    function resetTimer() {
       clearInterval(interval);
-      clearInterval(animInterval);
-      isRunning = false;
-      playPauseBtn.textContent = "▶";
-      remaining = duration;
+      remaining = time;
       updateDisplay();
-      updateProgress();
-    };
+      running = false;
+      playPauseBtn.innerText = '▶';
+    }
 
-    increaseBtn.onclick = () => {
-      duration += 5 * 60 * 1000;
-      if (duration > 60 * 60 * 1000) duration = 5 * 60 * 1000;
-      remaining = duration;
+    function increaseTime() {
+      const next = time / 60 + 5;
+      time = (next > maxTime) ? 5 * 60 : next * 60;
+      remaining = time;
       updateDisplay();
-      updateProgress();
-    };
+    }
 
-    decreaseBtn.onclick = () => {
-      duration -= 5 * 60 * 1000;
-      if (duration < 5 * 60 * 1000) duration = 60 * 60 * 1000;
-      remaining = duration;
+    function decreaseTime() {
+      const prev = time / 60 - 5;
+      time = (prev < 5) ? maxTime * 60 : prev * 60;
+      remaining = time;
       updateDisplay();
-      updateProgress();
-    };
+    }
 
+    // Init
     updateDisplay();
-    updateProgress();
-    animateMilliseconds();
   </script>
 </body>
 </html>
