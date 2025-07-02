@@ -2,88 +2,86 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pomodoro Widget</title>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <title>Pomodoro</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      padding: 10px;
+      padding: 20px;
       font-family: 'JetBrains Mono', monospace;
       background-color: #1a1a1a;
       color: white;
-      font-weight: 700;
     }
 
-    .container {
-      width: 100%;
+    .widget {
       max-width: 600px;
     }
 
-    .controls {
+    .top-row {
       display: flex;
       align-items: center;
       margin-bottom: 5px;
-      line-height: 1;
     }
 
-    .left-controls {
-      width: 60px;
+    .left-buttons {
+      width: 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
     }
 
-    .left-controls span {
-      font-size: 18px;
-      display: block;
+    .left-buttons button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 16px;
       margin-bottom: 6px;
       cursor: pointer;
     }
 
-    .center {
+    .timer-container {
       flex: 1;
-      text-align: center;
       display: flex;
       justify-content: center;
       align-items: flex-end;
       position: relative;
     }
 
-    .time {
-      font-size: 26px;
+    .timer {
+      font-size: 24px;
       display: flex;
-      align-items: flex-start;
+      align-items: flex-end;
     }
 
     .milliseconds {
       font-size: 10px;
-      margin-left: 4px;
-      margin-top: 2px;
+      margin-left: 5px;
+      margin-bottom: 4px;
     }
 
-    .bar-container {
+    .bottom-row {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
-      margin-top: -4px;
+      justify-content: center;
     }
 
     .side-button {
       font-size: 16px;
-      margin: 0 4px;
       font-weight: bold;
+      margin: 0 5px;
       cursor: pointer;
     }
 
     .bar {
       display: flex;
       height: 20px;
-      flex-wrap: nowrap;
     }
 
     .segment {
       width: 3px;
-      margin: 0 1px;
+      height: 100%;
+      margin: 0 0.5px;
       background-color: #444;
-      transition: background-color 0.2s;
     }
 
     .segment.filled {
@@ -92,113 +90,124 @@
 
     .segment.last {
       background-color: #00f9e9;
-      box-shadow: 0 0 5px #00f9e9;
+      box-shadow: 0 0 4px #00f9e9;
     }
-
-    .spacer {
-      width: 40px;
-      display: inline-block;
-    }
-
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="controls">
-      <div class="left-controls">
-        <span id="play-pause" onclick="toggleTimer()">▶</span>
-        <span onclick="resetTimer()">⭯</span>
+  <div class="widget">
+    <div class="top-row">
+      <div class="left-buttons">
+        <button id="playPause" onclick="toggleTimer()">▶</button>
+        <button onclick="resetTimer()">⭯</button>
       </div>
-      <div class="center">
-        <div class="time" id="time-display">25:00<span class="milliseconds" id="milliseconds">00</span></div>
+      <div class="timer-container">
+        <div class="timer" id="timer">
+          25:00
+          <span class="milliseconds" id="millis">00</span>
+        </div>
       </div>
     </div>
-    <div class="bar-container">
-      <span class="side-button" onclick="decreaseTime()">-</span>
+
+    <div class="bottom-row">
+      <div class="side-button" onclick="decreaseTime()">-</div>
       <div class="bar" id="bar"></div>
-      <span class="side-button" onclick="increaseTime()">+</span>
+      <div class="side-button" onclick="increaseTime()">+</div>
     </div>
   </div>
 
   <script>
-    const totalBars = 80;
-    const maxTime = 60; // minutes
-    let time = 25 * 60;
-    let remaining = time;
-    let interval = null;
+    const maxTime = 60; // in minutes
+    let totalTime = 25 * 60;
+    let timeLeft = totalTime;
     let running = false;
+    let timerInterval = null;
+    let millisInterval = null;
 
-    const timeDisplay = document.getElementById('time-display');
-    const millisDisplay = document.getElementById('milliseconds');
-    const bar = document.getElementById('bar');
-    const playPauseBtn = document.getElementById('play-pause');
+    const timerDisplay = document.getElementById("timer");
+    const millisDisplay = document.getElementById("millis");
+    const bar = document.getElementById("bar");
+    const playPause = document.getElementById("playPause");
+
+    const totalBars = 40;
 
     function formatTime(sec) {
-      const m = String(Math.floor(sec / 60)).padStart(2, '0');
-      const s = String(sec % 60).padStart(2, '0');
+      const m = String(Math.floor(sec / 60)).padStart(2, "0");
+      const s = String(sec % 60).padStart(2, "0");
       return `${m}:${s}`;
     }
 
-    function renderBar() {
-      bar.innerHTML = '';
-      const fillCount = Math.round((remaining / (maxTime * 60)) * totalBars);
+    function updateDisplay() {
+      timerDisplay.firstChild.nodeValue = formatTime(timeLeft);
+      updateBar();
+    }
+
+    function updateBar() {
+      bar.innerHTML = "";
+      const ratio = timeLeft / (maxTime * 60);
+      const fillCount = Math.round(ratio * totalBars);
       for (let i = 0; i < totalBars; i++) {
-        const segment = document.createElement('div');
-        segment.classList.add('segment');
-        if (i < fillCount - 1) segment.classList.add('filled');
-        else if (i === fillCount - 1) segment.classList.add('last');
+        const segment = document.createElement("div");
+        segment.classList.add("segment");
+        if (i < fillCount - 1) segment.classList.add("filled");
+        else if (i === fillCount - 1) segment.classList.add("last");
         bar.appendChild(segment);
       }
     }
 
-    function updateDisplay() {
-      timeDisplay.innerHTML = `${formatTime(remaining)}<span class="milliseconds" id="milliseconds">${String(Math.floor(Math.random()*90)+10)}</span>`;
-      renderBar();
-    }
-
     function toggleTimer() {
       if (running) {
-        clearInterval(interval);
-        playPauseBtn.innerText = '▶';
+        clearInterval(timerInterval);
+        clearInterval(millisInterval);
+        playPause.textContent = "▶";
       } else {
-        interval = setInterval(() => {
-          if (remaining > 0) {
-            remaining--;
+        timerInterval = setInterval(() => {
+          if (timeLeft > 0) {
+            timeLeft--;
             updateDisplay();
           } else {
-            clearInterval(interval);
-            playPauseBtn.innerText = '▶';
+            clearInterval(timerInterval);
+            clearInterval(millisInterval);
+            playPause.textContent = "▶";
             running = false;
           }
         }, 1000);
-        playPauseBtn.innerText = '⏸';
+
+        millisInterval = setInterval(() => {
+          millisDisplay.textContent = String(Math.floor(Math.random() * 90) + 10);
+        }, 50); // RAPIDE, pour effet visuel
+
+        playPause.textContent = "⏸";
       }
       running = !running;
     }
 
     function resetTimer() {
-      clearInterval(interval);
-      remaining = time;
-      updateDisplay();
+      clearInterval(timerInterval);
+      clearInterval(millisInterval);
       running = false;
-      playPauseBtn.innerText = '▶';
+      timeLeft = totalTime;
+      playPause.textContent = "▶";
+      updateDisplay();
+      millisDisplay.textContent = "00";
     }
 
     function increaseTime() {
-      const next = time / 60 + 5;
-      time = (next > maxTime) ? 5 * 60 : next * 60;
-      remaining = time;
+      let next = totalTime / 60 + 5;
+      if (next > maxTime) next = 5;
+      totalTime = next * 60;
+      timeLeft = totalTime;
       updateDisplay();
     }
 
     function decreaseTime() {
-      const prev = time / 60 - 5;
-      time = (prev < 5) ? maxTime * 60 : prev * 60;
-      remaining = time;
+      let prev = totalTime / 60 - 5;
+      if (prev < 5) prev = maxTime;
+      totalTime = prev * 60;
+      timeLeft = totalTime;
       updateDisplay();
     }
 
-    // Init
     updateDisplay();
   </script>
 </body>
