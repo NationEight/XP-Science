@@ -5,81 +5,79 @@
   <title>Pomodoro Widget</title>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
   <style>
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
       background-color: #191919;
-      font-family: 'JetBrains Mono', monospace;
       color: white;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
+      font-family: 'JetBrains Mono', monospace;
     }
 
-    .container {
+    .widget {
+      width: 640px;
+      height: 180px;
+      padding: 10px 20px;
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
       justify-content: flex-start;
-      padding: 8px;
+      align-items: flex-start;
       box-sizing: border-box;
-      width: 100%;
-      height: 100%;
     }
 
-    .top-row {
+    .top-controls {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 2px;
+      margin-bottom: 8px;
+      gap: 12px;
     }
 
     .button {
       background: none;
       border: none;
       color: white;
-      cursor: pointer;
-      font-size: 20px;
+      font-size: 18px;
       font-weight: bold;
       font-family: 'JetBrains Mono', monospace;
-      padding: 0 4px;
-    }
-
-    .button:hover {
-      transform: scale(1.1);
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
     }
 
     .time-display {
-      font-size: 40px;
+      font-size: 28px;
       font-weight: bold;
+      line-height: 1;
       display: flex;
       align-items: flex-start;
-      line-height: 1;
     }
 
     #ms {
-      font-size: 14px;
+      font-size: 12px;
       margin-left: 4px;
-      transform: translateY(5px);
+      transform: translateY(2px);
       opacity: 0.7;
     }
 
-    .middle-row {
+    .bottom-row {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-top: 4px;
       width: 100%;
+      justify-content: space-between;
+    }
+
+    .progress-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-grow: 1;
+      margin: 0 10px;
     }
 
     .progress-bar {
+      font-size: 16px;
+      display: flex;
+      line-height: 0.8;
       white-space: nowrap;
       overflow: hidden;
-      font-size: 20px;
-      line-height: 0.8;
-      display: flex;
-      justify-content: center;
-      flex-grow: 1;
     }
 
     .bar-segment {
@@ -103,10 +101,10 @@
 </head>
 <body>
 
-  <div class="container">
-    <!-- Ligne supérieure -->
-    <div class="top-row">
-      <button class="button" id="playPauseBtn" onclick="togglePlay()">⏵</button>
+  <div class="widget">
+    <!-- Top row: Controls -->
+    <div class="top-controls">
+      <button class="button" id="playPauseBtn" onclick="togglePlay()">▶</button>
       <button class="button" onclick="resetTimer()">⭯</button>
       <div class="time-display">
         <span id="mainTime">25:00</span>
@@ -114,10 +112,12 @@
       </div>
     </div>
 
-    <!-- Ligne inférieure -->
-    <div class="middle-row">
+    <!-- Bottom row: Progress -->
+    <div class="bottom-row">
       <button class="button" onclick="adjustTime(-5)">−</button>
-      <div class="progress-bar" id="progressBar"></div>
+      <div class="progress-wrapper">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
       <button class="button" onclick="adjustTime(5)">＋</button>
     </div>
   </div>
@@ -126,11 +126,10 @@
     let defaultTime = 25 * 60;
     let currentTime = defaultTime;
     let isRunning = false;
-    let interval;
-    let msFake = 0;
+    let interval, msInterval;
     const maxTime = 60 * 60;
     const minTime = 5 * 60;
-    const barsTotal = 100;
+    const barsTotal = 40;
     const barChar = '𑪛';
 
     const timeEl = document.getElementById('mainTime');
@@ -138,12 +137,22 @@
     const progressBar = document.getElementById('progressBar');
     const playPauseBtn = document.getElementById('playPauseBtn');
 
-    function updateTimeDisplay(ms = 0) {
+    function updateTimeDisplay() {
       const min = Math.floor(currentTime / 60).toString().padStart(2, '0');
       const sec = (currentTime % 60).toString().padStart(2, '0');
-      const msVal = ms.toString().padStart(2, '0');
       timeEl.textContent = `${min}:${sec}`;
-      msEl.textContent = msVal;
+    }
+
+    function simulateMilliseconds() {
+      if (msInterval) clearInterval(msInterval);
+      msInterval = setInterval(() => {
+        msEl.textContent = Math.floor(Math.random() * 100).toString().padStart(2, '0');
+      }, 50);
+    }
+
+    function stopMilliseconds() {
+      clearInterval(msInterval);
+      msEl.textContent = "00";
     }
 
     function updateProgressBar() {
@@ -188,45 +197,46 @@
         playPauseBtn.textContent = '⏸︎';
       } else {
         pauseTimer();
-        playPauseBtn.textContent = '⏵';
+        playPauseBtn.textContent = '▶';
       }
     }
 
     function startTimer() {
       if (currentTime <= 0) return;
       isRunning = true;
-      msFake = 0;
+      simulateMilliseconds();
 
       interval = setInterval(() => {
         if (currentTime <= 0) {
           clearInterval(interval);
+          stopMilliseconds();
           isRunning = false;
-          playPauseBtn.textContent = '⏵';
-          updateTimeDisplay(0);
+          playPauseBtn.textContent = '▶';
+          updateTimeDisplay();
           return;
         }
 
         currentTime--;
-        updateTimeDisplay(msFake);
+        updateTimeDisplay();
         updateProgressBar();
-        msFake = (msFake + 1) % 100;
       }, 1000);
     }
 
     function pauseTimer() {
       clearInterval(interval);
+      stopMilliseconds();
       isRunning = false;
     }
 
     function resetTimer() {
       pauseTimer();
       currentTime = defaultTime;
-      updateTimeDisplay(0);
+      updateTimeDisplay();
       updateProgressBar();
-      playPauseBtn.textContent = '⏵';
+      playPauseBtn.textContent = '▶';
     }
 
-    // Initialisation
+    // Initial
     updateTimeDisplay();
     updateProgressBar();
   </script>
