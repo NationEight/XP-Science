@@ -2,42 +2,32 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Pomodoro Notion</title>
+  <title>Pomodoro Notion Widget</title>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
   <style>
-    body {
+    html, body {
       background-color: #191919;
       color: white;
       font-family: 'JetBrains Mono', monospace;
       margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .container {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      align-items: flex-start;
+      padding: 8px;
+      gap: 10px;
     }
 
-    .top-controls {
+    .top-row {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 15px;
-      margin-bottom: 8px;
-      font-size: 2.5vw;
-    }
-
-    #time {
-      font-size: 4vw;
-      font-weight: bold;
-      display: flex;
-      align-items: flex-end;
-      gap: 5px;
-    }
-
-    #ms {
-      font-size: 1vw;
-      line-height: 1;
-      opacity: 0.7;
+      gap: 10px;
     }
 
     .button {
@@ -45,24 +35,45 @@
       border: none;
       color: white;
       cursor: pointer;
-      font-size: 2.5vw;
+      font-size: 24px;
       font-family: 'JetBrains Mono', monospace;
-      transition: transform 0.1s;
+      padding: 0;
     }
 
     .button:hover {
-      transform: scale(1.2);
+      transform: scale(1.15);
+    }
+
+    .time-display {
+      font-size: 48px;
+      font-weight: bold;
+      display: flex;
+      align-items: flex-start;
+      line-height: 1;
+    }
+
+    #ms {
+      font-size: 16px;
+      margin-left: 5px;
+      transform: translateY(6px);
+      opacity: 0.7;
+    }
+
+    .middle-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 5px;
     }
 
     .progress-bar {
       white-space: nowrap;
       overflow: hidden;
-      font-size: 2.5vw;
+      font-size: 22px;
       line-height: 1;
-      width: 90vw;
       display: flex;
       justify-content: center;
-      flex-wrap: nowrap;
+      flex-grow: 1;
     }
 
     .bar-segment {
@@ -76,28 +87,38 @@
 
     .last-filled {
       color: #00f9e9;
-      text-shadow: 0 0 6px #00f9e9, 0 0 10px #00f9e9;
+      text-shadow: 0 0 6px #00f9e9, 0 0 12px #00f9e9;
     }
 
     .empty {
       color: #2b2b2b;
     }
+
+    .spacer {
+      flex: 1;
+    }
   </style>
 </head>
 <body>
 
-  <div class="top-controls">
-    <button class="button" onclick="adjustTime(-5)">-</button>
-    <button class="button" id="playPauseBtn" onclick="togglePlay()">▶️</button>
-    <button class="button" onclick="resetTimer()">⭯</button>
-    <button class="button" onclick="adjustTime(5)">+</button>
-  </div>
+  <div class="container">
+    <!-- Ligne supérieure : Play, Reset, Time -->
+    <div class="top-row">
+      <button class="button" id="playPauseBtn" onclick="togglePlay()">⏵</button>
+      <button class="button" onclick="resetTimer()">⭯</button>
+      <div class="time-display">
+        <span id="mainTime">25:00</span>
+        <span id="ms">00</span>
+      </div>
+    </div>
 
-  <div id="time">
-    <span id="mainTime">25:00</span><span id="ms">00</span>
+    <!-- Ligne inférieure : - | progress bar | + -->
+    <div class="middle-row">
+      <button class="button" onclick="adjustTime(-5)">−</button>
+      <div class="progress-bar" id="progressBar"></div>
+      <button class="button" onclick="adjustTime(5)">＋</button>
+    </div>
   </div>
-
-  <div class="progress-bar" id="progressBar"></div>
 
   <script>
     let defaultTime = 25 * 60;
@@ -105,6 +126,7 @@
     let isRunning = false;
     let interval;
     const maxTime = 60 * 60;
+    const minTime = 5 * 60;
     const barsTotal = 100;
     const barChar = '𑪛';
 
@@ -145,8 +167,11 @@
       if (isRunning) return;
       let newTime = defaultTime + min * 60;
 
-      if (newTime < 0) newTime = 0;
-      if (newTime > maxTime) newTime = maxTime;
+      if (newTime > maxTime) {
+        newTime = minTime;
+      } else if (newTime < minTime) {
+        newTime = maxTime;
+      }
 
       defaultTime = newTime;
       currentTime = newTime;
@@ -157,10 +182,10 @@
     function togglePlay() {
       if (!isRunning) {
         startTimer();
-        playPauseBtn.textContent = '⏯️';
+        playPauseBtn.textContent = '⏸︎';
       } else {
         pauseTimer();
-        playPauseBtn.textContent = '▶️';
+        playPauseBtn.textContent = '⏵';
       }
     }
 
@@ -173,20 +198,15 @@
         if (currentTime <= 0) {
           clearInterval(interval);
           isRunning = false;
-          playPauseBtn.textContent = '▶️';
+          playPauseBtn.textContent = '⏵';
           updateTimeDisplay(0);
           return;
         }
 
-        ms += 10;
-        if (ms >= 1000) {
-          currentTime--;
-          ms = 0;
-        }
-
-        updateTimeDisplay(Math.floor(ms / 10));
+        currentTime--;
+        updateTimeDisplay(0);
         updateProgressBar();
-      }, 10);
+      }, 1000);
     }
 
     function pauseTimer() {
@@ -197,12 +217,12 @@
     function resetTimer() {
       pauseTimer();
       currentTime = defaultTime;
-      updateTimeDisplay();
+      updateTimeDisplay(0);
       updateProgressBar();
-      playPauseBtn.textContent = '▶️';
+      playPauseBtn.textContent = '⏵';
     }
 
-    // Initial
+    // Initialisation
     updateTimeDisplay();
     updateProgressBar();
   </script>
