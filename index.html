@@ -11,7 +11,7 @@
       color: white;
       font-family: 'JetBrains Mono', monospace;
       margin: 0;
-      padding: 8px 0; /* Marge haut/bas */
+      padding: 8px 0 0 0; /* ✅ Réduit le padding bas */
     }
 
     /* 📊 Barre de progression */
@@ -26,7 +26,7 @@
     }
 
     .bar-segment {
-      font-weight: 900; /* ➕ Gras renforcé */
+      font-weight: 900;
       display: inline-block;
     }
 
@@ -49,6 +49,7 @@
       align-items: center;
       gap: 5px;
       font-size: 15px;
+      padding: 0 8px; /* ✅ Ajoute un peu de marge latérale */
     }
 
     .left-controls, .right-controls {
@@ -84,7 +85,7 @@
       text-align: right;
     }
 
-    /* 🖼️ Exemple pour images plus tard
+    /* 🖼️ Images pour plus tard
     .timer-button img {
       width: 100%;
       height: 100%;
@@ -106,9 +107,8 @@
       <button class="timer-button" onclick="adjustTime(-5)">-</button>
     </div>
     <div class="right-controls">
-      <!-- Icônes à remplacer par images plus tard -->
       <button class="timer-button" onclick="startTimer()">▸</button>
-      <button class="timer-button" onclick="pauseTimer()">⏸</button>
+      <button class="timer-button" onclick="pauseTimer()">❚❚</button> <!-- ✅ Pause améliorée -->
       <button class="timer-button" onclick="resetTimer()">⭯</button>
     </div>
   </div>
@@ -196,7 +196,7 @@
       updateProgressBar();
     }
 
-    // Initialisation
+    // Init
     updateTimeDisplay();
     updateProgressBar();
   </script>
