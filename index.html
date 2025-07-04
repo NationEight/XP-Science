@@ -11,7 +11,7 @@
       background-color: #1a1a1a;
       color: white;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 25px; /* Taille de police générale — MODIFIABLE */
+      font-size: 23px; /* Taille de police générale — MODIFIABLE */
     }
 
     .row {
@@ -23,7 +23,7 @@
 
     .row:nth-child(2) {
       margin-top: 5px;
-      gap: 5px; /* Espace entre les éléments de la deuxième ligne — MODIFIABLE */
+      gap: 10px; /* Espace entre les éléments de la première ligne — MODIFIABLE */
     }
 
     .img-btn {
@@ -31,7 +31,7 @@
       height: 22px;
       cursor: pointer;
       background: none;
-      border: 1px solid #494949; /* Bordure grise — MODIFIABLE */
+      border: 1px solid #888; /* Bordure grise — MODIFIABLE */
       padding: 3px;
       margin: 0;
       box-shadow: 1px 1px 3px rgba(0,0,0,0.5); /* Ombre portée — MODIFIABLE */
@@ -39,14 +39,26 @@
     }
 
     .img-btn:hover {
-      transform: scale(1.1);
-      box-shadow: 3 3 3px #00f9e9; /* Néon bleu en hover — MODIFIABLE */
+      transform: scale(1.2);
+      box-shadow: 0 0 5px #00f9e9; /* Néon bleu en hover — MODIFIABLE */
     }
 
     .img-btn img {
       width: 100%;
       height: 100%;
       display: block;
+    }
+
+    .timer {
+      display: flex;
+      align-items: baseline;
+      font-size: 16px;
+    }
+
+    .milliseconds {
+      font-size: 10px;
+      margin-left: 4px;
+      align-self: flex-start;
     }
 
     .bar {
@@ -71,19 +83,6 @@
       background-color: #00f9e9; /* Couleur dernière barre — MODIFIABLE */
       box-shadow: 0 0 4px #00f9e9;
     }
-
-    .timer {
-      display: flex;
-      align-items: baseline;
-      font-size: 16px;
-      margin-right: 40px; /* Espace entre timer et boutons — MODIFIABLE */
-    }
-
-    .milliseconds {
-      font-size: 10px;
-      margin-left: 4px;
-      align-self: flex-start;
-    }
   </style>
 </head>
 <body>
@@ -91,13 +90,14 @@
   <!-- BARRE EN HAUT -->
   <div class="bar" id="bar"></div>
 
-  <!-- NOUVELLE DISPOSITION -->
+  <!-- AUDIO -->
+  <audio id="alarmSound" src="NotionRingtone.mp3" preload="auto"></audio>
+
   <div class="row">
     <div class="timer">
       <span id="timer">25:00</span>
       <span class="milliseconds" id="millis">00</span>
     </div>
-
     <button id="playPause" class="img-btn" onclick="toggleTimer()">
       <img src="PLAY.png" alt="Play">
     </button>
@@ -120,7 +120,7 @@
     let timerInterval = null;
     let millisInterval = null;
 
-    const totalBars = 64; // Longueur de la barre — MODIFIABLE
+    const totalBars = 59; // Longueur de la barre — MODIFIABLE
     const bar = document.getElementById("bar");
     const timerText = document.getElementById("timer");
     const millisText = document.getElementById("millis");
@@ -129,7 +129,7 @@
     function formatTime(sec) {
       const m = String(Math.floor(sec / 60)).padStart(2, "0");
       const s = String(sec % 60).padStart(2, "0");
-      return ${m}:${s};
+      return `${m}:${s}`;
     }
 
     function updateDisplay() {
@@ -164,8 +164,9 @@
             clearInterval(timerInterval);
             clearInterval(millisInterval);
             playPause.src = "PLAY.png";
-            millisText.textContent = "00"; // millisecondes à zéro
+            millisText.textContent = "00";
             running = false;
+            document.getElementById("alarmSound").play(); // 🔊 Joue le son ici
           }
         }, 1000);
 
