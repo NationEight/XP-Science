@@ -15,6 +15,9 @@
       height: 100%;              /* ✅ Empêche débordement */
       overflow: hidden;          /* ✅ Supprime scroll vertical */
       box-sizing: border-box;    /* ✅ Empêche que le padding ne fasse déborder */
+      display: flex;             /* ✅ Permet de positionner la clock en bas */
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     .row {
@@ -88,6 +91,17 @@
       background-color: #00f9e9;
       box-shadow: 0 0 6px #00f9e9; /* ✅ Effet Néon */
     }
+
+    .clock {
+      text-align: center;
+      padding: 4px 12px;
+      margin: 5px auto 6px auto;
+      font-size: 14px;
+      background-color: #2a2a2a;  /* ✅ Même gris que les barres */
+      color: #cccccc;             /* ✅ Gris clair */
+      border-radius: 8px;         /* ✅ Coins arrondis */
+      width: fit-content;
+    }
   </style>
 </head>
 <body>
@@ -117,6 +131,9 @@
       <img src="PLUS.png" alt="Plus">
     </button>
   </div>
+
+  <!-- HORLOGE EN BAS -->
+  <div class="clock" id="currentTime">--:--</div> <!-- ✅ Ligne affichant l'heure actuelle -->
 
   <script>
     const maxTime = 60;
@@ -213,7 +230,17 @@
       updateDisplay();
     }
 
+    // ✅ Fonction qui met à jour l'heure dans le bloc du bas
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById("currentTime").textContent = `${h}:${m}`;
+    }
+
     updateDisplay();
+    updateClock(); // ✅ Affichage immédiat
+    setInterval(updateClock, 60 * 1000); // ✅ Mise à jour toutes les minutes
   </script>
 </body>
 </html>
