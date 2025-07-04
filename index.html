@@ -12,8 +12,10 @@
       color: white;
       font-family: 'JetBrains Mono', monospace;
       font-size: 23px;
-      display: inline-block;       /* ✅ Supprime l'espace en bas */
-      overflow: hidden;            /* ✅ Empêche débordements */
+      /* display: inline-block;       ✅ Supprime l'espace en bas (⛔️ retiré car coupe le hover) */
+      /* overflow: hidden;            ✅ Empêche débordements (⛔️ retiré pour laisser les effets hover) */
+      height: 115px; /* ✅ Hauteur fixe pour s’adapter à l’embed Notion sans coupure */
+      box-sizing: border-box; /* ✅ Prévient tout débordement dû au padding */
     }
 
     .row {
@@ -25,7 +27,7 @@
 
     .controls {
       margin-top: 0; /* ✅ Supprime l’espace vertical abusif entre les deux lignes */
-      gap: 5px;     /* ✅ Espace entre les éléments de la ligne des boutons */
+      gap: 5px;       /* ✅ Espace entre les éléments de la ligne des boutons */
     }
 
     .img-btn {
