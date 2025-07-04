@@ -60,7 +60,7 @@
       display: flex;
       align-items: baseline;
       font-size: 16px;
-      margin-right: 79px; /* ✅ Contrôle l'espace horizontal entre timer et boutons */
+      margin-right: 101px; /* ✅ Contrôle l'espace horizontal entre timer et boutons */
     }
 
     .milliseconds {
@@ -143,7 +143,7 @@
     let timerInterval = null;
     let millisInterval = null;
 
-    const totalBars = 63;
+    const totalBars = 80;  /* ✅ Nombre de barres sur la barre de progression */
     const bar = document.getElementById("bar");
     const timerText = document.getElementById("timer");
     const millisText = document.getElementById("millis");
