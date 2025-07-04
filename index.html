@@ -8,10 +8,12 @@
     html, body {
       margin: 0;
       padding: 0;
-      background-color: #1a1a1a;
+      background-color: #2f3437; /* ✅ Fond Notion en dark mode */
       color: white;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 23px; /* Taille de police générale — MODIFIABLE */
+      font-size: 23px;
+      display: inline-block;       /* ✅ Supprime l'espace en bas */
+      overflow: hidden;            /* ✅ Empêche débordements */
     }
 
     .row {
@@ -21,26 +23,26 @@
       margin-left: 5px;
     }
 
-    .row:nth-child(2) {
-      margin-top: 80px; /* 👈 C'est cette valeur qui contrôle l'espace vertical entre les deux lignes 
-      gap: 10px; /* Espace entre les éléments de la deuxième ligne — MODIFIABLE */
+    .controls {
+      margin-top: 0; /* ✅ Supprime l’espace vertical abusif entre les deux lignes */
+      gap: 10px;     /* ✅ Espace entre les éléments de la ligne des boutons */
     }
 
     .img-btn {
-      width: 22px; /* Taille des boutons — MODIFIABLE */
+      width: 22px;
       height: 22px;
       cursor: pointer;
       background: none;
-      border: 1px solid #494949; /* Bordure grise — MODIFIABLE */
+      border: 1px solid #494949;
       padding: 3px;
       margin: 0;
-      box-shadow: 1px 1px 3px rgba(0,0,0,0.5); /* Ombre portée — MODIFIABLE */
+      box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
       transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .img-btn:hover {
       transform: scale(1.1);
-      box-shadow: 0 0 2px #00f9e9; /* Néon bleu en hover — MODIFIABLE */
+      box-shadow: 0 0 2px #00f9e9;
     }
 
     .img-btn img {
@@ -53,7 +55,7 @@
       display: flex;
       align-items: baseline;
       font-size: 16px;
-      margin-right: 101px; /* 👈 Change ici la valeur pour ajuster l'espacement */
+      margin-right: 101px; /* ✅ Contrôle l'espace horizontal entre timer et boutons */
     }
 
     .milliseconds {
@@ -65,7 +67,7 @@
     .bar {
       display: flex;
       justify-content: flex-start;
-      margin: 3px 0 0 6px; /* Marge sous la barre — MODIFIABLE */
+      margin: 0 0 8px 6px; /* ✅ Réduction de l’espace entre la barre et la ligne en dessous */
       height: 20px;
     }
 
@@ -81,7 +83,7 @@
     }
 
     .segment.last {
-      background-color: #00f9e9; /* Couleur dernière barre — MODIFIABLE */
+      background-color: #00f9e9;
       box-shadow: 0 0 4px #00f9e9;
     }
   </style>
@@ -91,10 +93,11 @@
   <!-- BARRE EN HAUT -->
   <div class="bar" id="bar"></div>
 
-  <!-- AUDIO -->
-  <audio id="alarmSound" src="NotionRingtone.mp3" preload="auto"></audio>
+  <!-- AUDIO (caché) -->
+  <audio id="alarmSound" src="NotionRingtone.mp3" preload="auto" style="display: none;"></audio> <!-- ✅ Masqué -->
 
-  <div class="row">
+  <!-- TIMER + BOUTONS -->
+  <div class="row controls"> <!-- ✅ Ajout de la classe "controls" -->
     <div class="timer">
       <span id="timer">25:00</span>
       <span class="milliseconds" id="millis">00</span>
@@ -121,7 +124,7 @@
     let timerInterval = null;
     let millisInterval = null;
 
-    const totalBars = 63; // Longueur de la barre — MODIFIABLE
+    const totalBars = 63;
     const bar = document.getElementById("bar");
     const timerText = document.getElementById("timer");
     const millisText = document.getElementById("millis");
@@ -167,7 +170,7 @@
             playPause.src = "PLAY.png";
             millisText.textContent = "00";
             running = false;
-            document.getElementById("alarmSound").play(); // 🔊 Joue le son ici
+            document.getElementById("alarmSound").play();
           }
         }, 1000);
 
