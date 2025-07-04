@@ -12,10 +12,9 @@
       color: white;
       font-family: 'JetBrains Mono', monospace;
       font-size: 23px;
-      /* display: inline-block;       ✅ Supprime l'espace en bas (⛔️ retiré car coupe le hover) */
-      /* overflow: hidden;            ✅ Empêche débordements (⛔️ retiré pour laisser les effets hover) */
-      height: 115px; /* ✅ Hauteur fixe pour s’adapter à l’embed Notion sans coupure */
-      box-sizing: border-box; /* ✅ Prévient tout débordement dû au padding */
+      height: 100%;              /* ✅ Empêche débordement */
+      overflow: hidden;          /* ✅ Supprime scroll vertical */
+      box-sizing: border-box;    /* ✅ Empêche que le padding ne fasse déborder */
     }
 
     .row {
@@ -26,8 +25,8 @@
     }
 
     .controls {
-      margin-top: 0; /* ✅ Supprime l’espace vertical abusif entre les deux lignes */
-      gap: 3px;       /* ✅ Espace entre les éléments de la ligne des boutons */
+      margin-top: 0;   /* ✅ Supprime l’espace vertical abusif entre les deux lignes */
+      gap: 5px;        /* ✅ Espace entre les éléments de la ligne des boutons */
     }
 
     .img-btn {
@@ -57,7 +56,7 @@
       display: flex;
       align-items: baseline;
       font-size: 16px;
-      margin-right: 90px; /* ✅ Contrôle l'espace horizontal entre timer et boutons */
+      margin-right: 96px; /* ✅ Contrôle l'espace horizontal entre timer et boutons */
     }
 
     .milliseconds {
@@ -69,7 +68,7 @@
     .bar {
       display: flex;
       justify-content: flex-start;
-      margin: 0 0 6px 3px; /* ✅ Réduction de l’espace entre la barre et la ligne en dessous */
+      margin: 0 0 8px 6px; /* ✅ Réduction de l’espace entre la barre et la ligne en dessous */
       height: 20px;
     }
 
