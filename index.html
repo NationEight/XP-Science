@@ -40,25 +40,13 @@
 
     .img-btn:hover {
       transform: scale(1.2);
-      box-shadow: 2 2 2px #00f9e9; /* Néon bleu en hover — MODIFIABLE */
+      box-shadow: 0 0 6px #00f9e9; /* Néon bleu en hover — MODIFIABLE */
     }
 
     .img-btn img {
       width: 100%;
       height: 100%;
       display: block;
-    }
-
-    .timer {
-      display: flex;
-      align-items: baseline;
-      font-size: 16px;
-    }
-
-    .milliseconds {
-      font-size: 10px;
-      margin-left: 4px;
-      align-self: flex-start;
     }
 
     .bar {
@@ -83,6 +71,19 @@
       background-color: #00f9e9; /* Couleur dernière barre — MODIFIABLE */
       box-shadow: 0 0 4px #00f9e9;
     }
+
+    .timer {
+      display: flex;
+      align-items: baseline;
+      font-size: 16px;
+      margin-right: 20px; /* Espace entre timer et boutons — MODIFIABLE */
+    }
+
+    .milliseconds {
+      font-size: 10px;
+      margin-left: 4px;
+      align-self: flex-start;
+    }
   </style>
 </head>
 <body>
@@ -90,17 +91,19 @@
   <!-- BARRE EN HAUT -->
   <div class="bar" id="bar"></div>
 
+  <!-- NOUVELLE DISPOSITION -->
   <div class="row">
+    <div class="timer">
+      <span id="timer">25:00</span>
+      <span class="milliseconds" id="millis">00</span>
+    </div>
+
     <button id="playPause" class="img-btn" onclick="toggleTimer()">
       <img src="PLAY.png" alt="Play">
     </button>
     <button class="img-btn" onclick="resetTimer()">
       <img src="STOP.png" alt="Stop">
     </button>
-    <div class="timer">
-      <span id="timer">25:00</span>
-      <span class="milliseconds" id="millis">00</span>
-    </div>
     <button class="img-btn" onclick="decreaseTime()">
       <img src="MOINS.png" alt="Moins">
     </button>
@@ -161,6 +164,7 @@
             clearInterval(timerInterval);
             clearInterval(millisInterval);
             playPause.src = "PLAY.png";
+            millisText.textContent = "00"; // millisecondes à zéro
             running = false;
           }
         }, 1000);
