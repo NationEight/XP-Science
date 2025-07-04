@@ -23,7 +23,7 @@
 
     .row:nth-child(2) {
       margin-top: 5px;
-      gap: 10px; /* Espace entre les éléments de la première ligne — MODIFIABLE */
+      gap: 5px; /* Espace entre les éléments de la première ligne — MODIFIABLE */
     }
 
     .img-btn {
@@ -31,7 +31,7 @@
       height: 22px;
       cursor: pointer;
       background: none;
-      border: 1px solid #888; /* Bordure grise — MODIFIABLE */
+      border: 1px solid #494949; /* Bordure grise — MODIFIABLE */
       padding: 3px;
       margin: 0;
       box-shadow: 1px 1px 3px rgba(0,0,0,0.5); /* Ombre portée — MODIFIABLE */
@@ -39,8 +39,8 @@
     }
 
     .img-btn:hover {
-      transform: scale(1.2);
-      box-shadow: 0 0 5px #00f9e9; /* Néon bleu en hover — MODIFIABLE */
+      transform: scale(1.1);
+      box-shadow: 0 0 2px #00f9e9; /* Néon bleu en hover — MODIFIABLE */
     }
 
     .img-btn img {
@@ -64,7 +64,7 @@
     .bar {
       display: flex;
       justify-content: flex-start;
-      margin: 3px 0 0 6px; /* Marge sous la barre — MODIFIABLE */
+      margin: 2px 0 0 4px; /* Marge sous la barre — MODIFIABLE */
       height: 20px;
     }
 
@@ -120,7 +120,7 @@
     let timerInterval = null;
     let millisInterval = null;
 
-    const totalBars = 59; // Longueur de la barre — MODIFIABLE
+    const totalBars = 63; // Longueur de la barre — MODIFIABLE
     const bar = document.getElementById("bar");
     const timerText = document.getElementById("timer");
     const millisText = document.getElementById("millis");
