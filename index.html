@@ -12,7 +12,6 @@
     color: white;
     font-size: 16px;
   }
-
   .container {
     width: 320px;
     padding: 8px;
@@ -31,10 +30,10 @@
     overflow: hidden;
   }
   .progress-fill {
-    background-color: #00f5a9; /* ← Couleur de la barre */
+    background-color: #00f5a9;
     height: 100%;
-    width: 39%;
-    box-shadow: 0 0 5px #00f5a9; /* ← Effet néon */
+    width: 0%;
+    box-shadow: 0 0 5px #00f5a9;
     transition: width 0.3s linear;
   }
   .progress-text {
@@ -43,14 +42,12 @@
     color: #191919;
     font-weight: 200;
   }
-  .progress-text strong {
-    font-weight: 700; /* ← Gras sur les chiffres du % */
-  }
+  .progress-text strong { font-weight: 700; }
 
   /* Bloc Timer + Flamme */
   .timer-flame-block {
-    background-color: #00f5a9; /* ← Couleur fond turquoise bloc Timer + Flamme */
-    box-shadow: 0 0 5px #00f5a9; /* ← Effet néon */
+    background-color: #00f5a9;
+    box-shadow: 0 0 5px #00f5a9;
     padding: 6px;
     display: flex;
     flex-direction: column;
@@ -65,24 +62,37 @@
   }
   .btn-group {
     display: flex;
-    gap: 4px; /* ← Espace entre boutons */
+    gap: 4px;
   }
   .img-btn {
-    width: 23px;  /* ← Taille bouton (changer ici) */
-    height: 23px; /* ← Taille bouton (changer ici) */
+    width: 23px;
+    height: 23px;
     cursor: pointer;
     transition: transform 0.2s;
+    opacity: 0.5; /* Inactif par défaut */
+    pointer-events: none;
   }
-  .img-btn:hover {
-    transform: scale(1.13); /* ← Effet grossissement */
+  .img-btn.active {
+    opacity: 1;
+    pointer-events: auto;
   }
+  .img-btn:hover { transform: scale(1.13); }
+
   .timer {
     color: #191919;
     font-weight: 200;
-    font-size: 18px; /* ← Taille police timer */
+    font-size: 18px;
   }
-  .timer strong {
-    font-weight: 700; /* ← Gras sur les chiffres */
+  .timer strong { font-weight: 700; }
+  .timer input {
+    width: 26px;
+    text-align: center;
+    font-size: 18px;
+    border: none;
+    background: transparent;
+    color: #191919;
+    font-weight: 700;
+    outline: none;
   }
 
   /* Ligne 3 - Flamme à gauche et cagnotte à droite */
@@ -93,15 +103,16 @@
   }
   .flame {
     font-size: 18px;
-    text-shadow: 0 0 5px #00f5a9; /* ← Effet néon flamme */
+    text-shadow: 0 0 5px #00f5a9;
   }
   .f-points {
-    font-size: 18px; /* ← Taille police cagnotte */
-    font-weight: 700; /* ← Cagnotte en gras */
-    color: #c500e7; /* ← Couleur cagnotte */
+    font-size: 18px;
+    font-weight: 700;
+    color: #c500e7;
   }
   .f-points span {
-    font-weight: 400; /* ← Zéros non gras */
+    font-weight: 400;
+    opacity: 0.3; /* Zéros plus discrets */
   }
 </style>
 </head>
@@ -111,8 +122,8 @@
 
   <!-- Ligne 1 -->
   <div class="progress-bar">
-    <div class="progress-fill"></div>
-    <div class="progress-text"><strong>39</strong>%</div>
+    <div class="progress-fill" id="progressFill"></div>
+    <div class="progress-text"><strong id="progressPercent">0</strong>%</div>
   </div>
 
   <!-- Bloc Timer + Flamme -->
@@ -121,11 +132,13 @@
     <!-- Ligne 2 -->
     <div class="controls">
       <div class="btn-group">
-        <img src="PLAY.png" alt="Play" class="img-btn">
-        <img src="STOP.png" alt="Stop" class="img-btn">
+        <img src="PLAY.png" alt="Play" class="img-btn" id="playBtn">
+        <img src="STOP.png" alt="Stop" class="img-btn" id="stopBtn">
       </div>
-      <div class="timer">
-        <strong>7</strong>h<strong>15</strong>m<strong>46</strong>s
+      <div class="timer" id="timerDisplay">
+        <input type="number" id="hours" min="0" max="23" value="0">h
+        <input type="number" id="minutes" min="0" max="59" value="50">m
+        <strong id="seconds">00</strong>s
       </div>
     </div>
 
@@ -138,6 +151,67 @@
   </div>
 
 </div>
+
+<script>
+  let totalSeconds = 0;
+  let remainingSeconds = 0;
+  let timerInterval;
+
+  const hoursInput = document.getElementById('hours');
+  const minutesInput = document.getElementById('minutes');
+  const secondsDisplay = document.getElementById('seconds');
+  const playBtn = document.getElementById('playBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const progressFill = document.getElementById('progressFill');
+  const progressPercent = document.getElementById('progressPercent');
+
+  function enablePlay() {
+    if (hoursInput.value || minutesInput.value) {
+      playBtn.classList.add('active');
+    }
+  }
+
+  function updateTimerDisplay() {
+    let h = Math.floor(remainingSeconds / 3600);
+    let m = Math.floor((remainingSeconds % 3600) / 60);
+    let s = remainingSeconds % 60;
+    hoursInput.value = h;
+    minutesInput.value = m;
+    secondsDisplay.textContent = s.toString().padStart(2, '0');
+  }
+
+  function startTimer() {
+    totalSeconds = parseInt(hoursInput.value) * 3600 + parseInt(minutesInput.value) * 60;
+    if (totalSeconds <= 0) return;
+    remainingSeconds = totalSeconds;
+    playBtn.classList.remove('active');
+    playBtn.style.pointerEvents = 'none';
+    timerInterval = setInterval(() => {
+      remainingSeconds--;
+      updateTimerDisplay();
+      let percent = ((totalSeconds - remainingSeconds) / totalSeconds) * 100;
+      progressFill.style.width = percent + '%';
+      progressPercent.textContent = Math.floor(percent);
+      if (remainingSeconds <= 0) {
+        clearInterval(timerInterval);
+      }
+    }, 1000);
+  }
+
+  function stopTimer() {
+    clearInterval(timerInterval);
+    playBtn.classList.add('active');
+    playBtn.style.pointerEvents = 'auto';
+  }
+
+  hoursInput.addEventListener('input', enablePlay);
+  minutesInput.addEventListener('input', enablePlay);
+  playBtn.addEventListener('click', startTimer);
+  stopBtn.addEventListener('click', stopTimer);
+
+  updateTimerDisplay();
+  enablePlay();
+</script>
 
 </body>
 </html>
