@@ -12,6 +12,7 @@
     color: white;
     font-size: 16px;
   }
+
   .container {
     width: 320px;
     padding: 8px;
@@ -42,7 +43,9 @@
     color: #191919;
     font-weight: 200;
   }
-  .progress-text strong { font-weight: 700; }
+  .progress-text strong {
+    font-weight: 700;
+  }
 
   /* Bloc Timer + Flamme */
   .timer-flame-block {
@@ -69,30 +72,39 @@
     height: 23px;
     cursor: pointer;
     transition: transform 0.2s;
-    opacity: 0.5; /* Inactif par défaut */
-    pointer-events: none;
   }
-  .img-btn.active {
-    opacity: 1;
-    pointer-events: auto;
+  .img-btn:hover {
+    transform: scale(1.13);
   }
-  .img-btn:hover { transform: scale(1.13); }
+
+  .timer-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .minutes-input {
+    width: 40px;
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 2px;
+    text-align: right;
+    border: none;
+    outline: none;
+    background-color: #191919;
+    color: #191919;
+    font-weight: 700;
+    background-color: #00f5a9;
+    box-shadow: 0 0 3px #00f5a9;
+  }
 
   .timer {
     color: #191919;
     font-weight: 200;
     font-size: 18px;
   }
-  .timer strong { font-weight: 700; }
-  .timer input {
-    width: 26px;
-    text-align: center;
-    font-size: 18px;
-    border: none;
-    background: transparent;
-    color: #191919;
+  .timer strong {
     font-weight: 700;
-    outline: none;
   }
 
   /* Ligne 3 - Flamme à gauche et cagnotte à droite */
@@ -112,7 +124,7 @@
   }
   .f-points span {
     font-weight: 400;
-    opacity: 0.3; /* Zéros plus discrets */
+    opacity: 0.3;
   }
 </style>
 </head>
@@ -122,8 +134,8 @@
 
   <!-- Ligne 1 -->
   <div class="progress-bar">
-    <div class="progress-fill" id="progressFill"></div>
-    <div class="progress-text"><strong id="progressPercent">0</strong>%</div>
+    <div class="progress-fill"></div>
+    <div class="progress-text"><strong>0</strong>%</div>
   </div>
 
   <!-- Bloc Timer + Flamme -->
@@ -135,10 +147,11 @@
         <img src="PLAY.png" alt="Play" class="img-btn" id="playBtn">
         <img src="STOP.png" alt="Stop" class="img-btn" id="stopBtn">
       </div>
-      <div class="timer" id="timerDisplay">
-        <input type="number" id="hours" min="0" max="23" value="0">h
-        <input type="number" id="minutes" min="0" max="59" value="50">m
-        <strong id="seconds">00</strong>s
+      <div class="timer-wrapper">
+        <input type="number" class="minutes-input" id="minutesInput" min="1" value="50">
+        <div class="timer" id="timerDisplay">
+          <strong>0</strong>h<strong>50</strong>m<strong>00</strong>s
+        </div>
       </div>
     </div>
 
@@ -153,64 +166,58 @@
 </div>
 
 <script>
-  let totalSeconds = 0;
-  let remainingSeconds = 0;
-  let timerInterval;
+  let totalSeconds = 50 * 60; // 50 minutes par défaut
+  let remainingSeconds = totalSeconds;
+  let timerInterval = null;
 
-  const hoursInput = document.getElementById('hours');
-  const minutesInput = document.getElementById('minutes');
-  const secondsDisplay = document.getElementById('seconds');
-  const playBtn = document.getElementById('playBtn');
-  const stopBtn = document.getElementById('stopBtn');
-  const progressFill = document.getElementById('progressFill');
-  const progressPercent = document.getElementById('progressPercent');
-
-  function enablePlay() {
-    if (hoursInput.value || minutesInput.value) {
-      playBtn.classList.add('active');
-    }
-  }
+  const timerDisplay = document.getElementById('timerDisplay');
+  const minutesInput = document.getElementById('minutesInput');
+  const progressFill = document.querySelector('.progress-fill');
+  const progressText = document.querySelector('.progress-text');
 
   function updateTimerDisplay() {
-    let h = Math.floor(remainingSeconds / 3600);
-    let m = Math.floor((remainingSeconds % 3600) / 60);
-    let s = remainingSeconds % 60;
-    hoursInput.value = h;
-    minutesInput.value = m;
-    secondsDisplay.textContent = s.toString().padStart(2, '0');
+    let hours = Math.floor(remainingSeconds / 3600);
+    let minutes = Math.floor((remainingSeconds % 3600) / 60);
+    let seconds = remainingSeconds % 60;
+    timerDisplay.innerHTML = `<strong>${hours}</strong>h<strong>${minutes}</strong>m<strong>${seconds}</strong>s`;
   }
 
-  function startTimer() {
-    totalSeconds = parseInt(hoursInput.value) * 3600 + parseInt(minutesInput.value) * 60;
-    if (totalSeconds <= 0) return;
-    remainingSeconds = totalSeconds;
-    playBtn.classList.remove('active');
-    playBtn.style.pointerEvents = 'none';
-    timerInterval = setInterval(() => {
-      remainingSeconds--;
+  function updateProgressBar() {
+    let percent = ((totalSeconds - remainingSeconds) / totalSeconds) * 100;
+    progressFill.style.width = percent + '%';
+    progressText.innerHTML = `<strong>${Math.floor(percent)}</strong>%`;
+  }
+
+  minutesInput.addEventListener('change', () => {
+    let mins = parseInt(minutesInput.value);
+    if (mins > 0) {
+      totalSeconds = mins * 60;
+      remainingSeconds = totalSeconds;
       updateTimerDisplay();
-      let percent = ((totalSeconds - remainingSeconds) / totalSeconds) * 100;
-      progressFill.style.width = percent + '%';
-      progressPercent.textContent = Math.floor(percent);
-      if (remainingSeconds <= 0) {
+      updateProgressBar();
+    }
+  });
+
+  document.getElementById('playBtn').addEventListener('click', () => {
+    if (timerInterval) return;
+    timerInterval = setInterval(() => {
+      if (remainingSeconds > 0) {
+        remainingSeconds--;
+        updateTimerDisplay();
+        updateProgressBar();
+      } else {
         clearInterval(timerInterval);
+        timerInterval = null;
       }
     }, 1000);
-  }
+  });
 
-  function stopTimer() {
+  document.getElementById('stopBtn').addEventListener('click', () => {
     clearInterval(timerInterval);
-    playBtn.classList.add('active');
-    playBtn.style.pointerEvents = 'auto';
-  }
-
-  hoursInput.addEventListener('input', enablePlay);
-  minutesInput.addEventListener('input', enablePlay);
-  playBtn.addEventListener('click', startTimer);
-  stopBtn.addEventListener('click', stopTimer);
+    timerInterval = null;
+  });
 
   updateTimerDisplay();
-  enablePlay();
 </script>
 
 </body>
