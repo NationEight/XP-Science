@@ -34,7 +34,7 @@
     background-color: #00f5a9; /* ← Couleur de la barre */
     height: 100%;
     width: 39%;
-    box-shadow: 0 0 5px #00f5a9; /* ← Effet néon (légèrement réduit) */
+    box-shadow: 0 0 5px #00f5a9; /* ← Effet néon */
     transition: width 0.3s linear;
   }
   .progress-text {
@@ -50,7 +50,7 @@
   /* Bloc Timer + Flamme */
   .timer-flame-block {
     background-color: #00f5a9; /* ← Couleur fond turquoise bloc Timer + Flamme */
-    box-shadow: 0 0 5px #00f5a9; /* ← Effet néon (légèrement réduit) */
+    box-shadow: 0 0 5px #00f5a9; /* ← Effet néon */
     padding: 6px;
     display: flex;
     flex-direction: column;
@@ -68,8 +68,8 @@
     gap: 4px; /* ← Espace entre boutons */
   }
   .img-btn {
-    width: 28px;
-    height: 28px;
+    width: 24px;  /* ← Taille bouton (changer ici) */
+    height: 24px; /* ← Taille bouton (changer ici) */
     cursor: pointer;
     transition: transform 0.2s;
   }
@@ -85,12 +85,11 @@
     font-weight: 700; /* ← Gras sur les chiffres */
   }
 
-  /* Ligne 3 - Flamme + Score */
+  /* Ligne 3 - Flamme à gauche et cagnotte à droite */
   .score {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
-    gap: 14px; /* ← Plus d'espace entre flamme et cagnotte */
   }
   .flame {
     font-size: 18px;
@@ -98,8 +97,11 @@
   }
   .f-points {
     font-size: 14px; /* ← Taille police cagnotte */
-    font-weight: 400;
-    color: #c500e7; /* ← Couleur cagnotte */
+    font-weight: 700; /* ← Cagnotte en gras */
+    color: white; /* ← Couleur cagnotte */
+  }
+  .f-points span {
+    font-weight: 400; /* ← Zéros non gras */
   }
 </style>
 </head>
@@ -130,7 +132,7 @@
     <!-- Ligne 3 -->
     <div class="score">
       <div class="flame">🔥</div>
-      <div class="f-points">0F°</div>
+      <div class="f-points"><span>00000000000000</span>F°</div>
     </div>
 
   </div>
