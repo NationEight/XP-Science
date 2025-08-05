@@ -21,7 +21,7 @@
     gap: 6px;
   }
 
-  /* Ligne 1 - Barre de progression */
+  /* === Couleur barre de progression === */
   .progress-bar {
     display: flex;
     align-items: center;
@@ -31,23 +31,26 @@
     overflow: hidden;
   }
   .progress-fill {
-    background-color: #00f5a9;
+    background-color: #00f5a9; /* ← Couleur de la barre */
     height: 100%;
     width: 39%;
-    box-shadow: 0 0 6px #00f5a9;
+    box-shadow: 0 0 5px #00f5a9; /* ← Effet néon (légèrement réduit) */
     transition: width 0.3s linear;
   }
   .progress-text {
     position: absolute;
     left: 6px;
     color: #191919;
-    font-weight: 400;
+    font-weight: 200;
+  }
+  .progress-text strong {
+    font-weight: 700; /* ← Gras sur les chiffres du % */
   }
 
   /* Bloc Timer + Flamme */
   .timer-flame-block {
-    background-color: #00f5a9;
-    box-shadow: 0 0 8px #00f5a9;
+    background-color: #00f5a9; /* ← Couleur fond turquoise bloc Timer + Flamme */
+    box-shadow: 0 0 5px #00f5a9; /* ← Effet néon (légèrement réduit) */
     padding: 6px;
     display: flex;
     flex-direction: column;
@@ -62,7 +65,7 @@
   }
   .btn-group {
     display: flex;
-    gap: 4px; /* réduit */
+    gap: 4px; /* ← Espace entre boutons */
   }
   .img-btn {
     width: 28px;
@@ -71,14 +74,15 @@
     transition: transform 0.2s;
   }
   .img-btn:hover {
-    transform: scale(1.15); /* accentué */
+    transform: scale(1.15); /* ← Effet grossissement */
   }
   .timer {
     color: #191919;
     font-weight: 200;
+    font-size: 18px; /* ← Taille police timer */
   }
   .timer strong {
-    font-weight: 700; /* vrai gras */
+    font-weight: 700; /* ← Gras sur les chiffres */
   }
 
   /* Ligne 3 - Flamme + Score */
@@ -86,16 +90,16 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: 10px; /* plus d'espace */
+    gap: 14px; /* ← Plus d'espace entre flamme et cagnotte */
   }
   .flame {
     font-size: 18px;
-    text-shadow: 0 0 6px #00f5a9;
+    text-shadow: 0 0 5px #00f5a9; /* ← Effet néon flamme */
   }
   .f-points {
-    font-size: 14px;
+    font-size: 14px; /* ← Taille police cagnotte */
     font-weight: 400;
-    color: white;
+    color: #c500e7; /* ← Couleur cagnotte */
   }
 </style>
 </head>
@@ -106,7 +110,7 @@
   <!-- Ligne 1 -->
   <div class="progress-bar">
     <div class="progress-fill"></div>
-    <div class="progress-text">39%</div>
+    <div class="progress-text"><strong>39</strong>%</div>
   </div>
 
   <!-- Bloc Timer + Flamme -->
