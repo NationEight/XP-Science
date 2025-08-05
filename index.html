@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Pomodoro Widget</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400&display=swap" rel="stylesheet">
 <style>
   body {
     margin: 0;
@@ -14,7 +14,7 @@
   }
 
   .container {
-    width: 320px; /* Largeur fixe pour widget Notion */
+    width: 320px;
     padding: 8px;
     display: flex;
     flex-direction: column;
@@ -33,7 +33,7 @@
   .progress-fill {
     background-color: #00f5a9;
     height: 100%;
-    width: 39%; /* Valeur statique pour démo */
+    width: 39%;
     box-shadow: 0 0 6px #00f5a9;
     transition: width 0.3s linear;
   }
@@ -41,7 +41,17 @@
     position: absolute;
     left: 6px;
     color: #191919;
-    font-weight: 200;
+    font-weight: 400;
+  }
+
+  /* Bloc Timer + Flamme */
+  .timer-flame-block {
+    background-color: #00f5a9;
+    box-shadow: 0 0 8px #00f5a9;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
   }
 
   /* Ligne 2 - Boutons + Timer */
@@ -52,7 +62,7 @@
   }
   .btn-group {
     display: flex;
-    gap: 6px;
+    gap: 4px; /* réduit */
   }
   .img-btn {
     width: 28px;
@@ -61,14 +71,14 @@
     transition: transform 0.2s;
   }
   .img-btn:hover {
-    transform: scale(1.1);
+    transform: scale(1.15); /* accentué */
   }
   .timer {
     color: #191919;
     font-weight: 200;
   }
   .timer strong {
-    font-weight: 400; /* chiffres plus gras */
+    font-weight: 700; /* vrai gras */
   }
 
   /* Ligne 3 - Flamme + Score */
@@ -76,7 +86,7 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: 6px;
+    gap: 10px; /* plus d'espace */
   }
   .flame {
     font-size: 18px;
@@ -99,21 +109,26 @@
     <div class="progress-text">39%</div>
   </div>
 
-  <!-- Ligne 2 -->
-  <div class="controls">
-    <div class="btn-group">
-      <img src="PLAY.png" alt="Play" class="img-btn">
-      <img src="STOP.png" alt="Stop" class="img-btn">
+  <!-- Bloc Timer + Flamme -->
+  <div class="timer-flame-block">
+    
+    <!-- Ligne 2 -->
+    <div class="controls">
+      <div class="btn-group">
+        <img src="PLAY.png" alt="Play" class="img-btn">
+        <img src="STOP.png" alt="Stop" class="img-btn">
+      </div>
+      <div class="timer">
+        <strong>7</strong>h<strong>15</strong>m<strong>46</strong>s
+      </div>
     </div>
-    <div class="timer">
-      <strong>7</strong>h<strong>15</strong>m<strong>46</strong>s
-    </div>
-  </div>
 
-  <!-- Ligne 3 -->
-  <div class="score">
-    <div class="flame">🔥</div>
-    <div class="f-points">875F°</div>
+    <!-- Ligne 3 -->
+    <div class="score">
+      <div class="flame">🔥</div>
+      <div class="f-points">0F°</div>
+    </div>
+
   </div>
 
 </div>
