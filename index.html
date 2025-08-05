@@ -86,7 +86,7 @@
   .minutes-box {
     display: flex;
     align-items: center;
-    background-color: #191919;
+    background-color: #191919; /* Fond Notion */
     border: 1px solid #00f5a9;
     box-shadow: 0 0 3px #00f5a9;
     padding: 0 4px;
@@ -130,8 +130,16 @@
     align-items: center;
   }
   .flame {
+    display: flex;
+    align-items: center;
+    gap: 4px;
     font-size: 18px;
     text-shadow: 0 0 5px #00f5a9;
+  }
+  .flame-count {
+    color: #00f5a9;
+    font-weight: 700;
+    font-size: 16px;
   }
   .f-points {
     font-size: 18px;
@@ -169,14 +177,14 @@
           <span>m</span>
         </div>
         <div class="timer" id="timerDisplay">
-          <strong>0</strong>h<strong>50</strong>m<strong>00</strong>s
+          <strong>00</strong>h<strong>00</strong>m<strong>00</strong>s
         </div>
       </div>
     </div>
 
     <!-- Ligne 3 -->
     <div class="score">
-      <div class="flame">𖠁</div>
+      <div class="flame">𖠁 <span class="flame-count" id="flameCount">0</span></div>
       <div class="f-points"><span>00000000000000</span>F°</div>
     </div>
 
@@ -185,10 +193,12 @@
 </div>
 
 <script>
-  let totalSeconds = 50 * 60;
-  let remainingSeconds = totalSeconds;
+  let totalSeconds = 0;
+  let remainingSeconds = 0;
   let timerInterval = null;
   let isRunning = false;
+  let flameCount = 0;
+  let flameIntervalCounter = 0; // Compteur interne pour les 10 secondes
 
   const timerDisplay = document.getElementById('timerDisplay');
   const minutesInput = document.getElementById('minutesInput');
@@ -196,16 +206,17 @@
   const progressText = document.querySelector('.progress-text');
   const playBtn = document.getElementById('playBtn');
   const stopBtn = document.getElementById('stopBtn');
+  const flameCountDisplay = document.getElementById('flameCount');
 
   function updateTimerDisplay() {
     let hours = Math.floor(remainingSeconds / 3600);
     let minutes = Math.floor((remainingSeconds % 3600) / 60);
     let seconds = remainingSeconds % 60;
-    timerDisplay.innerHTML = `<strong>${hours}</strong>h<strong>${minutes}</strong>m<strong>${seconds}</strong>s`;
+    timerDisplay.innerHTML = `<strong>${String(hours).padStart(2,'0')}</strong>h<strong>${String(minutes).padStart(2,'0')}</strong>m<strong>${String(seconds).padStart(2,'0')}</strong>s`;
   }
 
   function updateProgressBar() {
-    let percent = ((totalSeconds - remainingSeconds) / totalSeconds) * 100;
+    let percent = totalSeconds > 0 ? ((totalSeconds - remainingSeconds) / totalSeconds) * 100 : 0;
     progressFill.style.width = percent + '%';
     progressText.innerHTML = `<strong>${Math.floor(percent)}</strong>%`;
   }
@@ -217,6 +228,7 @@
       remainingSeconds = totalSeconds;
       updateTimerDisplay();
       updateProgressBar();
+      flameIntervalCounter = 0;
     }
   }
 
@@ -230,11 +242,18 @@
 
   playBtn.addEventListener('click', () => {
     if (!isRunning) {
+      if (remainingSeconds === 0) resetTimerToBoxValue();
       isRunning = true;
       playBtn.src = "PAUSE.png";
       timerInterval = setInterval(() => {
         if (remainingSeconds > 0) {
           remainingSeconds--;
+          flameIntervalCounter++;
+          if (flameIntervalCounter >= 10) {
+            flameCount++;
+            flameCountDisplay.textContent = flameCount;
+            flameIntervalCounter = 0;
+          }
           updateTimerDisplay();
           updateProgressBar();
         } else {
