@@ -83,19 +83,35 @@
     gap: 6px;
   }
 
+  .minutes-box {
+    display: flex;
+    align-items: center;
+    background-color: #191919;
+    border: 1px solid #00f5a9;
+    box-shadow: 0 0 3px #00f5a9;
+    padding: 0 4px;
+  }
   .minutes-input {
-    width: 40px;
-    font-size: 14px;
+    width: 38px;
+    font-size: 18px;
     font-family: 'JetBrains Mono', monospace;
-    padding: 2px;
-    text-align: right;
+    text-align: center;
     border: none;
     outline: none;
-    background-color: #191919;
-    color: #191919;
+    background: transparent;
+    color: #00f5a9;
     font-weight: 700;
-    background-color: #00f5a9;
-    box-shadow: 0 0 3px #00f5a9;
+    -moz-appearance: textfield;
+  }
+  .minutes-input::-webkit-outer-spin-button,
+  .minutes-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .minutes-box span {
+    color: #00f5a9;
+    font-weight: 400;
+    margin-left: 2px;
   }
 
   .timer {
@@ -148,7 +164,10 @@
         <img src="STOP.png" alt="Stop" class="img-btn" id="stopBtn">
       </div>
       <div class="timer-wrapper">
-        <input type="number" class="minutes-input" id="minutesInput" min="1" value="50">
+        <div class="minutes-box">
+          <input type="number" class="minutes-input" id="minutesInput" min="1" value="50">
+          <span>m</span>
+        </div>
         <div class="timer" id="timerDisplay">
           <strong>0</strong>h<strong>50</strong>m<strong>00</strong>s
         </div>
@@ -166,14 +185,17 @@
 </div>
 
 <script>
-  let totalSeconds = 50 * 60; // 50 minutes par défaut
+  let totalSeconds = 50 * 60;
   let remainingSeconds = totalSeconds;
   let timerInterval = null;
+  let isRunning = false;
 
   const timerDisplay = document.getElementById('timerDisplay');
   const minutesInput = document.getElementById('minutesInput');
   const progressFill = document.querySelector('.progress-fill');
   const progressText = document.querySelector('.progress-text');
+  const playBtn = document.getElementById('playBtn');
+  const stopBtn = document.getElementById('stopBtn');
 
   function updateTimerDisplay() {
     let hours = Math.floor(remainingSeconds / 3600);
@@ -188,7 +210,7 @@
     progressText.innerHTML = `<strong>${Math.floor(percent)}</strong>%`;
   }
 
-  minutesInput.addEventListener('change', () => {
+  function resetTimerToBoxValue() {
     let mins = parseInt(minutesInput.value);
     if (mins > 0) {
       totalSeconds = mins * 60;
@@ -196,25 +218,45 @@
       updateTimerDisplay();
       updateProgressBar();
     }
-  });
+  }
 
-  document.getElementById('playBtn').addEventListener('click', () => {
-    if (timerInterval) return;
-    timerInterval = setInterval(() => {
-      if (remainingSeconds > 0) {
-        remainingSeconds--;
-        updateTimerDisplay();
-        updateProgressBar();
-      } else {
-        clearInterval(timerInterval);
-        timerInterval = null;
-      }
-    }, 1000);
-  });
-
-  document.getElementById('stopBtn').addEventListener('click', () => {
+  minutesInput.addEventListener('change', () => {
     clearInterval(timerInterval);
     timerInterval = null;
+    isRunning = false;
+    playBtn.src = "PLAY.png";
+    resetTimerToBoxValue();
+  });
+
+  playBtn.addEventListener('click', () => {
+    if (!isRunning) {
+      isRunning = true;
+      playBtn.src = "PAUSE.png";
+      timerInterval = setInterval(() => {
+        if (remainingSeconds > 0) {
+          remainingSeconds--;
+          updateTimerDisplay();
+          updateProgressBar();
+        } else {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          isRunning = false;
+          playBtn.src = "PLAY.png";
+        }
+      }, 1000);
+    } else {
+      isRunning = false;
+      playBtn.src = "PLAY.png";
+      clearInterval(timerInterval);
+    }
+  });
+
+  stopBtn.addEventListener('click', () => {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    isRunning = false;
+    playBtn.src = "PLAY.png";
+    resetTimerToBoxValue();
   });
 
   updateTimerDisplay();
