@@ -1,259 +1,122 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <title>Pomodoro Widget</title>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background-color: #191919; /* ✅ Fond Notion en dark mode */
-      color: white;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 23px;
-      height: 100%;              /* ✅ Empêche débordement */
-      overflow: hidden;          /* ✅ Supprime scroll vertical */
-      box-sizing: border-box;    /* ✅ Empêche que le padding ne fasse déborder */
-    }
+<meta charset="UTF-8">
+<title>Pomodoro Widget</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200&display=swap" rel="stylesheet">
+<style>
+  body {
+    margin: 0;
+    background-color: #191919;
+    font-family: 'JetBrains Mono', monospace;
+    color: white;
+    font-size: 16px;
+  }
 
-    .container {
-      display: flex;
-      flex-direction: column;
-      height: 100%;              /* ✅ Permet de structurer en 3 lignes */
-    }
+  .container {
+    width: 320px; /* Largeur fixe pour widget Notion */
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
 
-    .row {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      margin-left: 5px;
-    }
+  /* Ligne 1 - Barre de progression */
+  .progress-bar {
+    display: flex;
+    align-items: center;
+    background-color: #323232;
+    height: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .progress-fill {
+    background-color: #00f5a9;
+    height: 100%;
+    width: 39%; /* Valeur statique pour démo */
+    box-shadow: 0 0 6px #00f5a9;
+    transition: width 0.3s linear;
+  }
+  .progress-text {
+    position: absolute;
+    left: 6px;
+    color: #191919;
+    font-weight: 200;
+  }
 
-    .controls {
-      margin-top: 0;   /* ✅ Supprime l’espace vertical abusif entre les deux lignes */
-      gap: 5px;        /* ✅ Espace entre les éléments de la ligne des boutons */
-      margin-bottom: 2px; /* ✅ Évite l'espace trop grand sous les boutons */
-    }
+  /* Ligne 2 - Boutons + Timer */
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .btn-group {
+    display: flex;
+    gap: 6px;
+  }
+  .img-btn {
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .img-btn:hover {
+    transform: scale(1.1);
+  }
+  .timer {
+    color: #191919;
+    font-weight: 200;
+  }
+  .timer strong {
+    font-weight: 400; /* chiffres plus gras */
+  }
 
-    .img-btn {
-      width: 22px;
-      height: 22px;
-      cursor: pointer;
-      background: none;
-      border: 1px solid #494949;
-      padding: 3px;
-      margin: 0;
-      box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .img-btn:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 2px #00f9e9;
-    }
-
-    .img-btn img {
-      width: 130%;           /* ✅ Image plus grande */
-      height: 130%;          /* ✅ Agrandissement du symbole */
-      display: block;
-      transform: translate(-10%, -10%); /* ✅ Recentre l'image dans le bouton */
-    }
-
-    .timer {
-      display: flex;
-      align-items: baseline;
-      font-size: 16px;
-      margin-right: 101px; /* ✅ Contrôle l'espace horizontal entre timer et boutons */
-    }
-
-    .milliseconds {
-      font-size: 10px;
-      margin-left: 4px;
-      align-self: flex-start;
-    }
-
-    .bar {
-      display: flex;
-      justify-content: flex-start;
-      margin: 5px 0 2px 3px; /* ✅ Réduction de l’espace entre la barre et la ligne en dessous */
-      height: 20px;
-    }
-
-    .segment {
-      width: 3px;
-      height: 100%;
-      margin: 0 0.5px;
-      background-color: #2a2a2a; /* ✅ Plus sombre que #444 */
-    }
-
-    .segment.filled {
-      background-color: white;
-    }
-
-    .segment.last {
-      background-color: #00f9e9;
-      box-shadow: 0 0 6px #00f9e9; /* ✅ Effet Néon */
-    }
-
-    .clock-container {
-      margin-left: 5px;            /* ✅ Aligne avec les lignes du dessus */
-      margin-bottom: 5px;          /* ✅ Évite collage au bas total */
-    }
-
-    .clock {
-      text-align: center;
-      padding: 4px 12px;
-      margin: 0;                  /* ✅ Supprime tout espacement inutile */
-      font-size: 14px;
-      background-color: #2a2a2a;  /* ✅ Même gris que les barres */
-      color: #cccccc;             /* ✅ Gris clair */
-      border-radius: 8px;         /* ✅ Coins arrondis */
-      width: fit-content;
-    }
-  </style>
+  /* Ligne 3 - Flamme + Score */
+  .score {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 6px;
+  }
+  .flame {
+    font-size: 18px;
+    text-shadow: 0 0 6px #00f5a9;
+  }
+  .f-points {
+    font-size: 14px;
+    font-weight: 400;
+    color: white;
+  }
+</style>
 </head>
 <body>
 
-  <div class="container"> <!-- ✅ Conteneur principal en 3 lignes -->
-    <!-- BARRE EN HAUT -->
-    <div class="bar" id="bar"></div>
+<div class="container">
 
-    <!-- AUDIO (caché) -->
-    <audio id="alarmSound" src="NotionRingtone.mp3" preload="auto" style="display: none;"></audio> <!-- ✅ Masqué -->
+  <!-- Ligne 1 -->
+  <div class="progress-bar">
+    <div class="progress-fill"></div>
+    <div class="progress-text">39%</div>
+  </div>
 
-    <!-- TIMER + BOUTONS -->
-    <div class="row controls"> <!-- ✅ Ajout de la classe "controls" -->
-      <div class="timer">
-        <span id="timer">25:00</span>
-        <span class="milliseconds" id="millis">00</span>
-      </div>
-      <button id="playPause" class="img-btn" onclick="toggleTimer()">
-        <img src="PLAY.png" alt="Play">
-      </button>
-      <button class="img-btn" onclick="resetTimer()">
-        <img src="STOP.png" alt="Stop">
-      </button>
-      <button class="img-btn" onclick="decreaseTime()">
-        <img src="MOINS.png" alt="Moins">
-      </button>
-      <button class="img-btn" onclick="increaseTime()">
-        <img src="PLUS.png" alt="Plus">
-      </button>
+  <!-- Ligne 2 -->
+  <div class="controls">
+    <div class="btn-group">
+      <img src="PLAY.png" alt="Play" class="img-btn">
+      <img src="STOP.png" alt="Stop" class="img-btn">
     </div>
-
-    <!-- HORLOGE EN BAS -->
-    <div class="clock-container"> <!-- ✅ Garde alignement à gauche -->
-      <div class="clock" id="currentTime">--:--</div> <!-- ✅ Ligne affichant l'heure actuelle -->
+    <div class="timer">
+      <strong>7</strong>h<strong>15</strong>m<strong>46</strong>s
     </div>
   </div>
 
-  <script>
-    const maxTime = 60;
-    let totalTime = 25 * 60;
-    let timeLeft = totalTime;
-    let running = false;
-    let timerInterval = null;
-    let millisInterval = null;
+  <!-- Ligne 3 -->
+  <div class="score">
+    <div class="flame">🔥</div>
+    <div class="f-points">875F°</div>
+  </div>
 
-    const totalBars = 80;  /* ✅ Nombre de barres sur la barre de progression */
-    const bar = document.getElementById("bar");
-    const timerText = document.getElementById("timer");
-    const millisText = document.getElementById("millis");
-    const playPause = document.getElementById("playPause").querySelector("img");
+</div>
 
-    function formatTime(sec) {
-      const m = String(Math.floor(sec / 60)).padStart(2, "0");
-      const s = String(sec % 60).padStart(2, "0");
-      return `${m}:${s}`;
-    }
-
-    function updateDisplay() {
-      timerText.textContent = formatTime(timeLeft);
-      updateBar();
-    }
-
-    function updateBar() {
-      bar.innerHTML = "";
-      const ratio = timeLeft / (maxTime * 60);
-      const fillCount = Math.round(ratio * totalBars);
-      for (let i = 0; i < totalBars; i++) {
-        const segment = document.createElement("div");
-        segment.classList.add("segment");
-        if (i < fillCount - 1) segment.classList.add("filled");
-        else if (i === fillCount - 1) segment.classList.add("last");
-        bar.appendChild(segment);
-      }
-    }
-
-    function toggleTimer() {
-      if (running) {
-        clearInterval(timerInterval);
-        clearInterval(millisInterval);
-        playPause.src = "PLAY.png";
-      } else {
-        timerInterval = setInterval(() => {
-          if (timeLeft > 0) {
-            timeLeft--;
-            updateDisplay();
-          } else {
-            clearInterval(timerInterval);
-            clearInterval(millisInterval);
-            playPause.src = "PLAY.png";
-            millisText.textContent = "00";
-            running = false;
-            document.getElementById("alarmSound").play(); // ✅ Son joué à la fin
-          }
-        }, 1000);
-
-        millisInterval = setInterval(() => {
-          millisText.textContent = String(Math.floor(Math.random() * 90) + 10);
-        }, 50);
-
-        playPause.src = "PAUSE.png";
-      }
-      running = !running;
-    }
-
-    function resetTimer() {
-      clearInterval(timerInterval);
-      clearInterval(millisInterval);
-      running = false;
-      timeLeft = totalTime;
-      playPause.src = "PLAY.png";
-      updateDisplay();
-      millisText.textContent = "00";
-    }
-
-    function increaseTime() {
-      resetTimer();
-      let next = totalTime / 60 + 5;
-      if (next > maxTime) next = 5;
-      totalTime = next * 60;
-      timeLeft = totalTime;
-      updateDisplay();
-    }
-
-    function decreaseTime() {
-      resetTimer();
-      let prev = totalTime / 60 - 5;
-      if (prev < 5) prev = maxTime;
-      totalTime = prev * 60;
-      timeLeft = totalTime;
-      updateDisplay();
-    }
-
-    // ✅ Fonction qui met à jour l'heure dans le bloc du bas
-    function updateClock() {
-      const now = new Date();
-      const h = String(now.getHours()).padStart(2, '0');
-      const m = String(now.getMinutes()).padStart(2, '0');
-      document.getElementById("currentTime").textContent = `${h}:${m}`;
-    }
-
-    updateDisplay();
-    updateClock(); // ✅ Affichage immédiat
-    setInterval(updateClock, 60 * 1000); // ✅ Mise à jour toutes les minutes
-  </script>
 </body>
 </html>
