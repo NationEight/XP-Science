@@ -3,27 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <title>Pomodoro Widget</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400&family=Noto+Sans+JP:wght@700&display=swap" rel="stylesheet">
 <style>
-  /* === Variables couleurs === */
   :root {
-    --bg-color: #191919;
-    --progress-bg: #323232;
-    --accent: #00f5a9;
-    --accent-glow: #00f5a9;
-    --flame-rest: white;
-    --flame-active: #c500e7;
-    --flame-glow1: #8b00e7;
-    --flame-glow2: #c500e7;
-    --gain-color: #ffeb3b;
-    --text-dark: #191919;
+    --bg-main: #191919;
+    --primary: #02e8a1;   /* Couleur principale (barres, bordures, minutes-box) */
+    --accent: #9a00d1;    /* Couleur points F° et flamme active */
+    --accent-glow1: #9a00d1; /* Glow interne */
+    --accent-glow2: #9a00d1; /* Glow externe */
+    --text-light: #ffffff;   /* Texte clair */
+    --text-dark: #191919;    /* Texte sombre */
+    --logo-on: #b705f7;      /* Couleur logo quand timer ON */
+    --logo-off: #191919;     /* Couleur logo quand timer OFF */
+    --gain-color: #b705f7;   /* Couleur du +1 */
   }
 
   body {
     margin: 0;
-    background-color: var(--bg-color);
+    background-color: var(--bg-main);
     font-family: 'JetBrains Mono', monospace;
-    color: white;
+    color: var(--text-light);
     font-size: 16px;
   }
 
@@ -39,17 +38,16 @@
   .progress-bar {
     display: flex;
     align-items: center;
-    background-color: var(--progress-bg);
+    background-color: #323232;
     height: 28px;
     position: relative;
     overflow: hidden;
   }
   .progress-fill {
-    background-color: var(--accent);
+    background-color: var(--primary);
     height: 100%;
     width: 0%;
-    box-shadow: 0 0 5px var(--accent-glow);
-    transition: width 0.05s linear;
+    box-shadow: 0 0 5px var(--primary);
   }
   .progress-text {
     position: absolute;
@@ -63,8 +61,8 @@
 
   /* === Bloc Timer + Flamme === */
   .timer-flame-block {
-    background-color: var(--accent);
-    box-shadow: 0 0 5px var(--accent-glow);
+    background-color: var(--primary);
+    box-shadow: 0 0 5px var(--primary);
     padding: 6px;
     display: flex;
     flex-direction: column;
@@ -100,9 +98,9 @@
   .minutes-box {
     display: flex;
     align-items: center;
-    background-color: var(--bg-color);
-    border: 1px solid var(--accent);
-    box-shadow: 0 0 3px var(--accent-glow);
+    background-color: var(--bg-main);
+    border: 1px solid var(--primary);
+    box-shadow: 0 0 3px var(--primary);
     padding: 0 4px;
   }
   .minutes-input {
@@ -113,7 +111,7 @@
     border: none;
     outline: none;
     background: transparent;
-    color: var(--accent);
+    color: var(--primary);
     font-weight: 700;
   }
   .minutes-input::-webkit-outer-spin-button,
@@ -122,7 +120,7 @@
     margin: 0;
   }
   .minutes-box span {
-    color: var(--accent);
+    color: var(--primary);
     font-weight: 400;
     margin-left: 2px;
   }
@@ -146,31 +144,33 @@
   .flame {
     display: flex;
     align-items: center;
-    font-size: 17px; /* taille au repos augmentée */
+    font-size: 19px; /* Taille à l'arrêt */
+    font-family: 'Noto Sans JP', sans-serif; /* Police uniquement pour le logo */
     font-weight: bold;
-    color: var(--flame-rest);
+    color: var(--logo-off);
     text-shadow: none;
     position: relative;
-    transition: all 0.3s ease;
+    will-change: transform;
+    transition: transform 0.25s ease, color 0.25s ease, text-shadow 0.25s ease;
   }
   .flame.active {
-    font-size: 18px;
-    color: var(--flame-active);
-    animation: glowFadeIn 0.6s forwards, flamePulse 2.2s infinite ease-in-out;
+    animation: pulseFlame 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    color: var(--logo-on);
+    text-shadow: 0 0 5px var(--accent-glow1), 0 0 12px var(--accent-glow2);
+    font-size: 21px; /* Taille légèrement plus grande en mode actif */
   }
-  @keyframes glowFadeIn {
-    0% { text-shadow: none; }
-    100% { text-shadow: 0 0 5px var(--flame-glow1), 0 0 12px var(--flame-glow2); }
+  @keyframes pulseFlame {
+    0%, 100% { transform: scale3d(1, 1, 1); }
+    50% { transform: scale3d(1.025, 1.025, 1); } /* Pulse très léger */
   }
-  @keyframes flamePulse {
-    0% { transform: scale(1); text-shadow: 0 0 5px var(--flame-glow1), 0 0 12px var(--flame-glow2); }
-    50% { transform: scale(1.03); text-shadow: 0 0 7px var(--flame-glow2), 0 0 15px var(--flame-glow2); }
-    100% { transform: scale(1); text-shadow: 0 0 5px var(--flame-glow1), 0 0 12px var(--flame-glow2); }
+
+  .flame-count {
+    display: none;
   }
   .f-points {
     font-size: 18px;
     font-weight: 700;
-    color: var(--flame-active);
+    color: var(--accent);
   }
   .f-points span {
     font-weight: 400;
@@ -189,16 +189,17 @@
     margin-left: 2px;
   }
   @keyframes popFade {
-    0% { opacity: 0; transform: scale(0.5) translateY(-5px); }
-    15% { opacity: 1; transform: scale(1.2) translateY(-8px); }
-    60% { opacity: 1; transform: scale(1) translateY(-14px); }
-    100% { opacity: 0; transform: scale(1) translateY(-18px); }
+    0% { opacity: 0; transform: scale3d(0.5, 0.5, 1) translateY(-5px); }
+    15% { opacity: 1; transform: scale3d(1.1, 1.1, 1) translateY(-8px); }
+    50% { opacity: 0.8; transform: scale3d(1, 1, 1) translateY(-16px); }
+    100% { opacity: 0; transform: scale3d(1, 1, 1) translateY(-26px); }
   }
 </style>
 </head>
 <body>
 
 <div class="container">
+
   <div class="progress-bar">
     <div class="progress-fill"></div>
     <div class="progress-text"><strong>0</strong>%</div>
@@ -229,25 +230,22 @@
       <div class="f-points" id="fPoints"></div>
     </div>
   </div>
+
 </div>
 
 <script>
   const GAIN_INTERVAL_SEC = 10;
   const ANIMATION_DURATION = 2500;
   const LOCALSTORAGE_KEY = "pomodoro_cagnotte";
-  const PROGRESS_SMOOTHING = 0.015;
+  const PROGRESS_SMOOTHING = 0.05;
 
   let totalSeconds = 0;
-  let remainingSeconds = 0;
   let endTime = 0;
   let isRunning = false;
   let fPoints = 0;
-  let accumulatedGainTime = 0; // temps cumulé depuis dernier +1
+  let elapsedGainTime = 0;
+  let pauseTime = 0;
   let displayedPercent = 0;
-  let lastTickTime = 0;
-
-  const savedPoints = localStorage.getItem(LOCALSTORAGE_KEY);
-  if (savedPoints) fPoints = parseInt(savedPoints);
 
   const timerDisplay = document.getElementById('timerDisplay');
   const minutesInput = document.getElementById('minutesInput');
@@ -259,22 +257,26 @@
   const gainContainer = document.getElementById('gainContainer');
   const flameLogo = document.getElementById('flameLogo');
 
+  const savedPoints = localStorage.getItem(LOCALSTORAGE_KEY);
+  if (savedPoints) fPoints = parseInt(savedPoints);
+
   function formatPoints(value) {
     const str = String(value).padStart(14, "0");
     const firstNonZero = str.search(/[^0]/);
-    let html = "";
-    for (let i = 0; i < str.length; i++) {
-      html += (i < firstNonZero) ? `<span>${str[i]}</span>` : str[i];
-    }
-    return html + "F°";
+    return str.split("").map((digit, i) =>
+      i < firstNonZero ? `<span>${digit}</span>` : digit
+    ).join("") + "F°";
   }
   fPointsDisplay.innerHTML = formatPoints(fPoints);
 
-  function updateTimerDisplay(sec) {
-    let h = Math.floor(sec / 3600);
-    let m = Math.floor((sec % 3600) / 60);
-    let s = Math.floor(sec % 60);
-    timerDisplay.innerHTML = `<strong>${String(h).padStart(2,'0')}</strong>h<strong>${String(m).padStart(2,'0')}</strong>m<strong>${String(s).padStart(2,'0')}</strong>s`;
+  function updateTimerDisplay(remaining) {
+    let hours = Math.floor(remaining / 3600);
+    let minutes = Math.floor((remaining % 3600) / 60);
+    let seconds = Math.floor(remaining % 60);
+    timerDisplay.innerHTML =
+      `<strong>${String(hours).padStart(2,'0')}</strong>h` +
+      `<strong>${String(minutes).padStart(2,'0')}</strong>m` +
+      `<strong>${String(seconds).padStart(2,'0')}</strong>s`;
   }
 
   function updateProgressBar(remaining) {
@@ -288,7 +290,8 @@
     let mins = parseInt(minutesInput.value);
     if (mins > 0) {
       totalSeconds = mins * 60;
-      remainingSeconds = totalSeconds;
+      endTime = performance.now() + totalSeconds * 1000;
+      elapsedGainTime = 0;
       updateTimerDisplay(totalSeconds);
       updateProgressBar(totalSeconds);
     }
@@ -302,32 +305,32 @@
     setTimeout(() => popup.remove(), ANIMATION_DURATION);
   }
 
-  function tick(timestamp) {
+  function tick() {
     if (!isRunning) return;
-    if (!lastTickTime) lastTickTime = timestamp;
-    const delta = (timestamp - lastTickTime) / 1000;
-    lastTickTime = timestamp;
+    const now = performance.now();
+    const remaining = Math.max(0, Math.round((endTime - now) / 1000));
 
-    accumulatedGainTime += delta;
-    while (accumulatedGainTime >= GAIN_INTERVAL_SEC) {
-      fPoints++;
+    elapsedGainTime += (now - pauseTime) / 1000;
+    pauseTime = now;
+
+    if (elapsedGainTime >= GAIN_INTERVAL_SEC) {
+      let gains = Math.floor(elapsedGainTime / GAIN_INTERVAL_SEC);
+      fPoints += gains;
+      elapsedGainTime -= gains * GAIN_INTERVAL_SEC;
       localStorage.setItem(LOCALSTORAGE_KEY, fPoints);
       fPointsDisplay.innerHTML = formatPoints(fPoints);
-      showGainAnimation();
-      accumulatedGainTime -= GAIN_INTERVAL_SEC;
+      for (let i = 0; i < gains; i++) showGainAnimation();
     }
 
-    remainingSeconds = Math.max(0, Math.round((endTime - timestamp) / 1000));
-
-    if (remainingSeconds === 0) {
+    if (remaining <= 0) {
       isRunning = false;
       playBtn.src = "PLAY.png";
       flameLogo.classList.remove("active");
       return;
     }
 
-    updateTimerDisplay(remainingSeconds);
-    updateProgressBar(remainingSeconds);
+    updateTimerDisplay(remaining);
+    updateProgressBar(remaining);
     requestAnimationFrame(tick);
   }
 
@@ -340,16 +343,15 @@
 
   playBtn.addEventListener('click', () => {
     if (!isRunning) {
-      if (remainingSeconds === 0) resetTimerToBoxValue();
-      endTime = performance.now() + remainingSeconds * 1000;
+      if (totalSeconds === 0) resetTimerToBoxValue();
+      endTime = performance.now() + (totalSeconds * 1000);
+      pauseTime = performance.now();
       isRunning = true;
-      lastTickTime = 0;
       playBtn.src = "PAUSE.png";
       flameLogo.classList.add("active");
       requestAnimationFrame(tick);
     } else {
       isRunning = false;
-      remainingSeconds = Math.max(0, Math.round((endTime - performance.now()) / 1000));
       playBtn.src = "PLAY.png";
       flameLogo.classList.remove("active");
     }
@@ -357,7 +359,6 @@
 
   stopBtn.addEventListener('click', () => {
     isRunning = false;
-    accumulatedGainTime = 0; // reset uniquement ici
     playBtn.src = "PLAY.png";
     flameLogo.classList.remove("active");
     resetTimerToBoxValue();
@@ -365,5 +366,6 @@
 
   resetTimerToBoxValue();
 </script>
+
 </body>
 </html>
