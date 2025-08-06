@@ -8,14 +8,14 @@
   :root {
     --bg-main: #191919;
     --primary: #02e8a1;   /* Couleur principale (barres, bordures, minutes-box) */
-    --accent: #9a00d1;    /* Couleur points F° et flamme active */
-    --accent-glow1: #9a00d1; /* Glow interne */
-    --accent-glow2: #9a00d1; /* Glow externe */
+    --accent: #bc00ff;    /* Couleur points F° et flamme active */
+    --accent-glow1: #c31cff; /* Glow interne */
+    --accent-glow2: #c31cff; /* Glow externe */
     --text-light: #ffffff;   /* Texte clair */
     --text-dark: #191919;    /* Texte sombre */
-    --logo-on: #b705f7;      /* Couleur logo quand timer ON */
-    --logo-off: #191919;     /* Couleur logo quand timer OFF */
-    --gain-color: #b705f7;   /* Couleur du +1 */
+    --logo-on: #bc00ff;      /* Couleur logo quand timer ON */
+    --logo-off: #ffffff;     /* Couleur logo quand timer OFF */
+    --gain-color: #bc00ff;   /* Couleur du +1 */
   }
 
   body {
@@ -144,24 +144,23 @@
   .flame {
     display: flex;
     align-items: center;
-    font-size: 19px; /* Taille à l'arrêt */
-    font-family: 'Noto Sans JP', sans-serif; /* Police uniquement pour le logo */
+    font-size: 21px; /* Taille fixe ON/OFF */
+    font-family: 'Noto Sans JP', sans-serif;
     font-weight: bold;
     color: var(--logo-off);
     text-shadow: none;
     position: relative;
     will-change: transform;
-    transition: transform 0.25s ease, color 0.25s ease, text-shadow 0.25s ease;
+    transition: color 0.25s ease, text-shadow 0.25s ease;
   }
   .flame.active {
-    animation: pulseFlame 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation: pulseFlame 1.5s ease-in-out infinite;
     color: var(--logo-on);
     text-shadow: 0 0 5px var(--accent-glow1), 0 0 12px var(--accent-glow2);
-    font-size: 21px; /* Taille légèrement plus grande en mode actif */
   }
   @keyframes pulseFlame {
     0%, 100% { transform: scale3d(1, 1, 1); }
-    50% { transform: scale3d(1.025, 1.025, 1); } /* Pulse très léger */
+    50% { transform: scale3d(1.025, 1.025, 1); }
   }
 
   .flame-count {
@@ -185,14 +184,15 @@
     font-weight: bold;
     opacity: 0;
     transform: scale(0.5);
-    animation: popFade 2.5s forwards;
+    animation: popFade 1.8s ease-out forwards;
     margin-left: 2px;
+    pointer-events: none;
   }
   @keyframes popFade {
-    0% { opacity: 0; transform: scale3d(0.5, 0.5, 1) translateY(-5px); }
-    15% { opacity: 1; transform: scale3d(1.1, 1.1, 1) translateY(-8px); }
-    50% { opacity: 0.8; transform: scale3d(1, 1, 1) translateY(-16px); }
-    100% { opacity: 0; transform: scale3d(1, 1, 1) translateY(-26px); }
+    0% { opacity: 0; transform: scale(0.6) translateY(0px); }
+    10% { opacity: 1; transform: scale(1) translateY(-4px); }
+    60% { opacity: 0.9; transform: scale(1) translateY(-14px); }
+    100% { opacity: 0; transform: scale(1) translateY(-26px); }
   }
 </style>
 </head>
@@ -235,7 +235,7 @@
 
 <script>
   const GAIN_INTERVAL_SEC = 10;
-  const ANIMATION_DURATION = 2500;
+  const ANIMATION_DURATION = 1800;
   const LOCALSTORAGE_KEY = "pomodoro_cagnotte";
   const PROGRESS_SMOOTHING = 0.05;
 
