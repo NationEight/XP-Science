@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Pomodoro Widget</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400&display=swap" rel="stylesheet">
 <style>
   body {
     margin: 0;
@@ -35,7 +35,6 @@
     height: 100%;
     width: 0%;
     box-shadow: 0 0 5px #00f5a9;
-    transition: width 0.3s linear;
   }
   .progress-text {
     position: absolute;
@@ -101,7 +100,6 @@
     background: transparent;
     color: #00f5a9;
     font-weight: 700;
-    -moz-appearance: textfield;
   }
   .minutes-input::-webkit-outer-spin-button,
   .minutes-input::-webkit-inner-spin-button {
@@ -133,19 +131,18 @@
   .flame {
     display: flex;
     align-items: center;
-    gap: 4px;
     font-size: 18px;
-    font-weight: 700;
-    color: white;
+    font-weight: bold; /* Logo gras */
+    color: white; /* Couleur par défaut quand timer OFF */
     text-shadow: none;
-    transition: color 0.3s, text-shadow 0.3s;
+    position: relative;
   }
   .flame.active {
-    color: orange;
-    text-shadow: 0 0 5px orange, 0 0 10px orange, 0 0 20px orange;
+    color: #ff6600; /* Orange plus chaud */
+    text-shadow: 0 0 6px #ff3300, 0 0 12px #ff6600;
   }
   .flame-count {
-    display: none; /* plus affiché ici */
+    display: none; /* Valeur retirée côté flamme */
   }
   .f-points {
     font-size: 18px;
@@ -154,25 +151,25 @@
   }
   .f-points span {
     font-weight: 400;
-    opacity: 0.3;
+    opacity: 0.3; /* Seulement pour les 0 ajoutés dynamiquement */
   }
 
   /* Animation +1 */
   .gain-popup {
     position: absolute;
-    left: 30px;
     font-size: 16px;
     color: #ffeb3b;
     font-weight: bold;
     opacity: 0;
     transform: scale(0.5);
-    animation: popFade 3s forwards;
+    animation: popFade 4s forwards; /* Durée augmentée */
+    margin-left: 2px; /* Collé à la flamme */
   }
   @keyframes popFade {
-    0% { opacity: 0; transform: scale(0.5) translateY(0); }
-    10% { opacity: 1; transform: scale(1.2) translateY(-5px); }
-    50% { transform: scale(1) translateY(-10px); }
-    100% { opacity: 0; transform: scale(1) translateY(-20px); }
+    0% { opacity: 0; transform: scale(0.5) translateY(-5px); }
+    10% { opacity: 1; transform: scale(1.2) translateY(-10px); }
+    50% { transform: scale(1) translateY(-20px); }
+    100% { opacity: 0; transform: scale(1) translateY(-35px); }
   }
 </style>
 </head>
@@ -208,11 +205,11 @@
 
     <!-- Ligne 3 -->
     <div class="score">
-      <div class="flame" id="flameIcon">
+      <div class="flame" id="flameLogo">
         火
         <div id="gainContainer"></div>
       </div>
-      <div class="f-points"><span id="fPoints">00000000000000</span>F°</div>
+      <div class="f-points" id="fPoints"></div>
     </div>
 
   </div>
@@ -222,14 +219,16 @@
 <script>
   // === PARAMÈTRES À AJUSTER FACILEMENT ===
   const GAIN_INTERVAL_SEC = 10; // Intervalle en secondes pour +1
-  const ANIMATION_DURATION = 3000; // Durée animation +1 en ms
+  const ANIMATION_DURATION = 4000; // Durée ms pour l'effet +1
   const LOCALSTORAGE_KEY = "pomodoro_cagnotte";
+  const PROGRESS_SMOOTHING = 0.05; // Vitesse de lissage de la barre
 
   let totalSeconds = 0;
   let endTime = 0; 
   let isRunning = false;
   let fPoints = 0;
   let lastGainTime = 0;
+  let displayedPercent = 0;
 
   // Charger cagnotte
   const savedPoints = localStorage.getItem(LOCALSTORAGE_KEY);
@@ -243,9 +242,22 @@
   const stopBtn = document.getElementById('stopBtn');
   const fPointsDisplay = document.getElementById('fPoints');
   const gainContainer = document.getElementById('gainContainer');
-  const flameIcon = document.getElementById('flameIcon');
+  const flameLogo = document.getElementById('flameLogo');
 
-  fPointsDisplay.textContent = String(fPoints).padStart(14, "0");
+  function formatPoints(value) {
+    const str = String(value).padStart(14, "0");
+    const firstNonZero = str.search(/[^0]/);
+    let html = "";
+    for (let i = 0; i < str.length; i++) {
+      if (i < firstNonZero) {
+        html += `<span>${str[i]}</span>`;
+      } else {
+        html += str[i];
+      }
+    }
+    return html + "F°";
+  }
+  fPointsDisplay.innerHTML = formatPoints(fPoints);
 
   function updateTimerDisplay(remaining) {
     let hours = Math.floor(remaining / 3600);
@@ -255,9 +267,10 @@
   }
 
   function updateProgressBar(remaining) {
-    let percent = totalSeconds > 0 ? ((totalSeconds - remaining) / totalSeconds) * 100 : 0;
-    progressFill.style.width = percent + '%';
-    progressText.innerHTML = `<strong>${Math.floor(percent)}</strong>%`;
+    let targetPercent = totalSeconds > 0 ? ((totalSeconds - remaining) / totalSeconds) * 100 : 0;
+    displayedPercent += (targetPercent - displayedPercent) * PROGRESS_SMOOTHING; // lissage
+    progressFill.style.width = displayedPercent + '%';
+    progressText.innerHTML = `<strong>${Math.floor(displayedPercent)}</strong>%`;
   }
 
   function resetTimerToBoxValue() {
@@ -285,8 +298,8 @@
 
     if (remaining === 0) {
       isRunning = false;
-      flameIcon.classList.remove('active');
       playBtn.src = "PLAY.png";
+      flameLogo.classList.remove("active");
       return;
     }
 
@@ -294,7 +307,7 @@
     if (now - lastGainTime >= GAIN_INTERVAL_SEC * 1000) {
       fPoints++;
       localStorage.setItem(LOCALSTORAGE_KEY, fPoints);
-      fPointsDisplay.textContent = String(fPoints).padStart(14, "0");
+      fPointsDisplay.innerHTML = formatPoints(fPoints);
       showGainAnimation();
       lastGainTime = now;
     }
@@ -306,8 +319,8 @@
 
   minutesInput.addEventListener('change', () => {
     isRunning = false;
-    flameIcon.classList.remove('active');
     playBtn.src = "PLAY.png";
+    flameLogo.classList.remove("active");
     resetTimerToBoxValue();
   });
 
@@ -317,20 +330,20 @@
       endTime = performance.now() + (totalSeconds * 1000);
       lastGainTime = performance.now();
       isRunning = true;
-      flameIcon.classList.add('active');
       playBtn.src = "PAUSE.png";
+      flameLogo.classList.add("active");
       requestAnimationFrame(tick);
     } else {
       isRunning = false;
-      flameIcon.classList.remove('active');
       playBtn.src = "PLAY.png";
+      flameLogo.classList.remove("active");
     }
   });
 
   stopBtn.addEventListener('click', () => {
     isRunning = false;
-    flameIcon.classList.remove('active');
     playBtn.src = "PLAY.png";
+    flameLogo.classList.remove("active");
     resetTimerToBoxValue();
   });
 
