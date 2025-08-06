@@ -8,14 +8,14 @@
   :root {
     --bg-main: #191919;
     --primary: #02e8a1;   /* Couleur principale (barres, bordures, minutes-box) */
-    --accent: #bc00ff;    /* Couleur points F° et flamme active */
-    --accent-glow1: #c31cff; /* Glow interne */
-    --accent-glow2: #c31cff; /* Glow externe */
+    --accent: #db44fc;    /* Couleur points F° et flamme active */
+    --accent-glow1: #e985ff; /* Glow interne */
+    --accent-glow2: #e985ff; /* Glow externe */
     --text-light: #ffffff;   /* Texte clair */
     --text-dark: #191919;    /* Texte sombre */
-    --logo-on: #bc00ff;      /* Couleur logo quand timer ON */
+    --logo-on: #db44fc;      /* Couleur logo quand timer ON */
     --logo-off: #ffffff;     /* Couleur logo quand timer OFF */
-    --gain-color: #bc00ff;   /* Couleur du +1 */
+    --gain-color: #db44fc;   /* Couleur du +1 */
   }
 
   body {
@@ -176,24 +176,25 @@
     opacity: 0.3;
   }
 
-  /* Animation +1 */
-  .gain-popup {
-    position: absolute;
-    font-size: 16px;
-    color: var(--gain-color);
-    font-weight: bold;
-    opacity: 0;
-    transform: scale(0.5);
-    animation: popFade 1.8s ease-out forwards;
-    margin-left: 2px;
-    pointer-events: none;
-  }
-  @keyframes popFade {
-    0% { opacity: 0; transform: scale(0.6) translateY(0px); }
-    10% { opacity: 1; transform: scale(1) translateY(-4px); }
-    60% { opacity: 0.9; transform: scale(1) translateY(-14px); }
-    100% { opacity: 0; transform: scale(1) translateY(-26px); }
-  }
+  /* Animation +1 (plus fluide) */
+.gain-popup {
+  position: absolute;
+  font-size: 16px;
+  color: var(--gain-color);
+  font-weight: bold;
+  opacity: 0;
+  transform: scale(0.7) translateY(0px);
+  animation: popFade 1.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  margin-left: 2px;
+  pointer-events: none;
+}
+@keyframes popFade {
+  0%   { opacity: 0; transform: scale(0.7) translateY(0px); }
+  10%  { opacity: 1; transform: scale(1) translateY(-4px); }
+  70%  { opacity: 1; transform: scale(1.05) translateY(-18px); }
+  100% { opacity: 0; transform: scale(1.05) translateY(-30px); }
+}
+
 </style>
 </head>
 <body>
@@ -297,13 +298,30 @@
     }
   }
 
-  function showGainAnimation() {
-    const popup = document.createElement("div");
-    popup.className = "gain-popup";
-    popup.textContent = "+1";
-    gainContainer.appendChild(popup);
-    setTimeout(() => popup.remove(), ANIMATION_DURATION);
-  }
+  const MAX_POINTS = 999999999999999999; // 18 chiffres max
+
+function formatPoints(value) {
+  const str = String(value).padStart(18, "0");
+  const firstNonZero = str.search(/[^0]/);
+  return str.split("").map((digit, i) =>
+    i < firstNonZero ? `<span>${digit}</span>` : digit
+  ).join("") + "F°";
+}
+
+function addPoints(amount) {
+  fPoints = Math.min(fPoints + amount, MAX_POINTS);
+  localStorage.setItem(LOCALSTORAGE_KEY, fPoints);
+  fPointsDisplay.innerHTML = formatPoints(fPoints);
+}
+
+function showGainAnimation() {
+  const popup = document.createElement("div");
+  popup.className = "gain-popup";
+  popup.textContent = "+1";
+  gainContainer.appendChild(popup);
+  setTimeout(() => popup.remove(), 1600);
+}
+
 
   function tick() {
     if (!isRunning) return;
@@ -314,13 +332,12 @@
     pauseTime = now;
 
     if (elapsedGainTime >= GAIN_INTERVAL_SEC) {
-      let gains = Math.floor(elapsedGainTime / GAIN_INTERVAL_SEC);
-      fPoints += gains;
-      elapsedGainTime -= gains * GAIN_INTERVAL_SEC;
-      localStorage.setItem(LOCALSTORAGE_KEY, fPoints);
-      fPointsDisplay.innerHTML = formatPoints(fPoints);
-      for (let i = 0; i < gains; i++) showGainAnimation();
-    }
+  let gains = Math.floor(elapsedGainTime / GAIN_INTERVAL_SEC);
+  elapsedGainTime -= gains * GAIN_INTERVAL_SEC;
+  addPoints(gains);
+  for (let i = 0; i < gains; i++) showGainAnimation();
+}
+
 
     if (remaining <= 0) {
       isRunning = false;
