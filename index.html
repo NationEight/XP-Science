@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Pomodoro Widget</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400;700&display=swap" rel="stylesheet">
 <style>
   body {
     margin: 0;
@@ -101,6 +101,7 @@
     background: transparent;
     color: #00f5a9;
     font-weight: 700;
+    -moz-appearance: textfield;
   }
   .minutes-input::-webkit-outer-spin-button,
   .minutes-input::-webkit-inner-spin-button {
@@ -134,13 +135,17 @@
     align-items: center;
     gap: 4px;
     font-size: 18px;
-    text-shadow: 0 0 5px #c500e7;
-    position: relative;
+    font-weight: 700;
+    color: white;
+    text-shadow: none;
+    transition: color 0.3s, text-shadow 0.3s;
+  }
+  .flame.active {
+    color: orange;
+    text-shadow: 0 0 5px orange, 0 0 10px orange, 0 0 20px orange;
   }
   .flame-count {
-    color: white;
-    font-weight: 700;
-    font-size: 16px;
+    display: none; /* plus affiché ici */
   }
   .f-points {
     font-size: 18px;
@@ -155,7 +160,7 @@
   /* Animation +1 */
   .gain-popup {
     position: absolute;
-    left: 50px;
+    left: 30px;
     font-size: 16px;
     color: #ffeb3b;
     font-weight: bold;
@@ -203,9 +208,8 @@
 
     <!-- Ligne 3 -->
     <div class="score">
-      <div class="flame">
-        火 
-        <span class="flame-count" id="flameCount">0</span>
+      <div class="flame" id="flameIcon">
+        火
         <div id="gainContainer"></div>
       </div>
       <div class="f-points"><span id="fPoints">00000000000000</span>F°</div>
@@ -218,13 +222,12 @@
 <script>
   // === PARAMÈTRES À AJUSTER FACILEMENT ===
   const GAIN_INTERVAL_SEC = 10; // Intervalle en secondes pour +1
-  const ANIMATION_DURATION = 3000; // ms pour l'effet +1
+  const ANIMATION_DURATION = 3000; // Durée animation +1 en ms
   const LOCALSTORAGE_KEY = "pomodoro_cagnotte";
 
   let totalSeconds = 0;
   let endTime = 0; 
   let isRunning = false;
-  let flameCount = 0;
   let fPoints = 0;
   let lastGainTime = 0;
 
@@ -238,9 +241,9 @@
   const progressText = document.querySelector('.progress-text');
   const playBtn = document.getElementById('playBtn');
   const stopBtn = document.getElementById('stopBtn');
-  const flameCountDisplay = document.getElementById('flameCount');
   const fPointsDisplay = document.getElementById('fPoints');
   const gainContainer = document.getElementById('gainContainer');
+  const flameIcon = document.getElementById('flameIcon');
 
   fPointsDisplay.textContent = String(fPoints).padStart(14, "0");
 
@@ -264,8 +267,6 @@
       endTime = performance.now() + totalSeconds * 1000;
       updateTimerDisplay(totalSeconds);
       updateProgressBar(totalSeconds);
-      flameCount = 0;
-      flameCountDisplay.textContent = flameCount;
     }
   }
 
@@ -284,14 +285,13 @@
 
     if (remaining === 0) {
       isRunning = false;
+      flameIcon.classList.remove('active');
       playBtn.src = "PLAY.png";
       return;
     }
 
     // Gain toutes les X secondes
     if (now - lastGainTime >= GAIN_INTERVAL_SEC * 1000) {
-      flameCount++;
-      flameCountDisplay.textContent = flameCount;
       fPoints++;
       localStorage.setItem(LOCALSTORAGE_KEY, fPoints);
       fPointsDisplay.textContent = String(fPoints).padStart(14, "0");
@@ -306,6 +306,7 @@
 
   minutesInput.addEventListener('change', () => {
     isRunning = false;
+    flameIcon.classList.remove('active');
     playBtn.src = "PLAY.png";
     resetTimerToBoxValue();
   });
@@ -316,16 +317,19 @@
       endTime = performance.now() + (totalSeconds * 1000);
       lastGainTime = performance.now();
       isRunning = true;
+      flameIcon.classList.add('active');
       playBtn.src = "PAUSE.png";
       requestAnimationFrame(tick);
     } else {
       isRunning = false;
+      flameIcon.classList.remove('active');
       playBtn.src = "PLAY.png";
     }
   });
 
   stopBtn.addEventListener('click', () => {
     isRunning = false;
+    flameIcon.classList.remove('active');
     playBtn.src = "PLAY.png";
     resetTimerToBoxValue();
   });
