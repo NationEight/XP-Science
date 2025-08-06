@@ -21,7 +21,7 @@
     gap: 6px;
   }
 
-  /* === Couleur barre de progression === */
+  /* === Barre de progression === */
   .progress-bar {
     display: flex;
     align-items: center;
@@ -47,7 +47,7 @@
     font-weight: 700;
   }
 
-  /* Bloc Timer + Flamme */
+  /* === Bloc Timer + Flamme === */
   .timer-flame-block {
     background-color: #00f5a9;
     box-shadow: 0 0 5px #00f5a9;
@@ -57,7 +57,7 @@
     gap: 6px;
   }
 
-  /* Ligne 2 - Boutons + Timer */
+  /* Boutons + Timer */
   .controls {
     display: flex;
     align-items: center;
@@ -86,7 +86,7 @@
   .minutes-box {
     display: flex;
     align-items: center;
-    background-color: #191919; /* Fond Notion */
+    background-color: #191919;
     border: 1px solid #00f5a9;
     box-shadow: 0 0 3px #00f5a9;
     padding: 0 4px;
@@ -101,7 +101,6 @@
     background: transparent;
     color: #00f5a9;
     font-weight: 700;
-    -moz-appearance: textfield;
   }
   .minutes-input::-webkit-outer-spin-button,
   .minutes-input::-webkit-inner-spin-button {
@@ -123,11 +122,12 @@
     font-weight: 700;
   }
 
-  /* Ligne 3 - Flamme à gauche et cagnotte à droite */
+  /* Flamme + Cagnotte */
   .score {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
   }
   .flame {
     display: flex;
@@ -135,6 +135,7 @@
     gap: 4px;
     font-size: 18px;
     text-shadow: 0 0 5px #c500e7;
+    position: relative;
   }
   .flame-count {
     color: white;
@@ -149,6 +150,24 @@
   .f-points span {
     font-weight: 400;
     opacity: 0.3;
+  }
+
+  /* Animation +1 */
+  .gain-popup {
+    position: absolute;
+    left: 50px;
+    font-size: 16px;
+    color: #ffeb3b;
+    font-weight: bold;
+    opacity: 0;
+    transform: scale(0.5);
+    animation: popFade 3s forwards;
+  }
+  @keyframes popFade {
+    0% { opacity: 0; transform: scale(0.5) translateY(0); }
+    10% { opacity: 1; transform: scale(1.2) translateY(-5px); }
+    50% { transform: scale(1) translateY(-10px); }
+    100% { opacity: 0; transform: scale(1) translateY(-20px); }
   }
 </style>
 </head>
@@ -184,8 +203,12 @@
 
     <!-- Ligne 3 -->
     <div class="score">
-      <div class="flame">経験 <span class="flame-count" id="flameCount">0</span></div>
-      <div class="f-points"><span>00000000000000</span>F°</div>
+      <div class="flame">
+        経験 
+        <span class="flame-count" id="flameCount">0</span>
+        <div id="gainContainer"></div>
+      </div>
+      <div class="f-points"><span id="fPoints">00000000000000</span>F°</div>
     </div>
 
   </div>
@@ -193,12 +216,21 @@
 </div>
 
 <script>
+  // === PARAMÈTRES À AJUSTER FACILEMENT ===
+  const GAIN_INTERVAL_SEC = 10; // Intervalle en secondes pour +1
+  const ANIMATION_DURATION = 3000; // ms pour l'effet +1
+  const LOCALSTORAGE_KEY = "pomodoro_cagnotte";
+
   let totalSeconds = 0;
-  let remainingSeconds = 0;
-  let timerInterval = null;
+  let endTime = 0; 
   let isRunning = false;
   let flameCount = 0;
-  let flameIntervalCounter = 0; // Compteur interne pour les 10 secondes
+  let fPoints = 0;
+  let lastGainTime = 0;
+
+  // Charger cagnotte
+  const savedPoints = localStorage.getItem(LOCALSTORAGE_KEY);
+  if (savedPoints) fPoints = parseInt(savedPoints);
 
   const timerDisplay = document.getElementById('timerDisplay');
   const minutesInput = document.getElementById('minutesInput');
@@ -207,16 +239,20 @@
   const playBtn = document.getElementById('playBtn');
   const stopBtn = document.getElementById('stopBtn');
   const flameCountDisplay = document.getElementById('flameCount');
+  const fPointsDisplay = document.getElementById('fPoints');
+  const gainContainer = document.getElementById('gainContainer');
 
-  function updateTimerDisplay() {
-    let hours = Math.floor(remainingSeconds / 3600);
-    let minutes = Math.floor((remainingSeconds % 3600) / 60);
-    let seconds = remainingSeconds % 60;
+  fPointsDisplay.textContent = String(fPoints).padStart(14, "0");
+
+  function updateTimerDisplay(remaining) {
+    let hours = Math.floor(remaining / 3600);
+    let minutes = Math.floor((remaining % 3600) / 60);
+    let seconds = Math.floor(remaining % 60);
     timerDisplay.innerHTML = `<strong>${String(hours).padStart(2,'0')}</strong>h<strong>${String(minutes).padStart(2,'0')}</strong>m<strong>${String(seconds).padStart(2,'0')}</strong>s`;
   }
 
-  function updateProgressBar() {
-    let percent = totalSeconds > 0 ? ((totalSeconds - remainingSeconds) / totalSeconds) * 100 : 0;
+  function updateProgressBar(remaining) {
+    let percent = totalSeconds > 0 ? ((totalSeconds - remaining) / totalSeconds) * 100 : 0;
     progressFill.style.width = percent + '%';
     progressText.innerHTML = `<strong>${Math.floor(percent)}</strong>%`;
   }
@@ -225,16 +261,50 @@
     let mins = parseInt(minutesInput.value);
     if (mins > 0) {
       totalSeconds = mins * 60;
-      remainingSeconds = totalSeconds;
-      updateTimerDisplay();
-      updateProgressBar();
-      flameIntervalCounter = 0;
+      endTime = performance.now() + totalSeconds * 1000;
+      updateTimerDisplay(totalSeconds);
+      updateProgressBar(totalSeconds);
+      flameCount = 0;
+      flameCountDisplay.textContent = flameCount;
     }
   }
 
+  function showGainAnimation() {
+    const popup = document.createElement("div");
+    popup.className = "gain-popup";
+    popup.textContent = "+1";
+    gainContainer.appendChild(popup);
+    setTimeout(() => popup.remove(), ANIMATION_DURATION);
+  }
+
+  function tick() {
+    if (!isRunning) return;
+    const now = performance.now();
+    const remaining = Math.max(0, Math.round((endTime - now) / 1000));
+
+    if (remaining === 0) {
+      isRunning = false;
+      playBtn.src = "PLAY.png";
+      return;
+    }
+
+    // Gain toutes les X secondes
+    if (now - lastGainTime >= GAIN_INTERVAL_SEC * 1000) {
+      flameCount++;
+      flameCountDisplay.textContent = flameCount;
+      fPoints++;
+      localStorage.setItem(LOCALSTORAGE_KEY, fPoints);
+      fPointsDisplay.textContent = String(fPoints).padStart(14, "0");
+      showGainAnimation();
+      lastGainTime = now;
+    }
+
+    updateTimerDisplay(remaining);
+    updateProgressBar(remaining);
+    requestAnimationFrame(tick);
+  }
+
   minutesInput.addEventListener('change', () => {
-    clearInterval(timerInterval);
-    timerInterval = null;
     isRunning = false;
     playBtn.src = "PLAY.png";
     resetTimerToBoxValue();
@@ -242,43 +312,25 @@
 
   playBtn.addEventListener('click', () => {
     if (!isRunning) {
-      if (remainingSeconds === 0) resetTimerToBoxValue();
+      if (totalSeconds === 0) resetTimerToBoxValue();
+      endTime = performance.now() + (totalSeconds * 1000);
+      lastGainTime = performance.now();
       isRunning = true;
       playBtn.src = "PAUSE.png";
-      timerInterval = setInterval(() => {
-        if (remainingSeconds > 0) {
-          remainingSeconds--;
-          flameIntervalCounter++;
-          if (flameIntervalCounter >= 10) {
-            flameCount++;
-            flameCountDisplay.textContent = flameCount;
-            flameIntervalCounter = 0;
-          }
-          updateTimerDisplay();
-          updateProgressBar();
-        } else {
-          clearInterval(timerInterval);
-          timerInterval = null;
-          isRunning = false;
-          playBtn.src = "PLAY.png";
-        }
-      }, 1000);
+      requestAnimationFrame(tick);
     } else {
       isRunning = false;
       playBtn.src = "PLAY.png";
-      clearInterval(timerInterval);
     }
   });
 
   stopBtn.addEventListener('click', () => {
-    clearInterval(timerInterval);
-    timerInterval = null;
     isRunning = false;
     playBtn.src = "PLAY.png";
     resetTimerToBoxValue();
   });
 
-  updateTimerDisplay();
+  resetTimerToBoxValue();
 </script>
 
 </body>
