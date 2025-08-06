@@ -35,6 +35,7 @@
     height: 100%;
     width: 0%;
     box-shadow: 0 0 5px #00f5a9;
+    transition: width 0.05s linear;
   }
   .progress-text {
     position: absolute;
@@ -131,18 +132,29 @@
   .flame {
     display: flex;
     align-items: center;
-    font-size: 18px;
-    font-weight: bold; /* Logo gras */
-    color: white; /* Couleur par défaut quand timer OFF */
+    font-size: 16px; /* plus petit à l'arrêt */
+    font-weight: bold;
+    color: white;
     text-shadow: none;
     position: relative;
+    transition: all 0.3s ease;
   }
   .flame.active {
-    color: #c500e7; /* Couleur du logo Flame */
-    text-shadow: 0 0 5px #8b00e7, 0 0 12px #c500e7;
+    font-size: 18px; /* grossit quand actif */
+    color: #c500e7;
+    animation: glowFadeIn 0.6s forwards, flamePulse 2.2s infinite ease-in-out;
+  }
+  @keyframes glowFadeIn {
+    0% { text-shadow: none; }
+    100% { text-shadow: 0 0 5px #8b00e7, 0 0 12px #c500e7; }
+  }
+  @keyframes flamePulse {
+    0% { transform: scale(1); text-shadow: 0 0 5px #8b00e7, 0 0 12px #c500e7; }
+    50% { transform: scale(1.04); text-shadow: 0 0 7px #a500ff, 0 0 15px #c500e7; }
+    100% { transform: scale(1); text-shadow: 0 0 5px #8b00e7, 0 0 12px #c500e7; }
   }
   .flame-count {
-    display: none; /* Valeur retirée côté flamme */
+    display: none;
   }
   .f-points {
     font-size: 18px;
@@ -151,7 +163,7 @@
   }
   .f-points span {
     font-weight: 400;
-    opacity: 0.3; /* Seulement pour les 0 ajoutés dynamiquement */
+    opacity: 0.3;
   }
 
   /* Animation +1 */
@@ -162,31 +174,26 @@
     font-weight: bold;
     opacity: 0;
     transform: scale(0.5);
-    animation: popFade 4s forwards; /* Durée augmentée */
-    margin-left: 2px; /* Collé à la flamme */
+    animation: popFade 2.5s forwards; /* raccourci */
+    margin-left: 2px;
   }
   @keyframes popFade {
     0% { opacity: 0; transform: scale(0.5) translateY(-5px); }
-    10% { opacity: 1; transform: scale(1.2) translateY(-10px); }
-    50% { transform: scale(1) translateY(-20px); }
-    100% { opacity: 0; transform: scale(1) translateY(-35px); }
+    15% { opacity: 1; transform: scale(1.2) translateY(-8px); }
+    60% { opacity: 1; transform: scale(1) translateY(-14px); }
+    100% { opacity: 0; transform: scale(1) translateY(-18px); }
   }
 </style>
 </head>
 <body>
 
 <div class="container">
-
-  <!-- Ligne 1 -->
   <div class="progress-bar">
     <div class="progress-fill"></div>
     <div class="progress-text"><strong>0</strong>%</div>
   </div>
 
-  <!-- Bloc Timer + Flamme -->
   <div class="timer-flame-block">
-    
-    <!-- Ligne 2 -->
     <div class="controls">
       <div class="btn-group">
         <img src="PLAY.png" alt="Play" class="img-btn" id="playBtn">
@@ -203,7 +210,6 @@
       </div>
     </div>
 
-    <!-- Ligne 3 -->
     <div class="score">
       <div class="flame" id="flameLogo">
         神火
@@ -211,26 +217,23 @@
       </div>
       <div class="f-points" id="fPoints"></div>
     </div>
-
   </div>
-
 </div>
 
 <script>
-  // === PARAMÈTRES À AJUSTER FACILEMENT ===
-  const GAIN_INTERVAL_SEC = 10; // Intervalle en secondes pour +1
-  const ANIMATION_DURATION = 4000; // Durée ms pour l'effet +1
+  const GAIN_INTERVAL_SEC = 10;
+  const ANIMATION_DURATION = 2500;
   const LOCALSTORAGE_KEY = "pomodoro_cagnotte";
-  const PROGRESS_SMOOTHING = 0.05; // Vitesse de lissage de la barre
+  const PROGRESS_SMOOTHING = 0.015; // plus fluide
 
   let totalSeconds = 0;
-  let endTime = 0; 
+  let remainingSeconds = 0;
+  let endTime = 0;
   let isRunning = false;
   let fPoints = 0;
   let lastGainTime = 0;
   let displayedPercent = 0;
 
-  // Charger cagnotte
   const savedPoints = localStorage.getItem(LOCALSTORAGE_KEY);
   if (savedPoints) fPoints = parseInt(savedPoints);
 
@@ -249,26 +252,22 @@
     const firstNonZero = str.search(/[^0]/);
     let html = "";
     for (let i = 0; i < str.length; i++) {
-      if (i < firstNonZero) {
-        html += `<span>${str[i]}</span>`;
-      } else {
-        html += str[i];
-      }
+      html += (i < firstNonZero) ? `<span>${str[i]}</span>` : str[i];
     }
     return html + "F°";
   }
   fPointsDisplay.innerHTML = formatPoints(fPoints);
 
-  function updateTimerDisplay(remaining) {
-    let hours = Math.floor(remaining / 3600);
-    let minutes = Math.floor((remaining % 3600) / 60);
-    let seconds = Math.floor(remaining % 60);
-    timerDisplay.innerHTML = `<strong>${String(hours).padStart(2,'0')}</strong>h<strong>${String(minutes).padStart(2,'0')}</strong>m<strong>${String(seconds).padStart(2,'0')}</strong>s`;
+  function updateTimerDisplay(sec) {
+    let h = Math.floor(sec / 3600);
+    let m = Math.floor((sec % 3600) / 60);
+    let s = Math.floor(sec % 60);
+    timerDisplay.innerHTML = `<strong>${String(h).padStart(2,'0')}</strong>h<strong>${String(m).padStart(2,'0')}</strong>m<strong>${String(s).padStart(2,'0')}</strong>s`;
   }
 
   function updateProgressBar(remaining) {
     let targetPercent = totalSeconds > 0 ? ((totalSeconds - remaining) / totalSeconds) * 100 : 0;
-    displayedPercent += (targetPercent - displayedPercent) * PROGRESS_SMOOTHING; // lissage
+    displayedPercent += (targetPercent - displayedPercent) * PROGRESS_SMOOTHING;
     progressFill.style.width = displayedPercent + '%';
     progressText.innerHTML = `<strong>${Math.floor(displayedPercent)}</strong>%`;
   }
@@ -277,7 +276,7 @@
     let mins = parseInt(minutesInput.value);
     if (mins > 0) {
       totalSeconds = mins * 60;
-      endTime = performance.now() + totalSeconds * 1000;
+      remainingSeconds = totalSeconds;
       updateTimerDisplay(totalSeconds);
       updateProgressBar(totalSeconds);
     }
@@ -294,16 +293,15 @@
   function tick() {
     if (!isRunning) return;
     const now = performance.now();
-    const remaining = Math.max(0, Math.round((endTime - now) / 1000));
+    remainingSeconds = Math.max(0, Math.round((endTime - now) / 1000));
 
-    if (remaining === 0) {
+    if (remainingSeconds === 0) {
       isRunning = false;
       playBtn.src = "PLAY.png";
       flameLogo.classList.remove("active");
       return;
     }
 
-    // Gain toutes les X secondes
     if (now - lastGainTime >= GAIN_INTERVAL_SEC * 1000) {
       fPoints++;
       localStorage.setItem(LOCALSTORAGE_KEY, fPoints);
@@ -312,8 +310,8 @@
       lastGainTime = now;
     }
 
-    updateTimerDisplay(remaining);
-    updateProgressBar(remaining);
+    updateTimerDisplay(remainingSeconds);
+    updateProgressBar(remainingSeconds);
     requestAnimationFrame(tick);
   }
 
@@ -326,8 +324,8 @@
 
   playBtn.addEventListener('click', () => {
     if (!isRunning) {
-      if (totalSeconds === 0) resetTimerToBoxValue();
-      endTime = performance.now() + (totalSeconds * 1000);
+      if (remainingSeconds === 0) resetTimerToBoxValue();
+      endTime = performance.now() + remainingSeconds * 1000;
       lastGainTime = performance.now();
       isRunning = true;
       playBtn.src = "PAUSE.png";
@@ -335,6 +333,7 @@
       requestAnimationFrame(tick);
     } else {
       isRunning = false;
+      remainingSeconds = Math.max(0, Math.round((endTime - performance.now()) / 1000));
       playBtn.src = "PLAY.png";
       flameLogo.classList.remove("active");
     }
@@ -349,6 +348,5 @@
 
   resetTimerToBoxValue();
 </script>
-
 </body>
 </html>
