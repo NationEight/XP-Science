@@ -5,9 +5,23 @@
 <title>Pomodoro Widget</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400&display=swap" rel="stylesheet">
 <style>
+  /* === Variables couleurs === */
+  :root {
+    --bg-color: #191919;
+    --progress-bg: #323232;
+    --accent: #00f5a9;
+    --accent-glow: #00f5a9;
+    --flame-rest: white;
+    --flame-active: #c500e7;
+    --flame-glow1: #8b00e7;
+    --flame-glow2: #c500e7;
+    --gain-color: #ffeb3b;
+    --text-dark: #191919;
+  }
+
   body {
     margin: 0;
-    background-color: #191919;
+    background-color: var(--bg-color);
     font-family: 'JetBrains Mono', monospace;
     color: white;
     font-size: 16px;
@@ -25,22 +39,22 @@
   .progress-bar {
     display: flex;
     align-items: center;
-    background-color: #323232;
+    background-color: var(--progress-bg);
     height: 28px;
     position: relative;
     overflow: hidden;
   }
   .progress-fill {
-    background-color: #00f5a9;
+    background-color: var(--accent);
     height: 100%;
     width: 0%;
-    box-shadow: 0 0 5px #00f5a9;
+    box-shadow: 0 0 5px var(--accent-glow);
     transition: width 0.05s linear;
   }
   .progress-text {
     position: absolute;
     left: 6px;
-    color: #191919;
+    color: var(--text-dark);
     font-weight: 200;
   }
   .progress-text strong {
@@ -49,8 +63,8 @@
 
   /* === Bloc Timer + Flamme === */
   .timer-flame-block {
-    background-color: #00f5a9;
-    box-shadow: 0 0 5px #00f5a9;
+    background-color: var(--accent);
+    box-shadow: 0 0 5px var(--accent-glow);
     padding: 6px;
     display: flex;
     flex-direction: column;
@@ -86,9 +100,9 @@
   .minutes-box {
     display: flex;
     align-items: center;
-    background-color: #191919;
-    border: 1px solid #00f5a9;
-    box-shadow: 0 0 3px #00f5a9;
+    background-color: var(--bg-color);
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 3px var(--accent-glow);
     padding: 0 4px;
   }
   .minutes-input {
@@ -99,7 +113,7 @@
     border: none;
     outline: none;
     background: transparent;
-    color: #00f5a9;
+    color: var(--accent);
     font-weight: 700;
   }
   .minutes-input::-webkit-outer-spin-button,
@@ -108,13 +122,13 @@
     margin: 0;
   }
   .minutes-box span {
-    color: #00f5a9;
+    color: var(--accent);
     font-weight: 400;
     margin-left: 2px;
   }
 
   .timer {
-    color: #191919;
+    color: var(--text-dark);
     font-weight: 200;
     font-size: 18px;
   }
@@ -132,34 +146,31 @@
   .flame {
     display: flex;
     align-items: center;
-    font-size: 16px; /* plus petit à l'arrêt */
+    font-size: 17px; /* taille au repos augmentée */
     font-weight: bold;
-    color: white;
+    color: var(--flame-rest);
     text-shadow: none;
     position: relative;
     transition: all 0.3s ease;
   }
   .flame.active {
-    font-size: 18px; /* grossit quand actif */
-    color: #c500e7;
+    font-size: 18px;
+    color: var(--flame-active);
     animation: glowFadeIn 0.6s forwards, flamePulse 2.2s infinite ease-in-out;
   }
   @keyframes glowFadeIn {
     0% { text-shadow: none; }
-    100% { text-shadow: 0 0 5px #8b00e7, 0 0 12px #c500e7; }
+    100% { text-shadow: 0 0 5px var(--flame-glow1), 0 0 12px var(--flame-glow2); }
   }
   @keyframes flamePulse {
-    0% { transform: scale(1); text-shadow: 0 0 5px #8b00e7, 0 0 12px #c500e7; }
-    50% { transform: scale(1.04); text-shadow: 0 0 7px #a500ff, 0 0 15px #c500e7; }
-    100% { transform: scale(1); text-shadow: 0 0 5px #8b00e7, 0 0 12px #c500e7; }
-  }
-  .flame-count {
-    display: none;
+    0% { transform: scale(1); text-shadow: 0 0 5px var(--flame-glow1), 0 0 12px var(--flame-glow2); }
+    50% { transform: scale(1.03); text-shadow: 0 0 7px var(--flame-glow2), 0 0 15px var(--flame-glow2); }
+    100% { transform: scale(1); text-shadow: 0 0 5px var(--flame-glow1), 0 0 12px var(--flame-glow2); }
   }
   .f-points {
     font-size: 18px;
     font-weight: 700;
-    color: #c500e7;
+    color: var(--flame-active);
   }
   .f-points span {
     font-weight: 400;
@@ -170,11 +181,11 @@
   .gain-popup {
     position: absolute;
     font-size: 16px;
-    color: #ffeb3b;
+    color: var(--gain-color);
     font-weight: bold;
     opacity: 0;
     transform: scale(0.5);
-    animation: popFade 2.5s forwards; /* raccourci */
+    animation: popFade 2.5s forwards;
     margin-left: 2px;
   }
   @keyframes popFade {
@@ -224,15 +235,16 @@
   const GAIN_INTERVAL_SEC = 10;
   const ANIMATION_DURATION = 2500;
   const LOCALSTORAGE_KEY = "pomodoro_cagnotte";
-  const PROGRESS_SMOOTHING = 0.015; // plus fluide
+  const PROGRESS_SMOOTHING = 0.015;
 
   let totalSeconds = 0;
   let remainingSeconds = 0;
   let endTime = 0;
   let isRunning = false;
   let fPoints = 0;
-  let lastGainTime = 0;
+  let accumulatedGainTime = 0; // temps cumulé depuis dernier +1
   let displayedPercent = 0;
+  let lastTickTime = 0;
 
   const savedPoints = localStorage.getItem(LOCALSTORAGE_KEY);
   if (savedPoints) fPoints = parseInt(savedPoints);
@@ -290,24 +302,28 @@
     setTimeout(() => popup.remove(), ANIMATION_DURATION);
   }
 
-  function tick() {
+  function tick(timestamp) {
     if (!isRunning) return;
-    const now = performance.now();
-    remainingSeconds = Math.max(0, Math.round((endTime - now) / 1000));
+    if (!lastTickTime) lastTickTime = timestamp;
+    const delta = (timestamp - lastTickTime) / 1000;
+    lastTickTime = timestamp;
+
+    accumulatedGainTime += delta;
+    while (accumulatedGainTime >= GAIN_INTERVAL_SEC) {
+      fPoints++;
+      localStorage.setItem(LOCALSTORAGE_KEY, fPoints);
+      fPointsDisplay.innerHTML = formatPoints(fPoints);
+      showGainAnimation();
+      accumulatedGainTime -= GAIN_INTERVAL_SEC;
+    }
+
+    remainingSeconds = Math.max(0, Math.round((endTime - timestamp) / 1000));
 
     if (remainingSeconds === 0) {
       isRunning = false;
       playBtn.src = "PLAY.png";
       flameLogo.classList.remove("active");
       return;
-    }
-
-    if (now - lastGainTime >= GAIN_INTERVAL_SEC * 1000) {
-      fPoints++;
-      localStorage.setItem(LOCALSTORAGE_KEY, fPoints);
-      fPointsDisplay.innerHTML = formatPoints(fPoints);
-      showGainAnimation();
-      lastGainTime = now;
     }
 
     updateTimerDisplay(remainingSeconds);
@@ -326,8 +342,8 @@
     if (!isRunning) {
       if (remainingSeconds === 0) resetTimerToBoxValue();
       endTime = performance.now() + remainingSeconds * 1000;
-      lastGainTime = performance.now();
       isRunning = true;
+      lastTickTime = 0;
       playBtn.src = "PAUSE.png";
       flameLogo.classList.add("active");
       requestAnimationFrame(tick);
@@ -341,6 +357,7 @@
 
   stopBtn.addEventListener('click', () => {
     isRunning = false;
+    accumulatedGainTime = 0; // reset uniquement ici
     playBtn.src = "PLAY.png";
     flameLogo.classList.remove("active");
     resetTimerToBoxValue();
