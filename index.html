@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Pomodoro Widget</title>
+<!-- Police JetBrains Mono pour l'interface et Noto Sans JP pour le logo -->
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400&family=Noto+Sans+JP:wght@700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -18,6 +19,13 @@
     --gain-color: #db44fc;   /* Couleur du +1 */
   }
 
+  /* Light mode override (toggle via JS en ajoutant la classe "light-mode" sur body) */
+  .light-mode {
+    --bg-main: #ffffff;      /* ← couleur de fond en mode clair */
+    --text-light: #191919;
+    --logo-off: #191919;
+  }
+
   body {
     margin: 0;
     background-color: var(--bg-main);
@@ -26,12 +34,16 @@
     font-size: 16px;
   }
 
+  /* Container : largeur responsive pour s'adapter à la zone d'intégration Notion.
+     Tu peux régler max-width si tu veux limiter la largeur par défaut */
   .container {
-    width: 320px;
+    width: 100%;          /* ← rend la largeur adaptative à l'encadré Notion */
+    max-width: 480px;     /* ← modifiable si tu veux un maximum fixe */
     padding: 8px;
     display: flex;
     flex-direction: column;
     gap: 6px;
+    box-sizing: border-box;
   }
 
   /* === Barre de progression === */
@@ -42,12 +54,14 @@
     height: 28px;
     position: relative;
     overflow: hidden;
+    width: 100%; /* prend toute la largeur de .container */
   }
   .progress-fill {
     background-color: var(--primary);
     height: 100%;
     width: 0%;
     box-shadow: 0 0 5px var(--primary);
+    transition: width 0.12s linear; /* animation fluide et réactive */
   }
   .progress-text {
     position: absolute;
@@ -56,7 +70,7 @@
     font-weight: 200;
   }
   .progress-text strong {
-    font-weight: 700;
+    font-weight: 700; /* 𖠁 Gras sur les chiffres du % (tu peux changer ici) */
   }
 
   /* === Bloc Timer + Flamme === */
@@ -79,20 +93,30 @@
     display: flex;
     gap: 4px;
   }
+
+  /* .img-btn utilisé pour images ET bouton toggle (même taille / hover) */
   .img-btn {
-    width: 23px;
-    height: 23px;
+    width: 23px;            /* ← changer ici la taille des boutons */
+    height: 23px;           /* ← changer ici la taille des boutons */
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    background: none;
+    border: none;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
   .img-btn:hover {
-    transform: scale(1.13);
+    transform: scale(1.15); /* ← effet grossissement (changer ici) */
   }
 
   .timer-wrapper {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    flex: 1; /* permet d'utiliser tout l'espace central et donc d'ajuster la longueur */
+    justify-content: flex-end; /* garde la timer à droite sur la même ligne que la barre */
   }
 
   .minutes-box {
@@ -101,11 +125,12 @@
     background-color: var(--bg-main);
     border: 1px solid var(--primary);
     box-shadow: 0 0 3px var(--primary);
-    padding: 0 4px;
+    padding: 0 6px;
+    flex-shrink: 0;
   }
   .minutes-input {
-    width: 32px; /* Largeur réduite pour 3 chiffres max */
-    font-size: 18px; /* Taille texte minutes box */
+    width: 46px;
+    font-size: 16px; /* 𖠁 Taille des chiffres dans la box → modifier ici (ex : 14px/16px/18px) */
     font-family: 'JetBrains Mono', monospace;
     text-align: center;
     border: none;
@@ -119,22 +144,19 @@
     -webkit-appearance: none;
     margin: 0;
   }
-  .minutes-input[type=number] {
-    -moz-appearance: textfield; /* suppression flèches Firefox */
-  }
   .minutes-box span {
     color: var(--primary);
     font-weight: 400;
-    margin-left: 2px;
+    margin-left: 6px;
   }
 
   .timer {
     color: var(--text-dark);
     font-weight: 200;
-    font-size: 18px;
+    font-size: 18px; /* ← Taille du timer (les numéros sont en gras via <strong>) */
   }
   .timer strong {
-    font-weight: 700;
+    font-weight: 700; /* 𖠁 Gras sur les numéros */
   }
 
   /* Flamme + Cagnotte */
@@ -143,60 +165,71 @@
     justify-content: space-between;
     align-items: center;
     position: relative;
+    width: 100%;
   }
   .flame {
     display: flex;
     align-items: center;
     font-size: 18px; /* Taille fixe ON/OFF */
-    font-family: 'Noto Sans JP', sans-serif;
+    font-family: 'Noto Sans JP', sans-serif; /* Police pour 神火 */
     font-weight: bold;
     color: var(--logo-off);
     text-shadow: none;
     position: relative;
-    will-change: transform;
+    will-change: transform, color, text-shadow;
     transition: color 0.25s ease, text-shadow 0.25s ease;
+    margin-left: 2px; /* alignement gauche avec la barre */
   }
   .flame.active {
-    animation: pulseFlame 1.5s ease-in-out infinite;
+    /* léger glow progressif (couleur contrôlée en :root) */
     color: var(--logo-on);
     text-shadow: 0 0 5px var(--accent-glow1), 0 0 12px var(--accent-glow2);
+    /* pulse CSS minimisé (n'affecte plus la taille globale) */
+    animation: pulseFlame 1.6s ease-in-out infinite;
   }
   @keyframes pulseFlame {
-    0%, 100% { transform: scale3d(1, 1, 1); }
-    50% { transform: scale3d(1.025, 1.025, 1); }
+    0%, 100% { transform: translateZ(0) scale3d(1,1,1); }
+    50% { transform: translateZ(0) scale3d(1.015,1.015,1); }
   }
 
   .flame-count {
-    display: none;
+    display: none; /* valeur affichée seulement dans la cagnotte */
   }
   .f-points {
     font-size: 18px;
     font-weight: 700;
     color: var(--accent);
+    white-space: nowrap; /* évite le wrapping */
   }
   .f-points span {
     font-weight: 400;
-    opacity: 0.3;
+    opacity: 0.35; /* zéros plus discrets (opaques) — changer ici si besoin */
   }
 
-  /* Animation +1 plus lente et hauteur réduite */
+  /* Animation +1 : plus fluide, start plus haut, easing agréable */
   .gain-popup {
     position: absolute;
-    font-size: 16px;
+    left: 100%; /* sera repositionné via CSS transform sur la pop-in à côté de la flamme */
+    top: 0;
+    font-size: 15px;
     color: var(--gain-color);
-    font-weight: bold;
+    font-weight: 700;
     opacity: 0;
-    transform: scale(0.9) translateY(0px);
-    animation: popFade 2.5s ease-out forwards;
-    margin-left: 2px;
+    transform-origin: left bottom;
+    will-change: transform, opacity;
+    animation: popFadeSmooth 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     pointer-events: none;
   }
-  @keyframes popFade {
-    0%   { opacity: 0; transform: scale(0.9) translateY(0px); }
-    10%  { opacity: 1; transform: scale(1) translateY(-2px); }
-    70%  { opacity: 1; transform: scale(1) translateY(-6px); }
-    100% { opacity: 0; transform: scale(1) translateY(-8px); }
+  @keyframes popFadeSmooth {
+    0%   { opacity: 0; transform: translate3d(4px,0,0) scale(0.85) translateY(0); }
+    12%  { opacity: 1; transform: translate3d(2px,-6px,0) scale(1.02) translateY(-6px); }
+    55%  { opacity: 0.95; transform: translate3d(0px,-18px,0) scale(1.02) translateY(-18px); }
+    100% { opacity: 0; transform: translate3d(-2px,-30px,0) scale(1.02) translateY(-30px); }
   }
+
+  /* petit reset pour boutons et images */
+  img.img-btn { display: block; }
+  button.img-btn { color: inherit; background: transparent; border: none; }
 
 </style>
 </head>
@@ -204,20 +237,26 @@
 
 <div class="container">
 
+  <!-- Ligne 1 (progress bar) -->
   <div class="progress-bar">
-    <div class="progress-fill"></div>
-    <div class="progress-text"><strong>0</strong>%</div>
+    <div class="progress-fill" id="progressFill"></div>
+    <div class="progress-text" id="progressText"><strong>0</strong>%</div>
   </div>
 
+  <!-- Bloc Timer + Flamme -->
   <div class="timer-flame-block">
+    <!-- Ligne 2 -->
     <div class="controls">
       <div class="btn-group">
         <img src="PLAY.png" alt="Play" class="img-btn" id="playBtn">
         <img src="STOP.png" alt="Stop" class="img-btn" id="stopBtn">
+        <!-- Bouton bascule clair/sombre (pas d'image pour l'instant) -->
+        <button id="bgBtn" class="img-btn" title="Mode clair/sombre">◑</button>
       </div>
+
       <div class="timer-wrapper">
         <div class="minutes-box">
-          <input type="number" class="minutes-input" id="minutesInput" min="1" maxlength="3" value="50">
+          <input type="number" class="minutes-input" id="minutesInput" min="1" value="50">
           <span>m</span>
         </div>
         <div class="timer" id="timerDisplay">
@@ -226,10 +265,11 @@
       </div>
     </div>
 
+    <!-- Ligne 3 -->
     <div class="score">
       <div class="flame" id="flameLogo">
         神火
-        <div id="gainContainer"></div>
+        <div id="gainContainer" style="position:relative; margin-left:6px;"></div>
       </div>
       <div class="f-points" id="fPoints"></div>
     </div>
@@ -237,61 +277,77 @@
 
 </div>
 
+<!-- Sonnerie (mettre NotionRingtone.mp3 dans le même dossier) -->
+<audio id="ringtone" src="NotionRingtone.mp3" preload="auto"></audio>
+
 <script>
-  const GAIN_INTERVAL_SEC = 10;
-  const LOCALSTORAGE_KEY = "pomodoro_cagnotte";
-  const PROGRESS_SMOOTHING = 0.05;
+  /* =========================
+     Paramètres modifiables (ou garder ceux par défaut)
+     - GAIN_INTERVAL_SEC : intervalle (s) pour le +1
+     - MAX_POINTS : plafond de la cagnotte (18 chiffres)
+     - ANIM_DURATION_POP : durée interne du popup (contrôlée par CSS aussi)
+     - minutes-input font-size : changer dans le CSS .minutes-input
+     ========================= */
+  const GAIN_INTERVAL_SEC = 10; // Intervalle de gain en secondes
+  const MAX_POINTS = 999999999999999999; // 18 chiffres max
+  const LOCALSTORAGE_KEY = "pomodoro_cagnotte"; // Clé stockage local
 
-  let totalSeconds = 0;
-  let endTime = 0;
-  let isRunning = false;
-  let fPoints = 0;
-  let elapsedGainTime = 0;
-  let pauseTime = 0;
-  let displayedPercent = 0;
+  // Variables temps / état
+  let totalSeconds = 0;          // durée initiale (en s) pris depuis la box
+  let remainingSeconds = 0;      // temps restant (en s, flottant)
+  let isRunning = false;         // état play/pause
+  let lastTimestamp = null;      // utilisé par requestAnimationFrame
+  let gainTimer = 0;             // accumulateur pour +1
+  let fPoints = parseInt(localStorage.getItem(LOCALSTORAGE_KEY) || "0", 10);
 
+  // Références DOM
   const timerDisplay = document.getElementById('timerDisplay');
   const minutesInput = document.getElementById('minutesInput');
-  const progressFill = document.querySelector('.progress-fill');
-  const progressText = document.querySelector('.progress-text');
+  const progressFill = document.getElementById('progressFill');
+  const progressText = document.getElementById('progressText');
   const playBtn = document.getElementById('playBtn');
   const stopBtn = document.getElementById('stopBtn');
+  const bgBtn = document.getElementById('bgBtn');
   const fPointsDisplay = document.getElementById('fPoints');
   const gainContainer = document.getElementById('gainContainer');
   const flameLogo = document.getElementById('flameLogo');
+  const ringtone = document.getElementById('ringtone');
 
-  const savedPoints = localStorage.getItem(LOCALSTORAGE_KEY);
-  if (savedPoints) fPoints = parseInt(savedPoints);
-
-  const MAX_POINTS = 999999999999999999; // 18 chiffres max
-
+  // affichage initial de la cagnotte
   function formatPoints(value) {
-    const str = String(value).padStart(18, "0");
+    const str = String(value).padStart(18, "0"); // 18 chiffres affichés
     const firstNonZero = str.search(/[^0]/);
+    // les zéros avant le premier non-zero sont moins opaques (span)
     return str.split("").map((digit, i) =>
       i < firstNonZero ? `<span>${digit}</span>` : digit
     ).join("") + "F°";
   }
   fPointsDisplay.innerHTML = formatPoints(fPoints);
 
+  // fonctions utiles
   function addPoints(amount) {
+    if (!amount) return;
     fPoints = Math.min(fPoints + amount, MAX_POINTS);
     localStorage.setItem(LOCALSTORAGE_KEY, fPoints);
     fPointsDisplay.innerHTML = formatPoints(fPoints);
   }
 
   function showGainAnimation() {
+    // popup inséré dans gainContainer (position relative) pour un placement stable
     const popup = document.createElement("div");
     popup.className = "gain-popup";
     popup.textContent = "+1";
+    // positionnement ajusté : on l'ajoute directement à gainContainer (à côté de la flamme)
     gainContainer.appendChild(popup);
-    setTimeout(() => popup.remove(), 2500);
+    // suppression après animation (durée CSS ~1.4s)
+    setTimeout(() => popup.remove(), 1500);
   }
 
-  function updateTimerDisplay(remaining) {
-    let hours = Math.floor(remaining / 3600);
-    let minutes = Math.floor((remaining % 3600) / 60);
-    let seconds = Math.floor(remaining % 60);
+  function updateTimerDisplay(sec) {
+    sec = Math.max(0, Math.floor(sec));
+    let hours = Math.floor(sec / 3600);
+    let minutes = Math.floor((sec % 3600) / 60);
+    let seconds = sec % 60;
     timerDisplay.innerHTML =
       `<strong>${String(hours).padStart(2,'0')}</strong>h` +
       `<strong>${String(minutes).padStart(2,'0')}</strong>m` +
@@ -299,84 +355,144 @@
   }
 
   function updateProgressBar(remaining) {
+    // targetPercent calculé sur base remainingSeconds (pas de lissage fragile)
     let targetPercent = totalSeconds > 0 ? ((totalSeconds - remaining) / totalSeconds) * 100 : 0;
-    displayedPercent += (targetPercent - displayedPercent) * PROGRESS_SMOOTHING;
-    progressFill.style.width = displayedPercent + '%';
-    progressText.innerHTML = `<strong>${Math.floor(displayedPercent)}</strong>%`;
+    targetPercent = Math.max(0, Math.min(100, targetPercent));
+    // On applique directement pour que la barre suive précisément le temps restant
+    progressFill.style.width = targetPercent + '%';
+    progressText.innerHTML = `<strong>${Math.floor(targetPercent)}</strong>%`;
   }
 
+  // reset / initialisation à la valeur de la box (appelé au chargement et sur STOP)
   function resetTimerToBoxValue() {
-    let mins = parseInt(minutesInput.value);
-    if (mins > 0) {
-      totalSeconds = mins * 60;
-      endTime = performance.now() + totalSeconds * 1000;
-      elapsedGainTime = 0;
-      updateTimerDisplay(totalSeconds);
-      updateProgressBar(totalSeconds);
-    }
+    const mins = parseInt(minutesInput.value, 10) || 0;
+    totalSeconds = Math.max(0, mins * 60);
+    remainingSeconds = totalSeconds;
+    gainTimer = 0;
+    lastTimestamp = null;
+    updateTimerDisplay(remainingSeconds);
+    updateProgressBar(remainingSeconds);
   }
 
-  function tick() {
+  // TICK principal (ultra-stable) : utilise delta depuis lastTimestamp
+  function tick(ts) {
     if (!isRunning) return;
-    const now = performance.now();
-    const remaining = Math.max(0, Math.round((endTime - now) / 1000));
+    if (!lastTimestamp) lastTimestamp = ts;
+    const delta = (ts - lastTimestamp) / 1000; // en secondes (float)
+    lastTimestamp = ts;
 
-    elapsedGainTime += (now - pauseTime) / 1000;
-    pauseTime = now;
+    // décrémente temps restant
+    remainingSeconds -= delta;
+    // accumulateur pour +1 pendant que le timer tourne
+    gainTimer += delta;
 
-    if (elapsedGainTime >= GAIN_INTERVAL_SEC) {
-      let gains = Math.floor(elapsedGainTime / GAIN_INTERVAL_SEC);
-      elapsedGainTime -= gains * GAIN_INTERVAL_SEC;
+    // si on dépasse les intervalles de gain (ex: plusieurs gains à la suite), on cumule
+    if (gainTimer >= GAIN_INTERVAL_SEC) {
+      const gains = Math.floor(gainTimer / GAIN_INTERVAL_SEC);
+      gainTimer -= gains * GAIN_INTERVAL_SEC;
       addPoints(gains);
       for (let i = 0; i < gains; i++) showGainAnimation();
     }
 
-    if (remaining <= 0) {
+    // fin du timer
+    if (remainingSeconds <= 0) {
+      remainingSeconds = 0;
       isRunning = false;
-      playBtn.src = "PLAY.png";
-      flameLogo.classList.remove("active");
+      lastTimestamp = null;
+      flameLogo.classList.remove('active');
+      playBtn.src = "PLAY.png"; // image de play (gardée comme avant)
+      updateTimerDisplay(0);
+      updateProgressBar(0);
+      // joue la sonnerie si disponible (peut être bloqué par navigateur si pas d'interaction)
+      try { ringtone.currentTime = 0; ringtone.play().catch(()=>{}); } catch(e){}
       return;
     }
 
-    updateTimerDisplay(remaining);
-    updateProgressBar(remaining);
+    // mise à jour affichage
+    updateTimerDisplay(remainingSeconds);
+    updateProgressBar(remainingSeconds);
+
     requestAnimationFrame(tick);
   }
 
-  minutesInput.addEventListener('change', () => {
-    if (minutesInput.value.length > 3) {
-      minutesInput.value = minutesInput.value.slice(0, 3);
+  /* =========================
+     ÉVÉNEMENTS
+     - Important : la modification de la box (minutesInput) NE DOIT PAS arrêter le timer.
+       On applique la nouvelle valeur uniquement si le timer est déjà arrêté (STOP ou jamais démarré).
+       Si tu veux qu'une modification while running prenne effet, dis-le et j'ajoute un bouton "Appliquer".
+     ========================= */
+
+  // Quand l'utilisateur change la box : si le timer est arrêté, on applique immédiatement.
+  minutesInput.addEventListener('input', () => {
+    // 𖠁 Ici tu peux ajuster la taille des chiffres dans la box -> .minutes-input { font-size: XXpx; }
+    if (!isRunning) {
+      resetTimerToBoxValue();
+    } else {
+      // si timer tourne, on ne fait rien (la nouvelle valeur prendra effet après STOP)
+      // (on pourrait stocker la valeur pour l'appliquer au prochain STOP si tu veux)
     }
-    isRunning = false;
-    playBtn.src = "PLAY.png";
-    flameLogo.classList.remove("active");
-    resetTimerToBoxValue();
   });
 
+  // Play / Pause
   playBtn.addEventListener('click', () => {
     if (!isRunning) {
-      if (totalSeconds === 0) resetTimerToBoxValue();
-      endTime = performance.now() + (totalSeconds * 1000);
-      pauseTime = performance.now();
+      // démarrage : si remainingSeconds est vide (=0), on initialise depuis la box
+      if (remainingSeconds <= 0) resetTimerToBoxValue();
+      if (remainingSeconds <= 0) return; // rien à faire si valeur invalide
       isRunning = true;
-      playBtn.src = "PAUSE.png";
-      flameLogo.classList.add("active");
+      lastTimestamp = null;
+      playBtn.src = "PAUSE.png"; // remplace icône si tu as PAUSE.png
+      flameLogo.classList.add('active');
       requestAnimationFrame(tick);
     } else {
+      // pause
       isRunning = false;
       playBtn.src = "PLAY.png";
-      flameLogo.classList.remove("active");
+      flameLogo.classList.remove('active');
+      lastTimestamp = null;
+      // note : on ne remet pas à zéro gainTimer ; il garde le temps excédentaire pour le prochain play
     }
   });
 
+  // STOP : remet la durée à la valeur de la box et réinitialise toute l'UI (barre à 0 instantanément)
   stopBtn.addEventListener('click', () => {
     isRunning = false;
     playBtn.src = "PLAY.png";
-    flameLogo.classList.remove("active");
+    flameLogo.classList.remove('active');
+    // applique la valeur en box et remet tout à zéro proprement
     resetTimerToBoxValue();
+    // reset visuel immédiat
+    progressFill.style.transition = 'none';       // désactive transition courte pour reset instantané
+    progressFill.style.width = '0%';
+    progressText.innerHTML = `<strong>0</strong>%`;
+    // remise de la transition au prochain tick pour ne pas bloquer l'animation continue
+    setTimeout(()=>{ progressFill.style.transition = 'width 0.12s linear'; }, 40);
+    gainTimer = 0; // on réinitialise le compteur d'intervalle (le joueur veut tout réinitialiser)
   });
 
+  // Toggle background clair/sombre (bouton à droite du STOP)
+  bgBtn.addEventListener('click', () => {
+    document.body.classList.toggle('light-mode');
+  });
+
+  /* =========================
+     Initialisation
+     - on prend la valeur par défaut dans la box et on affiche tout propre
+     ========================= */
   resetTimerToBoxValue();
+  // affichage initial de la cagnotte (déjà appelé plus haut, mais on refresh)
+  fPointsDisplay.innerHTML = formatPoints(fPoints);
+
+  /* =========================
+     Notes / endroits à modifier facilement :
+     - Couleurs : change les variables dans :root (--primary, --accent, --logo-on, --gain-color, etc.)
+     - Taille des boutons : .img-btn { width: XXpx; height: XXpx; }
+     - Effet grossissement au hover : .img-btn:hover { transform: scale(1.15); }
+     - Taille des chiffres de la box : .minutes-input { font-size: 16px; } (changer cette valeur)
+     - Effet néon : box-shadow dans .progress-fill et .timer-flame-block (var(--primary) etc.)
+     - Sonnerie : remplacer NotionRingtone.mp3 par ton fichier (même nom) dans le dossier
+     ========================= */
+
 </script>
 
 </body>
