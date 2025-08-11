@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Pomodoro Widget</title>
+<!-- Police JetBrains Mono pour l'interface et Noto Sans JP pour le logo -->
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400&family=Noto+Sans+JP:wght@700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -105,7 +106,7 @@
   }
   .minutes-input {
     width: 38px;
-    font-size: 18px;
+    font-size: 18px; /* Taille de la police dans la box minutes */
     font-family: 'JetBrains Mono', monospace;
     text-align: center;
     border: none;
@@ -145,7 +146,7 @@
     display: flex;
     align-items: center;
     font-size: 18px; /* Taille fixe ON/OFF */
-    font-family: 'Noto Sans JP', sans-serif;
+    font-family: 'Noto Sans JP', sans-serif; /* Police pour 神火 */
     font-weight: bold;
     color: var(--logo-off);
     text-shadow: none;
@@ -154,7 +155,7 @@
     transition: color 0.25s ease, text-shadow 0.25s ease;
   }
   .flame.active {
-    animation: pulseFlame 1.5s ease-in-out infinite;
+    animation: pulseFlame 1.5s ease-in-out infinite; /* Léger effet pulse */
     color: var(--logo-on);
     text-shadow: 0 0 5px var(--accent-glow1), 0 0 12px var(--accent-glow2);
   }
@@ -177,23 +178,23 @@
   }
 
   /* Animation +1 (plus fluide) */
-.gain-popup {
-  position: absolute;
-  font-size: 16px;
-  color: var(--gain-color);
-  font-weight: bold;
-  opacity: 0;
-  transform: scale(0.7) translateY(0px);
-  animation: popFade 1.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-  margin-left: 2px;
-  pointer-events: none;
-}
-@keyframes popFade {
-  0%   { opacity: 0; transform: scale(0.7) translateY(0px); }
-  10%  { opacity: 1; transform: scale(1) translateY(-4px); }
-  70%  { opacity: 1; transform: scale(1.05) translateY(-18px); }
-  100% { opacity: 0; transform: scale(1.05) translateY(-30px); }
-}
+  .gain-popup {
+    position: absolute;
+    font-size: 16px;
+    color: var(--gain-color);
+    font-weight: bold;
+    opacity: 0;
+    transform: scale(0.7) translateY(0px);
+    animation: popFade 1.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    margin-left: 2px;
+    pointer-events: none;
+  }
+  @keyframes popFade {
+    0%   { opacity: 0; transform: scale(0.7) translateY(0px); }
+    10%  { opacity: 1; transform: scale(1) translateY(-4px); }
+    70%  { opacity: 1; transform: scale(1.05) translateY(-18px); }
+    100% { opacity: 0; transform: scale(1.05) translateY(-30px); }
+  }
 
 </style>
 </head>
@@ -235,10 +236,10 @@
 </div>
 
 <script>
-  const GAIN_INTERVAL_SEC = 10;
-  const ANIMATION_DURATION = 1800;
-  const LOCALSTORAGE_KEY = "pomodoro_cagnotte";
-  const PROGRESS_SMOOTHING = 0.05;
+  const GAIN_INTERVAL_SEC = 10; // Intervalle de gain en secondes
+  const ANIMATION_DURATION = 1800; // Durée de l'animation du +1
+  const LOCALSTORAGE_KEY = "pomodoro_cagnotte"; // Clé de stockage local
+  const PROGRESS_SMOOTHING = 0.05; // Lissage progression barre
 
   let totalSeconds = 0;
   let endTime = 0;
@@ -261,14 +262,30 @@
   const savedPoints = localStorage.getItem(LOCALSTORAGE_KEY);
   if (savedPoints) fPoints = parseInt(savedPoints);
 
+  const MAX_POINTS = 999999999999999999; // 18 chiffres max
+
   function formatPoints(value) {
-    const str = String(value).padStart(14, "0");
+    const str = String(value).padStart(18, "0");
     const firstNonZero = str.search(/[^0]/);
     return str.split("").map((digit, i) =>
       i < firstNonZero ? `<span>${digit}</span>` : digit
     ).join("") + "F°";
   }
   fPointsDisplay.innerHTML = formatPoints(fPoints);
+
+  function addPoints(amount) {
+    fPoints = Math.min(fPoints + amount, MAX_POINTS);
+    localStorage.setItem(LOCALSTORAGE_KEY, fPoints);
+    fPointsDisplay.innerHTML = formatPoints(fPoints);
+  }
+
+  function showGainAnimation() {
+    const popup = document.createElement("div");
+    popup.className = "gain-popup";
+    popup.textContent = "+1";
+    gainContainer.appendChild(popup);
+    setTimeout(() => popup.remove(), 1600);
+  }
 
   function updateTimerDisplay(remaining) {
     let hours = Math.floor(remaining / 3600);
@@ -298,31 +315,6 @@
     }
   }
 
-  const MAX_POINTS = 999999999999999999; // 18 chiffres max
-
-function formatPoints(value) {
-  const str = String(value).padStart(18, "0");
-  const firstNonZero = str.search(/[^0]/);
-  return str.split("").map((digit, i) =>
-    i < firstNonZero ? `<span>${digit}</span>` : digit
-  ).join("") + "F°";
-}
-
-function addPoints(amount) {
-  fPoints = Math.min(fPoints + amount, MAX_POINTS);
-  localStorage.setItem(LOCALSTORAGE_KEY, fPoints);
-  fPointsDisplay.innerHTML = formatPoints(fPoints);
-}
-
-function showGainAnimation() {
-  const popup = document.createElement("div");
-  popup.className = "gain-popup";
-  popup.textContent = "+1";
-  gainContainer.appendChild(popup);
-  setTimeout(() => popup.remove(), 1600);
-}
-
-
   function tick() {
     if (!isRunning) return;
     const now = performance.now();
@@ -332,12 +324,11 @@ function showGainAnimation() {
     pauseTime = now;
 
     if (elapsedGainTime >= GAIN_INTERVAL_SEC) {
-  let gains = Math.floor(elapsedGainTime / GAIN_INTERVAL_SEC);
-  elapsedGainTime -= gains * GAIN_INTERVAL_SEC;
-  addPoints(gains);
-  for (let i = 0; i < gains; i++) showGainAnimation();
-}
-
+      let gains = Math.floor(elapsedGainTime / GAIN_INTERVAL_SEC);
+      elapsedGainTime -= gains * GAIN_INTERVAL_SEC;
+      addPoints(gains);
+      for (let i = 0; i < gains; i++) showGainAnimation();
+    }
 
     if (remaining <= 0) {
       isRunning = false;
