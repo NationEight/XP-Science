@@ -2,333 +2,382 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Timer Stylé</title>
+<title>Pomodoro Widget</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400&family=Noto+Sans+JP:wght@700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --primary: #02e8a1; /* couleur principale (barre et fond turquoise) */
-  --primary-neon: 0 0 10px #02e8a1, 0 0 20px #02e8a1; /* effet néon turquoise */
-  --flame-color: #ff7a00; /* couleur du logo flamme */
-  --flame-neon: 0 0 8px #ff4500, 0 0 12px #ff6347; /* effet néon flamme plus rouge */
-  --gain-color: #ff7a00; /* couleur du +1 */
-  --background: #191919; /* fond global (Notion) */
-  --progress-bg: #444; /* fond de la barre de progression */
-  --progress-fill: #02e8a1; /* remplissage de la barre */
-  --cagnotte-color: #ffffff; /* couleur du texte cagnotte */
-}
+  :root {
+    --bg-main: #191919;
+    --primary: #02e8a1;   /* Couleur principale (barres, bordures, minutes-box) */
+    --accent: #db44fc;    /* Couleur points F° et flamme active */
+    --accent-glow1: #e985ff; /* Glow interne */
+    --accent-glow2: #e985ff; /* Glow externe */
+    --text-light: #ffffff;   /* Texte clair */
+    --text-dark: #191919;    /* Texte sombre */
+    --logo-on: #db44fc;      /* Couleur logo quand timer ON */
+    --logo-off: #ffffff;     /* Couleur logo quand timer OFF */
+    --gain-color: #db44fc;   /* Couleur du +1 */
+  }
 
-body {
-  background: var(--background);
-  color: white;
-  font-family: 'JetBrains Mono', monospace;
-  padding: 20px;
-}
+  body {
+    margin: 0;
+    background-color: var(--bg-main);
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-light);
+    font-size: 16px;
+  }
 
-/* Première ligne : barre + pourcentage */
-.progress-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.progress-bar {
-  flex: 1;
-  height: 10px;
-  background: var(--progress-bg);
-  border-radius: 5px;
-  overflow: hidden;
-}
-.progress-fill {
-  height: 100%;
-  background: var(--progress-fill);
-  width: 0%;
-  transition: width 0.1s linear; /* fluidité de la barre */
-}
-.progress-text {
-  font-size: 18px; /* taille pourcentage */
-  font-weight: 700; /* gras sur les chiffres */
-}
-.progress-text .num {
-  font-weight: 700; /* chiffres gras */
-}
-.progress-text .unit {
-  font-weight: 400; /* % non gras */
-}
+  .container {
+    width: 320px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
 
-/* Bloc timer + flamme */
-.timer-flame-container {
-  margin-top: 10px;
-  background: var(--primary);
-  box-shadow: var(--primary-neon);
-  padding: 10px;
-  border-radius: 10px;
-}
+  /* === Barre de progression === */
+  .progress-bar {
+    display: flex;
+    align-items: center;
+    background-color: #323232;
+    height: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .progress-fill {
+    background-color: var(--primary);
+    height: 100%;
+    width: 0%;
+    box-shadow: 0 0 5px var(--primary);
+  }
+  .progress-text {
+    position: absolute;
+    left: 6px;
+    color: var(--text-dark);
+    font-weight: 200;
+  }
+  .progress-text strong {
+    font-weight: 700;
+  }
 
-/* Timer */
-.timer-row {
-  display: flex;
-  align-items: center;
-  gap: 6px; /* espace entre boutons */
-  margin-bottom: 8px;
-}
-.timer-display {
-  font-size: 18px; /* taille timer */
-  font-weight: 700;
-}
-.timer-display .num {
-  font-weight: 700; /* chiffres gras */
-}
-.timer-display .unit {
-  font-weight: 400;
-}
+  /* === Bloc Timer + Flamme === */
+  .timer-flame-block {
+    background-color: var(--primary);
+    box-shadow: 0 0 5px var(--primary);
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
 
-/* Minutes box */
-.minutes-input {
-  width: 32px; /* largeur réduite pour 3 chiffres */
-  font-size: 18px; /* Taille police box */
-  font-family: 'JetBrains Mono', monospace;
-  text-align: center;
-  border: 1px solid var(--primary);
-  outline: none;
-  background: var(--background);
-  color: var(--primary);
-  font-weight: 700;
-  border-radius: 4px;
-}
-.minutes-input::-webkit-outer-spin-button,
-.minutes-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-.minutes-input[type=number] {
-  -moz-appearance: textfield; /* supprime flèches Firefox */
-}
+  /* Boutons + Timer */
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .btn-group {
+    display: flex;
+    gap: 4px;
+  }
+  .img-btn {
+    width: 23px;
+    height: 23px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .img-btn:hover {
+    transform: scale(1.13);
+  }
 
-/* Boutons */
-button {
-  padding: 6px 10px;
-  border: none;
-  background: var(--primary);
-  box-shadow: var(--primary-neon);
-  color: black;
-  font-weight: bold;
-  border-radius: 6px;
-  transition: transform 0.15s ease;
-}
-button:hover {
-  transform: scale(1.08); /* effet grossissement */
-}
-button:active {
-  transform: scale(0.95);
-}
+  .timer-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
 
-/* Ligne flamme + cagnotte */
-.flame-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.flame-container {
-  display: flex;
-  align-items: center;
-  font-family: 'Noto Sans JP', sans-serif; /* police logo */
-  font-size: 20px; /* taille logo à l’arrêt */
-  color: var(--flame-color);
-  text-shadow: var(--flame-neon);
-  transition: transform 0.3s ease;
-}
-.flame-container.pulsing {
-  animation: pulseFlame 1.5s infinite ease-in-out;
-}
-@keyframes pulseFlame {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.06); }
-}
+  .minutes-box {
+    display: flex;
+    align-items: center;
+    background-color: var(--bg-main);
+    border: 1px solid var(--primary);
+    box-shadow: 0 0 3px var(--primary);
+    padding: 0 4px;
+  }
+  .minutes-input {
+    width: 32px; /* Largeur réduite pour 3 chiffres max */
+    font-size: 18px; /* Taille texte minutes box */
+    font-family: 'JetBrains Mono', monospace;
+    text-align: center;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--primary);
+    font-weight: 700;
+  }
+  .minutes-input::-webkit-outer-spin-button,
+  .minutes-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .minutes-input[type=number] {
+    -moz-appearance: textfield; /* suppression flèches Firefox */
+  }
+  .minutes-box span {
+    color: var(--primary);
+    font-weight: 400;
+    margin-left: 2px;
+  }
 
-/* +1 gain */
-.gain-popup {
-  position: absolute;
-  font-size: 16px;
-  color: var(--gain-color);
-  font-weight: bold;
-  opacity: 0;
-  transform: scale(0.9) translateY(0px);
-  animation: popFadeSmall 2.4s ease-out forwards; /* durée augmentée */
-  margin-left: 2px;
-  pointer-events: none;
-}
-@keyframes popFadeSmall {
-  0%   { opacity: 0; transform: scale(0.9) translateY(0px); }
-  10%  { opacity: 1; transform: scale(1) translateY(-2px); }
-  80%  { opacity: 1; transform: scale(1.05) translateY(-6px); }
-  100% { opacity: 0; transform: scale(1.05) translateY(-6px); }
-}
+  .timer {
+    color: var(--text-dark);
+    font-weight: 200;
+    font-size: 18px;
+  }
+  .timer strong {
+    font-weight: 700;
+  }
 
-/* Cagnotte */
-.cagnotte {
-  font-size: 18px;
-  color: var(--cagnotte-color);
-  font-weight: 700;
-}
-.cagnotte .zeros {
-  opacity: 0.4; /* opacité des zéros */
-}
+  /* Flamme + Cagnotte */
+  .score {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+  }
+  .flame {
+    display: flex;
+    align-items: center;
+    font-size: 18px; /* Taille fixe ON/OFF */
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: bold;
+    color: var(--logo-off);
+    text-shadow: none;
+    position: relative;
+    will-change: transform;
+    transition: color 0.25s ease, text-shadow 0.25s ease;
+  }
+  .flame.active {
+    animation: pulseFlame 1.5s ease-in-out infinite;
+    color: var(--logo-on);
+    text-shadow: 0 0 5px var(--accent-glow1), 0 0 12px var(--accent-glow2);
+  }
+  @keyframes pulseFlame {
+    0%, 100% { transform: scale3d(1, 1, 1); }
+    50% { transform: scale3d(1.025, 1.025, 1); }
+  }
+
+  .flame-count {
+    display: none;
+  }
+  .f-points {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .f-points span {
+    font-weight: 400;
+    opacity: 0.3;
+  }
+
+  /* Animation +1 plus lente et hauteur réduite */
+  .gain-popup {
+    position: absolute;
+    font-size: 16px;
+    color: var(--gain-color);
+    font-weight: bold;
+    opacity: 0;
+    transform: scale(0.9) translateY(0px);
+    animation: popFade 2.5s ease-out forwards;
+    margin-left: 2px;
+    pointer-events: none;
+  }
+  @keyframes popFade {
+    0%   { opacity: 0; transform: scale(0.9) translateY(0px); }
+    10%  { opacity: 1; transform: scale(1) translateY(-2px); }
+    70%  { opacity: 1; transform: scale(1) translateY(-6px); }
+    100% { opacity: 0; transform: scale(1) translateY(-8px); }
+  }
+
 </style>
 </head>
 <body>
 
-<!-- Première ligne -->
-<div class="progress-container">
-  <div class="progress-bar">
-    <div class="progress-fill" id="progressFill"></div>
-  </div>
-  <div class="progress-text">
-    <span class="num" id="progressNum">0</span><span class="unit">%</span>
-  </div>
-</div>
+<div class="container">
 
-<!-- Timer + flamme -->
-<div class="timer-flame-container">
-  <div class="timer-row">
-    <input type="number" id="minutesInput" class="minutes-input" maxlength="3" min="0" max="999">
-    <div class="timer-display" id="timerDisplay">
-      <span class="num">00</span><span class="unit">h</span>
-      <span class="num">00</span><span class="unit">m</span>
-      <span class="num">00</span><span class="unit">s</span>
-    </div>
-    <button id="playBtn">PLAY</button>
-    <button id="stopBtn">STOP</button>
+  <div class="progress-bar">
+    <div class="progress-fill"></div>
+    <div class="progress-text"><strong>0</strong>%</div>
   </div>
-  <div class="flame-row">
-    <div class="flame-container" id="flameLogo">火</div>
-    <div style="position: relative;">
-      <span class="cagnotte"><span class="zeros" id="zerosSpan">00000000000000</span><span id="cagnotteValue">0</span>F°</span>
+
+  <div class="timer-flame-block">
+    <div class="controls">
+      <div class="btn-group">
+        <img src="PLAY.png" alt="Play" class="img-btn" id="playBtn">
+        <img src="STOP.png" alt="Stop" class="img-btn" id="stopBtn">
+      </div>
+      <div class="timer-wrapper">
+        <div class="minutes-box">
+          <input type="number" class="minutes-input" id="minutesInput" min="1" maxlength="3" value="50">
+          <span>m</span>
+        </div>
+        <div class="timer" id="timerDisplay">
+          <strong>00</strong>h<strong>00</strong>m<strong>00</strong>s
+        </div>
+      </div>
+    </div>
+
+    <div class="score">
+      <div class="flame" id="flameLogo">
+        神火
+        <div id="gainContainer"></div>
+      </div>
+      <div class="f-points" id="fPoints"></div>
     </div>
   </div>
+
 </div>
 
 <script>
-/* ===== Variables principales ===== */
-const minutesInput = document.getElementById("minutesInput");
-const timerDisplay = document.getElementById("timerDisplay");
-const playBtn = document.getElementById("playBtn");
-const stopBtn = document.getElementById("stopBtn");
-const progressFill = document.getElementById("progressFill");
-const progressNum = document.getElementById("progressNum");
-const flameLogo = document.getElementById("flameLogo");
-const cagnotteValue = document.getElementById("cagnotteValue");
-const zerosSpan = document.getElementById("zerosSpan");
+  const GAIN_INTERVAL_SEC = 10;
+  const LOCALSTORAGE_KEY = "pomodoro_cagnotte";
+  const PROGRESS_SMOOTHING = 0.05;
 
-let timerDuration = 0;
-let timeLeft = 0;
-let timerInterval;
-let running = false;
-let totalGain = 0;
-let gainCounter = 0;
-let lastGainTime = 0;
+  let totalSeconds = 0;
+  let endTime = 0;
+  let isRunning = false;
+  let fPoints = 0;
+  let elapsedGainTime = 0;
+  let pauseTime = 0;
+  let displayedPercent = 0;
 
-/* ===== Fonctions utilitaires ===== */
-function updateTimerDisplay(sec) {
-  let h = String(Math.floor(sec / 3600)).padStart(2, '0');
-  let m = String(Math.floor((sec % 3600) / 60)).padStart(2, '0');
-  let s = String(sec % 60).padStart(2, '0');
-  timerDisplay.innerHTML =
-    `<span class="num">${h}</span><span class="unit">h</span>` +
-    `<span class="num">${m}</span><span class="unit">m</span>` +
-    `<span class="num">${s}</span><span class="unit">s</span>`;
-}
+  const timerDisplay = document.getElementById('timerDisplay');
+  const minutesInput = document.getElementById('minutesInput');
+  const progressFill = document.querySelector('.progress-fill');
+  const progressText = document.querySelector('.progress-text');
+  const playBtn = document.getElementById('playBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const fPointsDisplay = document.getElementById('fPoints');
+  const gainContainer = document.getElementById('gainContainer');
+  const flameLogo = document.getElementById('flameLogo');
 
-function updateProgress() {
-  let percent = ((timerDuration - timeLeft) / timerDuration) * 100 || 0;
-  progressFill.style.width = percent.toFixed(2) + "%";
-  progressNum.textContent = Math.floor(percent);
-}
+  const savedPoints = localStorage.getItem(LOCALSTORAGE_KEY);
+  if (savedPoints) fPoints = parseInt(savedPoints);
 
-function resetProgress() {
-  progressFill.style.width = "0%";
-  progressNum.textContent = "0";
-}
+  const MAX_POINTS = 999999999999999999; // 18 chiffres max
 
-/* Animation du +1 */
-function showGainAnimation() {
-  const popup = document.createElement("div");
-  popup.className = "gain-popup";
-  popup.textContent = "+1";
-  flameLogo.appendChild(popup);
-  setTimeout(() => popup.remove(), 2400);
-}
-
-/* ===== Contrôles ===== */
-minutesInput.addEventListener('input', () => {
-  if (minutesInput.value.length > 3) {
-    minutesInput.value = minutesInput.value.slice(0, 3);
+  function formatPoints(value) {
+    const str = String(value).padStart(18, "0");
+    const firstNonZero = str.search(/[^0]/);
+    return str.split("").map((digit, i) =>
+      i < firstNonZero ? `<span>${digit}</span>` : digit
+    ).join("") + "F°";
   }
-  if (running) {
-    clearInterval(timerInterval);
-    running = false;
-    playBtn.textContent = "PLAY";
-    flameLogo.classList.remove("pulsing");
-  }
-  timerDuration = parseInt(minutesInput.value || 0) * 60;
-  timeLeft = timerDuration;
-  updateTimerDisplay(timeLeft);
-  resetProgress();
-});
+  fPointsDisplay.innerHTML = formatPoints(fPoints);
 
-playBtn.addEventListener('click', () => {
-  if (!running) {
-    if (timeLeft <= 0) {
-      timerDuration = parseInt(minutesInput.value || 0) * 60;
-      timeLeft = timerDuration;
-      resetProgress();
+  function addPoints(amount) {
+    fPoints = Math.min(fPoints + amount, MAX_POINTS);
+    localStorage.setItem(LOCALSTORAGE_KEY, fPoints);
+    fPointsDisplay.innerHTML = formatPoints(fPoints);
+  }
+
+  function showGainAnimation() {
+    const popup = document.createElement("div");
+    popup.className = "gain-popup";
+    popup.textContent = "+1";
+    gainContainer.appendChild(popup);
+    setTimeout(() => popup.remove(), 2500);
+  }
+
+  function updateTimerDisplay(remaining) {
+    let hours = Math.floor(remaining / 3600);
+    let minutes = Math.floor((remaining % 3600) / 60);
+    let seconds = Math.floor(remaining % 60);
+    timerDisplay.innerHTML =
+      `<strong>${String(hours).padStart(2,'0')}</strong>h` +
+      `<strong>${String(minutes).padStart(2,'0')}</strong>m` +
+      `<strong>${String(seconds).padStart(2,'0')}</strong>s`;
+  }
+
+  function updateProgressBar(remaining) {
+    let targetPercent = totalSeconds > 0 ? ((totalSeconds - remaining) / totalSeconds) * 100 : 0;
+    displayedPercent += (targetPercent - displayedPercent) * PROGRESS_SMOOTHING;
+    progressFill.style.width = displayedPercent + '%';
+    progressText.innerHTML = `<strong>${Math.floor(displayedPercent)}</strong>%`;
+  }
+
+  function resetTimerToBoxValue() {
+    let mins = parseInt(minutesInput.value);
+    if (mins > 0) {
+      totalSeconds = mins * 60;
+      endTime = performance.now() + totalSeconds * 1000;
+      elapsedGainTime = 0;
+      updateTimerDisplay(totalSeconds);
+      updateProgressBar(totalSeconds);
     }
-    lastGainTime = Date.now() - (gainCounter * 1000); // garde le décompte partiel
-    running = true;
-    playBtn.textContent = "PAUSE";
-    flameLogo.classList.add("pulsing");
-    timerInterval = setInterval(() => {
-      timeLeft--;
-      updateTimerDisplay(timeLeft);
-      updateProgress();
-      // Gestion du +1 toutes les 10s réelles
-      if (Date.now() - lastGainTime >= 10000) {
-        totalGain++;
-        gainCounter = 0;
-        lastGainTime = Date.now();
-        cagnotteValue.textContent = totalGain;
-        showGainAnimation();
-      } else {
-        gainCounter = Math.floor((Date.now() - lastGainTime) / 1000);
-      }
-      if (timeLeft <= 0) {
-        clearInterval(timerInterval);
-        running = false;
-        playBtn.textContent = "PLAY";
-        flameLogo.classList.remove("pulsing");
-      }
-    }, 1000);
-  } else {
-    running = false;
-    clearInterval(timerInterval);
-    playBtn.textContent = "PLAY";
-    flameLogo.classList.remove("pulsing");
   }
-});
 
-stopBtn.addEventListener('click', () => {
-  running = false;
-  clearInterval(timerInterval);
-  playBtn.textContent = "PLAY";
-  flameLogo.classList.remove("pulsing");
-  timeLeft = parseInt(minutesInput.value || 0) * 60;
-  updateTimerDisplay(timeLeft);
-  resetProgress();
-  gainCounter = 0;
-  lastGainTime = 0;
-});
+  function tick() {
+    if (!isRunning) return;
+    const now = performance.now();
+    const remaining = Math.max(0, Math.round((endTime - now) / 1000));
 
-/* Valeurs initiales */
-minutesInput.value = "";
-updateTimerDisplay(0);
+    elapsedGainTime += (now - pauseTime) / 1000;
+    pauseTime = now;
+
+    if (elapsedGainTime >= GAIN_INTERVAL_SEC) {
+      let gains = Math.floor(elapsedGainTime / GAIN_INTERVAL_SEC);
+      elapsedGainTime -= gains * GAIN_INTERVAL_SEC;
+      addPoints(gains);
+      for (let i = 0; i < gains; i++) showGainAnimation();
+    }
+
+    if (remaining <= 0) {
+      isRunning = false;
+      playBtn.src = "PLAY.png";
+      flameLogo.classList.remove("active");
+      return;
+    }
+
+    updateTimerDisplay(remaining);
+    updateProgressBar(remaining);
+    requestAnimationFrame(tick);
+  }
+
+  minutesInput.addEventListener('change', () => {
+    if (minutesInput.value.length > 3) {
+      minutesInput.value = minutesInput.value.slice(0, 3);
+    }
+    isRunning = false;
+    playBtn.src = "PLAY.png";
+    flameLogo.classList.remove("active");
+    resetTimerToBoxValue();
+  });
+
+  playBtn.addEventListener('click', () => {
+    if (!isRunning) {
+      if (totalSeconds === 0) resetTimerToBoxValue();
+      endTime = performance.now() + (totalSeconds * 1000);
+      pauseTime = performance.now();
+      isRunning = true;
+      playBtn.src = "PAUSE.png";
+      flameLogo.classList.add("active");
+      requestAnimationFrame(tick);
+    } else {
+      isRunning = false;
+      playBtn.src = "PLAY.png";
+      flameLogo.classList.remove("active");
+    }
+  });
+
+  stopBtn.addEventListener('click', () => {
+    isRunning = false;
+    playBtn.src = "PLAY.png";
+    flameLogo.classList.remove("active");
+    resetTimerToBoxValue();
+  });
+
+  resetTimerToBoxValue();
 </script>
+
 </body>
 </html>
