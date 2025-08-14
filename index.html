@@ -320,7 +320,7 @@
     // les zéros avant le premier non-zero sont moins opaques (span)
     return str.split("").map((digit, i) =>
       i < firstNonZero ? `<span>${digit}</span>` : digit
-    ).join("") + "⚘";
+    ).join("") + "💮";
   }
   fPointsDisplay.innerHTML = formatPoints(fPoints);
 
