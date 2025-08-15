@@ -119,7 +119,7 @@
   }
 
   .minutes-box {
-    height: 23px;                             /* ← hauteur du bloc timer */
+    height: 23px;                             /* ← hauteur de la box */
     display: flex;
     align-items: center;
     background-color: var(--bg-main);
@@ -216,17 +216,17 @@
   font-weight: 700;
   transform-origin: left bottom;
   will-change: transform, opacity;
-  animation: popFadeSmooth 2s linear forwards;
+  animation: popFadeSmooth 1.8s linear forwards;
   pointer-events: none;
   }
 
 @keyframes popFadeSmooth {
-  0%   { opacity: 0;   transform: translateY(-10px) scale(0.85); }   /* fade in */
-  20%  { opacity: 0.5; transform: translateY(-12px) scale(0.90); }   /* fade in */
-  40%  { opacity: 1;   transform: translateY(-14px) scale(0.90); }  
-  60%  { opacity: 1;   transform: translateY(-16px) scale(0.90); }  
-  80%  { opacity: 0.5; transform: translateY(-18px) scale(0.90); }  /* fade out */
-  100% { opacity: 0;   transform: translateY(-20px) scale(0.85); }  /* fade out */
+  0%   { opacity: 0;   transform: translateY(-14px) scale(0.85); }   /* fade in */
+  20%  { opacity: 0.5; transform: translateY(-16px) scale(0.90); }   /* fade in */
+  40%  { opacity: 1;   transform: translateY(-18px) scale(0.90); }  
+  60%  { opacity: 0.8; transform: translateY(-20px) scale(0.90); }  
+  80%  { opacity: 0.4; transform: translateY(-22px) scale(0.90); }  /* fade out */
+  100% { opacity: 0;   transform: translateY(-24px) scale(0.85); }  /* fade out */
   }
 
   /* petit reset pour boutons et images */
@@ -342,7 +342,7 @@
     // positionnement ajusté : on l'ajoute directement à gainContainer (à côté de la flamme)
     gainContainer.appendChild(popup);
     // suppression après animation (durée CSS ~1.4s)
-    setTimeout(() => popup.remove(), 2000);       /* ← durée de l'animation du +1 */ 
+    setTimeout(() => popup.remove(), 1800);       /* ← durée de l'animation du +1 */ 
   }
 
   function updateTimerDisplay(sec) {
