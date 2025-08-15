@@ -76,10 +76,10 @@
   .timer-flame-block {
     background-color: var(--primary);
     box-shadow: 0 0 4px var(--primary);       /* ← effet néon sur le gros bloc timer */
-    padding: 6px;                             /* ← hauteur du bloc timer */
+    padding: 2px;                             /* ← hauteur du bloc timer */
     display: flex;
     flex-direction: column;
-    gap: 5px;                                 /* ← marge entre la première et deuxième ligne du bloc timer */
+    gap: 2px;                                 /* ← marge entre la première et deuxième ligne du bloc timer */
   }
 
   /* Boutons + Timer */
@@ -119,17 +119,19 @@
   }
 
   .minutes-box {
+    height: 22px;
     display: flex;
     align-items: center;
     background-color: var(--bg-main);
-    border: 1px solid var(--primary);
+    border: 0px solid var(--primary);
     box-shadow: 0 0 3px var(--primary);
-    padding: 0 5px;                           
+    padding: 0 4px;                           /* ← longueur de la box */                 
     flex-shrink: 0;
   }
   .minutes-input {
-    width: 42px;                              /* ← longueur de la box */
-    font-size: 23px;                          /* ← taille des chiffres dans la box */
+    height: 18px;
+    width: 42px;                              /* ← longueur des nombres dans la box */
+    font-size: 22px;                          /* ← taille des chiffres dans la box */
     font-family: 'Teko', monospace;           /* ← police dans la box */
     text-align: center;
     border: none;
