@@ -3,25 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <title>Pomodoro Widget</title>
-<!-- Police JetBrains Mono pour l'interface et Noto Sans JP pour le logo -->
+<!-- Police pour l'interface et pour le symbol -->
 <link href="https://fonts.googleapis.com/css2?family=Teko:wght@200;400&family=Noto+Sans+JP:wght@700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg-main: #191919;
-    --primary: #02e8a1;   /* Couleur principale (barres, bordures, minutes-box) */
-    --accent: #db44fc;    /* Couleur points F° et flamme active */
-    --accent-glow1: #e985ff; /* Glow interne */
-    --accent-glow2: #e985ff; /* Glow externe */
-    --text-light: #ffffff;   /* Texte clair */
-    --text-dark: #191919;    /* Texte sombre */
-    --logo-on: #db44fc;      /* Couleur logo quand timer ON */
-    --logo-off: #ffffff;     /* Couleur logo quand timer OFF */
-    --gain-color: #db44fc;   /* Couleur du +1 */
+    --primary: #02e8a1;                       /* ← couleur principale (barres, bordures, minutes-box) */
+    --accent: #db44fc;                        /* ← couleur cagnotte et du symbol active */
+    --accent-glow1: #e985ff;                  /* ← glow interne */
+    --accent-glow2: #e985ff;                  /* ← glow externe */
+    --text-light: #ffffff;                    /* ← texte clair */
+    --text-dark: #191919;                     /* ← texte sombre */
+    --logo-on: #db44fc;                       /* ← couleur symbol quand timer ON */
+    --logo-off: #ffffff;                      /* ← couleur symbol quand timer OFF */
+    --gain-color: #db44fc;                    /* ← couleur du +1 */
   }
 
   /* Light mode override (toggle via JS en ajoutant la classe "light-mode" sur body) */
   .light-mode {
-    --bg-main: #ffffff;      /* ← couleur de fond en mode clair */
+    --bg-main: #ffffff;                       /* ← couleur de fond en mode clair */
     --text-light: #191919;
     --logo-off: #191919;
   }
@@ -34,15 +34,14 @@
     font-size: 16px;
   }
 
-  /* Container : largeur responsive pour s'adapter à la zone d'intégration Notion.
-     Tu peux régler max-width si tu veux limiter la largeur par défaut */
+  /* Container : largeur responsive pour s'adapter à la zone d'intégration Notion */
   .container {
-    width: 100%;          /* ← rend la largeur adaptative à l'encadré Notion */
-    max-width: 700px;     /* ← modifiable si tu veux un maximum fixe */
-    padding: 8px;
+    width: 100%;                              /* ← rend la largeur adaptative à l'encadré Notion */
+    max-width: 1000px;                        /* ← modifiable si tu veux un maximum fixe */
+    padding: 4px;                             /* ← marge globale */
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 6px;                                 /* ← espace entre les deux bloc (progress-bar & timer) */
     box-sizing: border-box;
   }
 
@@ -51,17 +50,17 @@
     display: flex;
     align-items: center;
     background-color: #323232;
-    height: 28px;
+    height: 28px;                             /* ← hauteur de la progress-bar */
     position: relative;
     overflow: hidden;
-    width: 100%; /* prend toute la largeur de .container */
+    width: 100%;                              /* ← prend toute la largeur de .container */
   }
   .progress-fill {
     background-color: var(--primary);
     height: 100%;
     width: 0%;
     box-shadow: 0 0 5px var(--primary);
-    transition: width 0.12s linear; /* animation fluide et réactive */
+    transition: width 0.12s linear;           /* ← animation fluide et réactive */
   }
   .progress-text {
     position: absolute;
@@ -70,14 +69,14 @@
     font-weight: 200;
   }
   .progress-text strong {
-    font-weight: 700; /* 𖠁 Gras sur les chiffres du % (tu peux changer ici) */
+    font-weight: 700;                         /* ← gras sur les chiffres du % */
   }
 
-  /* === Bloc Timer + Flamme === */
+  /* === Bloc Timer + Symbol === */
   .timer-flame-block {
     background-color: var(--primary);
-    box-shadow: 0 0 5px var(--primary);
-    padding: 6px;
+    box-shadow: 0 0 4px var(--primary);       /* ← effet néon sur le gros bloc timer */
+    padding: 6px;                             /* ← hauteur du bloc timer */
     display: flex;
     flex-direction: column;
     gap: 6px;
