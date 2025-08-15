@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Pomodoro Widget</title>
 <!-- Police JetBrains Mono pour l'interface et Noto Sans JP pour le logo -->
-<link href="https://fonts.googleapis.com/css2?family=Geo:wght@400;700&family=Noto+Sans+JP:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400&family=Noto+Sans+JP:wght@700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg-main: #191919;
@@ -27,9 +27,11 @@
   }
 
   body {
-    font-family: 'Geo', monospace; /* remplace JetBrains */
-    font-size: 18px;               /* même que avant */
-    font-size-adjust: 0.8;         /* ajuste la taille pour compenser x-height */
+    margin: 0;
+    background-color: var(--bg-main);
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-light);
+    font-size: 16px;
   }
 
   /* Container : largeur responsive pour s'adapter à la zone d'intégration Notion.
