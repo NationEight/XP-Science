@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Pomodoro Widget</title>
 <!-- Police pour l'interface et pour le symbol -->
-<link href="https://fonts.googleapis.com/css2?family=Teko:wght@200;400&family=Noto+Sans+JP:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;800&family=Noto+Sans+JP:wght@700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg-main: #191919;
@@ -79,7 +79,7 @@
     padding: 6px;                             /* ← hauteur du bloc timer */
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;                                 /* ← marge entre la première et deuxième ligne du bloc timer */
   }
 
   /* Boutons + Timer */
@@ -90,13 +90,13 @@
   }
   .btn-group {
     display: flex;
-    gap: 4px;
+    gap: 4px;                                 /* ← marge entre les deux boutons (PLAY & STOP) */
   }
 
   /* .img-btn utilisé pour images ET bouton toggle (même taille / hover) */
   .img-btn {
-    width: 23px;            /* ← changer ici la taille des boutons */
-    height: 23px;           /* ← changer ici la taille des boutons */
+    width: 23px;                              /* ← changer ici la taille des boutons */
+    height: 23px;                             /* ← changer ici la taille des boutons */
     cursor: pointer;
     transition: transform 0.18s ease, box-shadow 0.18s ease;
     background: none;
@@ -107,15 +107,15 @@
     justify-content: center;
   }
   .img-btn:hover {
-    transform: scale(1.15); /* ← effet grossissement (changer ici) */
+    transform: scale(1.15);                   /* ← effet grossissement des boutons */
   }
 
   .timer-wrapper {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex: 1; /* permet d'utiliser tout l'espace central et donc d'ajuster la longueur */
-    justify-content: flex-end; /* garde la timer à droite sur la même ligne que la barre */
+    gap: 8px;                                 /* ← marge entre le timer et la box */
+    flex: 1;                                  /* ← permet d'utiliser tout l'espace central et donc d'ajuster la longueur */
+    justify-content: flex-end;                /* ← garde la timer à droite sur la même ligne que la barre */
   }
 
   .minutes-box {
@@ -124,13 +124,13 @@
     background-color: var(--bg-main);
     border: 1px solid var(--primary);
     box-shadow: 0 0 3px var(--primary);
-    padding: 0 6px;
+    padding: 0 5px;                           
     flex-shrink: 0;
   }
   .minutes-input {
-    width: 46px;
-    font-size: 16px; /* 𖠁 Taille des chiffres dans la box → modifier ici (ex : 14px/16px/18px) */
-    font-family: 'Teko', monospace;
+    width: 42px;                              /* ← longueur de la box */
+    font-size: 16px;                          /* ← taille des chiffres dans la box */
+    font-family: 'Teko', monospace;           /* ← police dans la box */
     text-align: center;
     border: none;
     outline: none;
@@ -146,19 +146,19 @@
   .minutes-box span {
     color: var(--primary);
     font-weight: 400;
-    margin-left: 6px;
+    margin-left: 4px;                         /* ← marge dans la box entre la valeur et le "m" */
   }
 
   .timer {
     color: var(--text-dark);
     font-weight: 200;
-    font-size: 18px; /* ← Taille du timer (les numéros sont en gras via <strong>) */
+    font-size: 18px;                          /* ← taille de la police du timer */
   }
   .timer strong {
-    font-weight: 700; /* Gras sur les numéros */
+    font-weight: 700;                         /* ← gras sur les numéros du timer */
   }
 
-  /* Flamme + Cagnotte */
+  /* Symbol + Cagnotte */
   .score {
     display: flex;
     justify-content: space-between;
@@ -169,15 +169,15 @@
   .flame {
     display: flex;
     align-items: center;
-    font-size: 18px; /* Taille fixe ON/OFF */
-    font-family: 'Noto Sans JP', sans-serif; /* Police pour 神火 */
-    font-weight: bold;
+    font-size: 18px;                          /* ← taille du symbol (en ON et en OFF) */
+    font-family: 'Noto Sans JP', sans-serif;  /* ← police du symbol */
+    font-weight: regular;                     /* ← regular ou bold */
     color: var(--logo-off);
     text-shadow: none;
     position: relative;
     will-change: transform, color, text-shadow;
     transition: color 0.25s ease, text-shadow 0.25s ease;
-    margin-left: 2px; /* alignement gauche avec la barre */
+    margin-left: 2px;                         /* ← marge à gauche du symbol */
   }
   .flame.active {
     /* léger glow progressif (couleur contrôlée en :root) */
@@ -188,17 +188,17 @@
   }
   @keyframes pulseFlame {
     0%, 100% { transform: translateZ(0) scale3d(1,1,1); }
-    50% { transform: translateZ(0) scale3d(1.040,1.040,1); }
+    50% { transform: translateZ(0) scale3d(1.040,1.040,1); }    /* ← puissance du pulse effect, modifier la valeur scale3d */
   }
 
   .flame-count {
-    display: none; /* valeur affichée seulement dans la cagnotte */
+    display: none;                            /* ← valeur affichée seulement dans la cagnotte */
   }
   .f-points {
     font-size: 18px;
     font-weight: 700;
     color: var(--accent);
-    white-space: nowrap; /* évite le wrapping */
+    white-space: nowrap;                      /* ← évite le wrapping */
   }
   .f-points span {
     font-weight: 400;
