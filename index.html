@@ -220,12 +220,12 @@
   }
 
 @keyframes popFadeSmooth {
-  0%   { opacity: 0;   transform: translateY(-8px)  scale(0.60); }   /* fade in */
-  20%  { opacity: 0.5; transform: translateY(-12px) scale(0.80); }   /* fade in */
-  40%  { opacity: 1;   transform: translateY(-14px) scale(0.85); }  
+  0%   { opacity: 0;   transform: translateY(-10px) scale(0.85); }   /* fade in */
+  20%  { opacity: 0.5; transform: translateY(-12px) scale(0.90); }   /* fade in */
+  40%  { opacity: 1;   transform: translateY(-14px) scale(0.90); }  
   60%  { opacity: 0.8; transform: translateY(-16px) scale(0.90); }  
-  80%  { opacity: 0.4; transform: translateY(-18px) scale(0.95); }  /* fade out */
-  100% { opacity: 0;   transform: translateY(-20px) scale(0.95); }  /* fade out */
+  80%  { opacity: 0.4; transform: translateY(-18px) scale(0.90); }  /* fade out */
+  100% { opacity: 0;   transform: translateY(-20px) scale(0.85); }  /* fade out */
   }
 
   /* petit reset pour boutons et images */
@@ -289,7 +289,7 @@
      - ANIM_DURATION_POP : durée interne du popup (contrôlée par CSS aussi)
      - minutes-input font-size : changer dans le CSS .minutes-input
      ========================= */
-  const GAIN_INTERVAL_SEC = 4; // Intervalle de gain en secondes
+  const GAIN_INTERVAL_SEC = 10; // Intervalle de gain en secondes
   const MAX_POINTS = 999999999999999999; // 18 chiffres max
   const LOCALSTORAGE_KEY = "pomodoro_cagnotte"; // Clé stockage local
 
