@@ -115,7 +115,7 @@
     align-items: center;
     gap: 8px;                                 /* ← marge entre le timer et la box */
     flex: 1;                                  /* ← permet d'utiliser tout l'espace central et donc d'ajuster la longueur */
-    justify-content: flex-end;                /* ← garde la timer à droite sur la même ligne que la barre */
+    justify-content: flex-end;                /* ← garde le timer à droite sur la même ligne que la barre */
   }
 
   .minutes-box {
@@ -181,49 +181,51 @@
   }
   .flame.active {
     /* léger glow progressif (couleur contrôlée en :root) */
-    color: var(--logo-on);
-    text-shadow: 0 0 5px var(--accent-glow1), 0 0 12px var(--accent-glow2);
+    color: var(--logo-on); 
+    text-shadow: 0 0 2px var(--accent-glow1), 0 0 6px var(--accent-glow2);
     /* pulse CSS minimisé (n'affecte plus la taille globale) */
-    animation: pulseFlame 1.9s ease-in-out infinite;
+    animation: pulseFlame 1.4s ease-in-out infinite;
   }
   @keyframes pulseFlame {
     0%, 100% { transform: translateZ(0) scale3d(1,1,1); }
-    50% { transform: translateZ(0) scale3d(1.040,1.040,1); }    /* ← puissance du pulse effect, modifier la valeur scale3d */
+    50% { transform: translateZ(0) scale3d(1.080,1.080,1); }    /* ← puissance du pulse effect, modifier la valeur scale3d */
   }
 
   .flame-count {
     display: none;                            /* ← valeur affichée seulement dans la cagnotte */
   }
   .f-points {
-    font-size: 18px;
+    font-size: 18px;                          /* ← taille de la police de la cagnotte */
     font-weight: 700;
     color: var(--accent);
     white-space: nowrap;                      /* ← évite le wrapping */
   }
   .f-points span {
     font-weight: 400;
-    opacity: 0.35; /* zéros plus discrets (opaques) — changer ici si besoin */
+    opacity: 0.32;                            /* ← zéros plus discrets */
   }
 
   /* Animation +1 : plus fluide, start plus haut, easing agréable */
   .gain-popup {
-    position: absolute;
-    left: 100%; /* sera repositionné via CSS transform sur la pop-in à côté de la flamme */
-    top: 0;
-    font-size: 15px;
-    color: var(--gain-color);
-    font-weight: 700;
-    opacity: 0;
-    transform-origin: left bottom;
-    will-change: transform, opacity;
-    animation: popFadeSmooth 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    pointer-events: none;
+  position: absolute;
+  left: 100%;
+  top: 0;
+  font-size: 15px;
+  color: var(--gain-color);
+  font-weight: 700;
+  transform-origin: left bottom;
+  will-change: transform, opacity;
+  animation: popFadeSmooth 2s linear forwards;
+  pointer-events: none;
   }
-  @keyframes popFadeSmooth {
-    0%   { opacity: 0; transform: translate3d(4px,0,0) scale(0.85) translateY(0); }
-    12%  { opacity: 1; transform: translate3d(2px,-6px,0) scale(1.02) translateY(-6px); }
-    55%  { opacity: 0.95; transform: translate3d(0px,-18px,0) scale(1.02) translateY(-18px); }
-    100% { opacity: 0; transform: translate3d(-2px,-30px,0) scale(1.02) translateY(-30px); }
+
+@keyframes popFadeSmooth {
+  0%   { opacity: 0;   transform: translateY(-8px)  scale(0.60); }   /* fade in */
+  20%  { opacity: 0.5; transform: translateY(-12px) scale(0.80); }   /* fade in */
+  40%  { opacity: 1;   transform: translateY(-14px) scale(0.85); }  
+  60%  { opacity: 0.8; transform: translateY(-16px) scale(0.90); }  
+  80%  { opacity: 0.4; transform: translateY(-18px) scale(0.95); }  /* fade out */
+  100% { opacity: 0;   transform: translateY(-20px) scale(0.95); }  /* fade out */
   }
 
   /* petit reset pour boutons et images */
@@ -287,7 +289,7 @@
      - ANIM_DURATION_POP : durée interne du popup (contrôlée par CSS aussi)
      - minutes-input font-size : changer dans le CSS .minutes-input
      ========================= */
-  const GAIN_INTERVAL_SEC = 10; // Intervalle de gain en secondes
+  const GAIN_INTERVAL_SEC = 4; // Intervalle de gain en secondes
   const MAX_POINTS = 999999999999999999; // 18 chiffres max
   const LOCALSTORAGE_KEY = "pomodoro_cagnotte"; // Clé stockage local
 
@@ -339,7 +341,7 @@
     // positionnement ajusté : on l'ajoute directement à gainContainer (à côté de la flamme)
     gainContainer.appendChild(popup);
     // suppression après animation (durée CSS ~1.4s)
-    setTimeout(() => popup.remove(), 1500);
+    setTimeout(() => popup.remove(), 2000);       /* ← durée de l'animation du +1 */ 
   }
 
   function updateTimerDisplay(sec) {
