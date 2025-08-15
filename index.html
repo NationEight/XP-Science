@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Pomodoro Widget</title>
 <!-- Police pour l'interface et pour le symbol -->
-<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@400&family=Noto+Sans+JP:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Teko:wght@400&family=Noto+Sans+JP:wght@700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg-main: #191919;
@@ -29,9 +29,9 @@
   body {
     margin: 0;
     background-color: var(--bg-main);
-    font-family: 'Saira Condensed', monospace;
+    font-family: 'Teko', monospace;
     color: var(--text-light);
-    font-size: 20px;
+    font-size: 23px;
   }
 
   /* Container : largeur responsive pour s'adapter à la zone d'intégration Notion */
@@ -129,8 +129,8 @@
   }
   .minutes-input {
     width: 42px;                              /* ← longueur de la box */
-    font-size: 20px;                          /* ← taille des chiffres dans la box */
-    font-family: 'Saira Condensed', monospace;           /* ← police dans la box */
+    font-size: 23px;                          /* ← taille des chiffres dans la box */
+    font-family: 'Teko', monospace;           /* ← police dans la box */
     text-align: center;
     border: none;
     outline: none;
@@ -152,7 +152,7 @@
   .timer {
     color: var(--text-dark);
     font-weight: 200;
-    font-size: 20px;                          /* ← taille de la police du timer */
+    font-size: 23px;                          /* ← taille de la police du timer */
   }
   .timer strong {
     font-weight: 700;                         /* ← gras sur les numéros du timer */
@@ -169,8 +169,8 @@
   .flame {
     display: flex;
     align-items: center;
-    font-size: 18px;                          /* ← taille du symbol (en ON et en OFF) */
-    font-family: 'Saira Condensed', monospace;            /* ← police du symbol */
+    font-size: 20px;                          /* ← taille du symbol (en ON et en OFF) */
+    font-family: 'Teko', monospace;            /* ← police du symbol */
     font-weight: regular;                     /* ← regular ou bold */
     color: var(--logo-off);
     text-shadow: none;
@@ -195,7 +195,7 @@
     display: none;                            /* ← valeur affichée seulement dans la cagnotte */
   }
   .f-points {
-    font-size: 20px;                          /* ← taille de la police de la cagnotte */
+    font-size: 23px;                          /* ← taille de la police de la cagnotte */
     font-weight: 700;
     color: var(--accent);
     white-space: nowrap;                      /* ← évite le wrapping */
@@ -210,7 +210,7 @@
   position: absolute;
   left: 100%;
   top: 0;
-  font-size: 20px;
+  font-size: 23px;
   color: var(--gain-color);
   font-weight: 700;
   transform-origin: left bottom;
