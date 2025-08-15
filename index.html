@@ -119,7 +119,7 @@
   }
 
   .minutes-box {
-    height: 22px;
+    height: 23px;                             /* ← hauteur du bloc timer */
     display: flex;
     align-items: center;
     background-color: var(--bg-main);
@@ -129,7 +129,6 @@
     flex-shrink: 0;
   }
   .minutes-input {
-    height: 18px;
     width: 42px;                              /* ← longueur des nombres dans la box */
     font-size: 22px;                          /* ← taille des chiffres dans la box */
     font-family: 'Teko', monospace;           /* ← police dans la box */
@@ -148,7 +147,7 @@
   .minutes-box span {
     color: var(--primary);
     font-weight: 400;
-    margin-left: 4px;                         /* ← marge dans la box entre la valeur et le "m" */
+    margin-left: 2px;                         /* ← marge dans la box entre la valeur et le "m" */
   }
 
   .timer {
@@ -172,7 +171,7 @@
     display: flex;
     align-items: center;
     font-size: 20px;                          /* ← taille du symbol (en ON et en OFF) */
-    font-family: 'Teko', monospace;            /* ← police du symbol */
+    font-family: 'Teko', monospace;           /* ← police du symbol */
     font-weight: regular;                     /* ← regular ou bold */
     color: var(--logo-off);
     text-shadow: none;
