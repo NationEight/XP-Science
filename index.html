@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Pomodoro Widget</title>
 <!-- Police JetBrains Mono pour l'interface et Noto Sans JP pour le logo -->
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400&family=Noto+Sans+JP:wght@700&family=Qahiri&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400&family=Noto+Sans+JP:wght@700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg-main: #191919;
@@ -29,12 +29,9 @@
   body {
     margin: 0;
     background-color: var(--bg-main);
-    /* Applique Bebas sur tout le widget (fallbacks conservés) */
-    font-family: 'Qahiri', 'Qahiri', monospace;
+    font-family: 'JetBrains Mono', monospace;
     color: var(--text-light);
-    font-size: 18px;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
+    font-size: 16px;
   }
 
   /* Container : largeur responsive pour s'adapter à la zone d'intégration Notion.
@@ -73,7 +70,7 @@
     font-weight: 200;
   }
   .progress-text strong {
-    font-weight: 700; /* Gras sur les chiffres du % (tu peux changer ici) */
+    font-weight: 700; /* 𖠁 Gras sur les chiffres du % (tu peux changer ici) */
   }
 
   /* === Bloc Timer + Flamme === */
@@ -133,8 +130,8 @@
   }
   .minutes-input {
     width: 46px;
-    font-size: 18px; /* 𖠁 Taille des chiffres dans la box → modifier ici (ex : 14px/16px/18px) */
-    font-family: 'Qahiri', monospace;
+    font-size: 16px; /* 𖠁 Taille des chiffres dans la box → modifier ici (ex : 14px/16px/18px) */
+    font-family: 'JetBrains Mono', monospace;
     text-align: center;
     border: none;
     outline: none;
@@ -174,7 +171,7 @@
     display: flex;
     align-items: center;
     font-size: 18px; /* Taille fixe ON/OFF */
-    font-family: 'Qahiri', sans-serif; /* Police pour le Symbol */
+    font-family: 'Noto Sans JP', sans-serif; /* Police pour 神火 */
     font-weight: bold;
     color: var(--logo-off);
     text-shadow: none;
