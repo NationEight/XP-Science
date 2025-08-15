@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Pomodoro Widget</title>
 <!-- Police JetBrains Mono pour l'interface et Noto Sans JP pour le logo -->
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400&family=Noto+Sans+JP:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400&family=Noto+Sans+JP:wght@700&family=Geo&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg-main: #191919;
@@ -29,9 +29,12 @@
   body {
     margin: 0;
     background-color: var(--bg-main);
-    font-family: 'JetBrains Mono', monospace;
+    /* Applique Geo sur tout le widget (fallbacks conservés) */
+    font-family: 'Geo', 'JetBrains Mono', monospace;
     color: var(--text-light);
     font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
   /* Container : largeur responsive pour s'adapter à la zone d'intégration Notion.
@@ -131,7 +134,7 @@
   .minutes-input {
     width: 46px;
     font-size: 16px; /* 𖠁 Taille des chiffres dans la box → modifier ici (ex : 14px/16px/18px) */
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Geo', monospace; /* héritage Geo pour cohérence globale */
     text-align: center;
     border: none;
     outline: none;
@@ -160,39 +163,48 @@
   }
 
   /* Flamme + Cagnotte */
-  .score {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    width: 100%;
-  }
-  .flame {
-    display: flex;
-    align-items: center;
+  .symbol {
+    /* Stabilisation stricte pour éviter tout micro-déplacement */
+    display: inline-grid;           /* boîte fixe */
+    place-items: center;
     font-size: 18px; /* Taille fixe ON/OFF */
-    font-family: 'Noto Sans JP', sans-serif; /* Police pour 神火 */
+    font-family: 'Geo','Noto Sans JP','Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif; /* Geo partout + fallback emoji */
     font-weight: bold;
     color: var(--logo-off);
     text-shadow: none;
     position: relative;
-    will-change: transform, color, text-shadow;
+    will-change: color, text-shadow;
     transition: color 0.25s ease, text-shadow 0.25s ease;
     margin-left: 2px; /* alignement gauche avec la barre */
+    line-height: 1;   /* verrouille la hauteur de ligne */
+    vertical-align: middle;
   }
-  .flame.active {
+  .symbol.active {
     /* léger glow progressif (couleur contrôlée en :root) */
     color: var(--logo-on);
-    text-shadow: 0 0 5px var(--accent-glow1), 0 0 12px var(--accent-glow2);
-    /* pulse CSS minimisé (n'affecte plus la taille globale) */
-    animation: pulseFlame 1.6s ease-in-out infinite;
+    /* On conserve le néon mais SANS scale pour éviter tout shift */
+    animation: neonPulse 1.6s ease-in-out infinite;
+    text-shadow:
+      0 0 5px var(--accent-glow1),
+      0 0 12px var(--accent-glow2);
   }
-  @keyframes pulseFlame {
-    0%, 100% { transform: translateZ(0) scale3d(1,1,1); }
-    50% { transform: translateZ(0) scale3d(1.015,1.015,1); }
+  @keyframes neonPulse {
+    0%, 100% {
+      text-shadow:
+        0 0 5px var(--accent-glow1),
+        0 0 12px var(--accent-glow2);
+      filter: none;
+    }
+    50% {
+      /* Pulse léger uniquement sur l'intensité du néon, pas sur la taille */
+      text-shadow:
+        0 0 7px var(--accent-glow1),
+        0 0 14px var(--accent-glow2);
+      filter: saturate(1.05) brightness(1.02);
+    }
   }
 
-  .flame-count {
+  .symbol-count {
     display: none; /* valeur affichée seulement dans la cagnotte */
   }
   .f-points {
@@ -200,10 +212,14 @@
     font-weight: 700;
     color: var(--accent);
     white-space: nowrap; /* évite le wrapping */
+    font-family: 'Geo', monospace; /* nouvelle police pour le compteur */
+    /* léger néon — appliqué uniquement aux chiffres "principaux" (les zéros sont <span>) */
+    text-shadow: 0 0 4px var(--accent), 0 0 8px var(--accent-glow2);
   }
   .f-points span {
     font-weight: 400;
     opacity: 0.35; /* zéros plus discrets (opaques) — changer ici si besoin */
+    text-shadow: none; /* pas de néon sur les zéros */
   }
 
   /* Animation +1 : plus fluide, start plus haut, easing agréable */
@@ -267,7 +283,7 @@
 
     <!-- Ligne 3 -->
     <div class="score">
-      <div class="flame" id="flameLogo">
+      <div class="symbol" id="symbolLogo">
         🌢
         <div id="gainContainer" style="position:relative; margin-left:6px;"></div>
       </div>
@@ -310,7 +326,7 @@
   const bgBtn = document.getElementById('bgBtn');
   const fPointsDisplay = document.getElementById('fPoints');
   const gainContainer = document.getElementById('gainContainer');
-  const flameLogo = document.getElementById('flameLogo');
+  const symbolLogo = document.getElementById('symbolLogo');
   const ringtone = document.getElementById('ringtone');
 
   // affichage initial de la cagnotte
@@ -320,7 +336,7 @@
     // les zéros avant le premier non-zero sont moins opaques (span)
     return str.split("").map((digit, i) =>
       i < firstNonZero ? `<span>${digit}</span>` : digit
-    ).join("") + "𖠁";
+    ).join("");
   }
   fPointsDisplay.innerHTML = formatPoints(fPoints);
 
@@ -337,7 +353,7 @@
     const popup = document.createElement("div");
     popup.className = "gain-popup";
     popup.textContent = "+1";
-    // positionnement ajusté : on l'ajoute directement à gainContainer (à côté de la flamme)
+    // positionnement ajusté : on l'ajoute directement à gainContainer (à côté du symbole)
     gainContainer.appendChild(popup);
     // suppression après animation (durée CSS ~1.4s)
     setTimeout(() => popup.remove(), 1500);
@@ -399,7 +415,7 @@
       remainingSeconds = 0;
       isRunning = false;
       lastTimestamp = null;
-      flameLogo.classList.remove('active');
+      symbolLogo.classList.remove('active');
       playBtn.src = "PLAY.png"; // image de play (gardée comme avant)
       updateTimerDisplay(0);
       updateProgressBar(0);
@@ -442,13 +458,13 @@
       isRunning = true;
       lastTimestamp = null;
       playBtn.src = "PAUSE.png"; // remplace icône si tu as PAUSE.png
-      flameLogo.classList.add('active');
+      symbolLogo.classList.add('active');
       requestAnimationFrame(tick);
     } else {
       // pause
       isRunning = false;
       playBtn.src = "PLAY.png";
-      flameLogo.classList.remove('active');
+      symbolLogo.classList.remove('active');
       lastTimestamp = null;
       // note : on ne remet pas à zéro gainTimer ; il garde le temps excédentaire pour le prochain play
     }
@@ -458,7 +474,7 @@
   stopBtn.addEventListener('click', () => {
     isRunning = false;
     playBtn.src = "PLAY.png";
-    flameLogo.classList.remove('active');
+    symbolLogo.classList.remove('active');
     // applique la valeur en box et remet tout à zéro proprement
     resetTimerToBoxValue();
     // reset visuel immédiat
