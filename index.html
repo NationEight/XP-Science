@@ -74,9 +74,10 @@
 
   /* === Bloc Timer + Symbol === */
   .timer-flame-block {
+    height: 63px;                             /* ← hauteur du bloc timer */
     background-color: var(--primary);
     box-shadow: 0 0 4px var(--primary);       /* ← effet néon sur le gros bloc timer */
-    padding: 2px;                             /* ← hauteur du bloc timer */
+    padding: 6px;                             /* ← marge du bloc timer (de tout ce qui est à l'intérieur) */
     display: flex;
     flex-direction: column;
     gap: 2px;                                 /* ← marge entre la première et deuxième ligne du bloc timer */
@@ -107,7 +108,7 @@
     justify-content: center;
   }
   .img-btn:hover {
-    transform: scale(1.15);                   /* ← effet grossissement des boutons */
+    transform: scale(1.12);                   /* ← effet grossissement des boutons */
   }
 
   .timer-wrapper {
@@ -221,12 +222,12 @@
   }
 
 @keyframes popFadeSmooth {
-  0%   { opacity: 0;   transform: translateY(-14px) scale(0.85); }   /* fade in */
-  20%  { opacity: 0.5; transform: translateY(-16px) scale(0.90); }   /* fade in */
+  0%   { opacity: 0;   transform: translateY(-16px) scale(0.85); }   /* fade in */
+  20%  { opacity: 0.5; transform: translateY(-17px) scale(0.90); }   /* fade in */
   40%  { opacity: 1;   transform: translateY(-18px) scale(0.90); }  
-  60%  { opacity: 0.8; transform: translateY(-20px) scale(0.90); }  
-  80%  { opacity: 0.4; transform: translateY(-22px) scale(0.90); }  /* fade out */
-  100% { opacity: 0;   transform: translateY(-24px) scale(0.85); }  /* fade out */
+  60%  { opacity: 0.8; transform: translateY(-19px) scale(0.90); }  
+  80%  { opacity: 0.4; transform: translateY(-20px) scale(0.90); }  /* fade out */
+  100% { opacity: 0;   transform: translateY(-21px) scale(0.85); }  /* fade out */
   }
 
   /* petit reset pour boutons et images */
