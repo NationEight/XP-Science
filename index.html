@@ -3,27 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <title>Pomodoro Widget</title>
-<!-- Polices locales -->
+<!-- Police pour l'interface et pour le symbol -->
+<link href="https://fonts.googleapis.com/css2?family=Teko:wght@400&family=Noto+Sans+JP:wght@700&display=swap" rel="stylesheet">
 <style>
-  /* Import de la police Technology depuis le fichier local */
-  @font-face {
-    font-family: 'Technology';
-    src: url('Technology.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-  }
-
   :root {
     --bg-main: #191919;
     --primary: #02e8a1;                       /* ← couleur principale (barres, bordures, minutes-box) */
-    --accent: #db44fc;                        /* ← couleur cagnotte et du symbol active */
-    --accent-glow1: #e985ff;                  /* ← glow interne */
-    --accent-glow2: #e985ff;                  /* ← glow externe */
+    --accent: #02e8a1;                        /* ← couleur cagnotte et du symbol active */
+    --accent-glow1: #02e8a1;                  /* ← glow interne */
+    --accent-glow2: #02e8a1;                  /* ← glow externe */
     --text-light: #ffffff;                    /* ← texte clair */
     --text-dark: #191919;                     /* ← texte sombre */
-    --logo-on: #db44fc;                       /* ← couleur symbol quand timer ON */
+    --logo-on: #02e8a1;                       /* ← couleur symbol quand timer ON */
     --logo-off: #ffffff;                      /* ← couleur symbol quand timer OFF */
-    --gain-color: #db44fc;                    /* ← couleur du +1 */
+    --gain-color: #02e8a1;                    /* ← couleur du +1 */
   }
 
   /* Light mode override (toggle via JS en ajoutant la classe "light-mode" sur body) */
@@ -36,7 +29,7 @@
   body {
     margin: 0;
     background-color: var(--bg-main);
-    font-family: 'Technology', monospace;
+    font-family: 'Teko', monospace;
     color: var(--text-light);
     font-size: 23px;
   }
@@ -82,8 +75,8 @@
   /* === Bloc Timer + Symbol === */
   .timer-flame-block {
     height: 63px;                             /* ← hauteur du bloc timer */
-    background-color: var(--primary);
-    box-shadow: 0 0 4px var(--primary);       /* ← effet néon sur le gros bloc timer */
+    background-color: transparent;            /* ← couleur du bloc timer */
+    box-shadow: 0 0 0px var(--primary);       /* ← effet néon sur le gros bloc timer */
     padding: 6px;                             /* ← marge du bloc timer (de tout ce qui est à l'intérieur) */
     display: flex;
     flex-direction: column;
@@ -160,9 +153,10 @@
   }
 
   .timer {
-    color: var(--text-dark);
+    color: #02e8a1;                           /* ← couleur du timer */
     font-weight: 200;
     font-size: 23px;                          /* ← taille de la police du timer */
+    text-shadow: 0 0 1px var(--accent-glow1), 0 0 2px var(--accent-glow2);
   }
   .timer strong {
     font-weight: 700;                         /* ← gras sur les numéros du timer */
