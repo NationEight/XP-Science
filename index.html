@@ -3,9 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <title>Pomodoro Widget</title>
-<!-- Police pour l'interface et pour le symbol -->
-<link href="https://fonts.googleapis.com/css2?family=Teko:wght@400&family=Noto+Sans+JP:wght@700&display=swap" rel="stylesheet">
+<!-- Polices locales -->
 <style>
+  /* Import de la police Technology depuis le fichier local */
+  @font-face {
+    font-family: 'Technology';
+    src: url('Technology.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
   :root {
     --bg-main: #191919;
     --primary: #02e8a1;                       /* ← couleur principale (barres, bordures, minutes-box) */
@@ -29,7 +36,7 @@
   body {
     margin: 0;
     background-color: var(--bg-main);
-    font-family: 'Teko', monospace;
+    font-family: 'Technology', monospace;
     color: var(--text-light);
     font-size: 23px;
   }
@@ -132,7 +139,7 @@
   .minutes-input {
     width: 42px;                              /* ← longueur des nombres dans la box */
     font-size: 22px;                          /* ← taille des chiffres dans la box */
-    font-family: 'Teko', monospace;           /* ← police dans la box */
+    font-family: 'Technology', monospace;           /* ← police dans la box */
     text-align: center;
     border: none;
     outline: none;
@@ -174,7 +181,7 @@
     display: flex;
     align-items: center;
     font-size: 18px;                          /* ← taille du symbol (en ON et en OFF) */
-    font-family: 'Teko', monospace;           /* ← police du symbol */
+    font-family: 'Technology', monospace;           /* ← police du symbol */
     font-weight: regular;                     /* ← regular ou bold */
     color: var(--logo-off);
     text-shadow: none;
