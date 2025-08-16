@@ -275,7 +275,7 @@
           <span>➥</span>
         </div>
         <div class="timer" id="timerDisplay">
-          <strong>00</strong>h<strong>00</strong>m<strong>00</strong>s
+          <strong>00</strong>:<strong>00</strong>:<strong>00</strong>
         </div>
       </div>
     </div>
@@ -365,8 +365,7 @@
     let seconds = sec % 60;
     timerDisplay.innerHTML =
       `<strong>${String(hours).padStart(2,'0')}</strong>h` +
-      `<strong>${String(minutes).padStart(2,'0')}</strong>m` +
-      `<strong>${String(seconds).padStart(2,'0')}</strong>s`;
+      `<strong>${String(minutes).padStart(2,'0')}</strong>m`;  
   }
 
   function updateProgressBar(remaining) {
