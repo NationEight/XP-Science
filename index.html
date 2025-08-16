@@ -82,12 +82,12 @@
   /* === Bloc Timer + Symbol === */
   .timer-flame-block {
     height: 63px;                             /* ← hauteur du bloc timer */
-    background-color: #191919;            /* ← couleur du bloc timer */
+    background-color: #191919;                /* ← couleur du bloc timer */
     box-shadow: 0 0 0px var(--primary);       /* ← effet néon sur le gros bloc timer */
     padding: 6px;                             /* ← marge du bloc timer (de tout ce qui est à l'intérieur) */
     display: flex;
     flex-direction: column;
-    gap: 2px;                                 /* ← marge entre la première et deuxième ligne du bloc timer */
+    gap: 4px;                                 /* ← marge entre la première et deuxième ligne du bloc timer */
   }
 
   /* Boutons + Timer */
@@ -131,8 +131,8 @@
     display: flex;
     align-items: center;
     background-color: transparent;            /* ← couleur du fond de la box */
-    border: 0px solid var(--primary);
-    box-shadow: 0 0 3px var(--primary);
+    border: 0px solid var(--primary);      
+    box-shadow: 0 0 0px var(--primary);       /* ← effet néon sur la box */
     padding: 0 4px;                           /* ← longueur de la box */                 
     flex-shrink: 0;
   }
@@ -144,7 +144,7 @@
     border: none;
     outline: none;
     height: 23px;                             /* ← hauteur du fond des minutes */
-    background: white;                        /* ← couleur du fond des numbres de la box */
+    background: transparent;                  /* ← couleur du fond des numbres de la box */
     color: #191919;                           /* ← couleur de la police dans la box */
     font-weight: 700;
   }
