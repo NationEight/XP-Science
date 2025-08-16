@@ -144,8 +144,9 @@
     border: none;
     outline: none;
     height: 23px;                             /* ← hauteur du fond des minutes */
-    background: transparent;                  /* ← couleur du fond des numbres de la box */
-    color: #191919;                           /* ← couleur de la police dans la box */
+    background: transparent;                  /* ← couleur du fond des nombres de la box */
+    color: #02e8a1;                           /* ← couleur de la police dans la box */
+    text-shadow: 0 0 1px var(--accent-glow1), 0 0 1px var(--accent-glow2);  /* ← effet neon sur la police de la box */
     font-weight: 700;
   }
   .minutes-input::-webkit-outer-spin-button,
@@ -154,7 +155,8 @@
     margin: 0;
   }
   .minutes-box span {
-    color: #191919;                           /* ← couleur du symbol dans la box */
+    color: #02e8a1;                           /* ← couleur du symbol dans la box */
+    text-shadow: 0 0 1px var(--accent-glow1), 0 0 1px var(--accent-glow2);  /* ← effet neon sur le symbol dans la box */
     font-weight: 400;
     margin-left: 2px;                         /* ← marge dans la box entre la valeur et le "m" */
   }
