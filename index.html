@@ -3,9 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <title>Pomodoro Widget</title>
-<!-- Police pour l'interface et pour le symbol -->
-<link href="https://fonts.googleapis.com/css2?family=Teko:wght@400&family=Noto+Sans+JP:wght@700&display=swap" rel="stylesheet">
+<!-- Polices locales -->
 <style>
+  /* Import de la police Technology depuis le fichier local */
+  @font-face {
+    font-family: 'Technology';
+    src: url('Technology.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
   :root {
     --bg-main: #191919;
     --primary: #02e8a1;                       /* ← couleur principale (barres, bordures, minutes-box) */
@@ -202,6 +209,7 @@
     font-weight: 700;
     color: var(--accent);
     white-space: nowrap;                      /* ← évite le wrapping */
+    text-shadow: 0 0 1px var(--accent-glow1), 0 0 2px var(--accent-glow2);    /* ← effet néon sur la cagnotte */
   }
   .f-points span {
     font-weight: 400;
@@ -260,7 +268,7 @@
 
       <div class="timer-wrapper">
         <div class="minutes-box">
-          <input type="number" class="minutes-input" id="minutesInput" min="1" value="50">
+          <input type="number" class="minutes-input" id="minutesInput" min="1" value="50" maxlength="3"> <!-- blocage des 3 chiffres dans la box -->
           <span>➥</span>
         </div>
         <div class="timer" id="timerDisplay">
@@ -426,15 +434,13 @@
        Si tu veux qu'une modification while running prenne effet, dis-le et j'ajoute un bouton "Appliquer".
      ========================= */
 
-  // Quand l'utilisateur change la box : si le timer est arrêté, on applique immédiatement.
-  minutesInput.addEventListener('input', () => {
-    // 𖠁 Ici tu peux ajuster la taille des chiffres dans la box -> .minutes-input { font-size: XXpx; }
-    if (!isRunning) {
-      resetTimerToBoxValue();
-    } else {
-      // si timer tourne, on ne fait rien (la nouvelle valeur prendra effet après STOP)
-      // (on pourrait stocker la valeur pour l'appliquer au prochain STOP si tu veux)
-    }
+  minutesInput.addEventListener('input', () => {                  
+  if (minutesInput.value.length > 3) {                      /* blocage de la box à 3 chiffres */    
+    minutesInput.value = minutesInput.value.slice(0,3);         
+  }                                                             
+  if (!isRunning) {
+    resetTimerToBoxValue();
+  }
   });
 
   // Play / Pause
