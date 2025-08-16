@@ -15,15 +15,15 @@
 
   :root {
     --bg-main: #191919;
-    --primary: #02e8a1;                       /* ← couleur principale (barres, bordures, minutes-box) */
-    --accent: #02e8a1;                        /* ← couleur cagnotte et du symbol active */
-    --accent-glow1: #02e8a1;                  /* ← glow interne */
-    --accent-glow2: #02e8a1;                  /* ← glow externe */
+    --primary: #51B5D6;                      /* ← couleur principale (barres, bordures, minutes-box) */
+    --accent: #51B5D6;                        /* ← couleur cagnotte et du symbol active */
+    --accent-glow1: #51B5D6;                  /* ← glow interne */
+    --accent-glow2: #51B5D6;                 /* ← glow externe */
     --text-light: #ffffff;                    /* ← texte clair */
     --text-dark: #191919;                     /* ← texte sombre */
-    --logo-on: #02e8a1;                       /* ← couleur symbol quand timer ON */
+    --logo-on: #51B5D6;                       /* ← couleur symbol quand timer ON */
     --logo-off: #ffffff;                      /* ← couleur symbol quand timer OFF */
-    --gain-color: #02e8a1;                    /* ← couleur du +1 */
+    --gain-color: #51B5D6;                    /* ← couleur du +1 */
   }
 
   /* Light mode override (toggle via JS en ajoutant la classe "light-mode" sur body) */
@@ -145,7 +145,7 @@
     outline: none;
     height: 23px;                             /* ← hauteur du fond des minutes */
     background: transparent;                  /* ← couleur du fond des nombres de la box */
-    color: #02e8a1;                           /* ← couleur de la police dans la box */
+    color: #51B5D6;                          /* ← couleur de la police dans la box */
     text-shadow: 0 0 0px var(--accent-glow1), 0 0 1px var(--accent-glow2);  /* ← effet neon sur la police de la box */
     font-weight: 700;
   }
@@ -155,14 +155,14 @@
     margin: 0;
   }
   .minutes-box span {
-    color: #02e8a1;                           /* ← couleur du symbol dans la box */
+    color: #51B5D6;                          /* ← couleur du symbol dans la box */
     text-shadow: 0 0 0px var(--accent-glow1), 0 0 1px var(--accent-glow2);  /* ← effet neon sur le symbol dans la box */
     font-weight: 400;
     margin-left: 2px;                         /* ← marge dans la box entre la valeur et le "m" */
   }
 
   .timer {
-    color: #02e8a1;                           /* ← couleur du timer */
+    color: #51B5D6;                          /* ← couleur du timer */
     font-weight: 200;
     font-size: 24px;                          /* ← taille de la police du timer */
     text-shadow: 0 0 0px var(--accent-glow1), 0 0 1px var(--accent-glow2);  /* ← effet néon sur le timer */
