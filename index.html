@@ -15,10 +15,10 @@
 
   :root {
     --bg-main: #191919;
-    --primary: #51B5D6;                      /* ← couleur principale (barres, bordures, minutes-box) */
+    --primary: #51B5D6;                       /* ← couleur principale (barres, bordures, minutes-box) */
     --accent: #51B5D6;                        /* ← couleur cagnotte et du symbol active */
-    --accent-glow1: #51B5D6;                  /* ← glow interne */
-    --accent-glow2: #51B5D6;                 /* ← glow externe */
+    --accent-glow1: #666457;                  /* ← glow interne */
+    --accent-glow2: #666457;                  /* ← glow externe */
     --text-light: #ffffff;                    /* ← texte clair */
     --text-dark: #191919;                     /* ← texte sombre */
     --logo-on: #51B5D6;                       /* ← couleur symbol quand timer ON */
@@ -82,7 +82,7 @@
   /* === Bloc Timer + Symbol === */
   .timer-flame-block {
     height: 63px;                             /* ← hauteur du bloc timer */
-    background-color: #191919;                /* ← couleur du bloc timer */
+    background-color: #CED6B8;                /* ← couleur du bloc timer */
     box-shadow: 0 0 0px var(--primary);       /* ← effet néon sur le gros bloc timer */
     padding: 6px;                             /* ← marge du bloc timer (de tout ce qui est à l'intérieur) */
     display: flex;
@@ -121,7 +121,7 @@
   .timer-wrapper {
     display: flex;
     align-items: center;
-    gap: 8px;                                 /* ← marge entre le timer et la box */
+    gap: 6px;                                 /* ← marge entre le timer et la box */
     flex: 1;                                  /* ← permet d'utiliser tout l'espace central et donc d'ajuster la longueur */
     justify-content: flex-end;                /* ← garde le timer à droite sur la même ligne que la barre */
   }
@@ -145,8 +145,10 @@
     outline: none;
     height: 23px;                             /* ← hauteur du fond des minutes */
     background: transparent;                  /* ← couleur du fond des nombres de la box */
-    color: #51B5D6;                          /* ← couleur de la police dans la box */
-    text-shadow: -1 1 0px var(--accent-glow1), 0 0 0px var(--accent-glow2);  /* ← effet neon sur la police de la box */
+    color: #666457;                           /* ← couleur de la police dans la box */
+    opacity: 0.90;                            /* ← opacité de la police dans la box */
+    text-shadow: 0 0 0px var(--accent-glow1), 0 0 0px var(--accent-glow2);  /* ← effet néon sur la police de la box */
+    filter: drop-shadow(-2px 2px 0.3px rgba(102, 100, 87, 0.2));            /* ← effet ombre sur la police de la box */
     font-weight: 700;
   }
   .minutes-input::-webkit-outer-spin-button,
@@ -155,17 +157,20 @@
     margin: 0;
   }
   .minutes-box span {
-    color: #51B5D6;                          /* ← couleur du symbol dans la box */
-    text-shadow: -1 1 0px var(--accent-glow1), 0 0 0px var(--accent-glow2);  /* ← effet neon sur le symbol dans la box */
+    color: #666457;                           /* ← couleur du symbol dans la box */
+    text-shadow: 0 0 0px var(--accent-glow1), 0 0 0px var(--accent-glow2);  /* ← effet neon sur le symbol dans la box */
     font-weight: 400;
-    margin-left: 2px;                         /* ← marge dans la box entre la valeur et le "m" */
+    margin-left: 1px;                         /* ← marge dans la box entre la valeur et le "m" */
+    opacity: 0.32;
   }
 
   .timer {
-    color: #51B5D6;                          /* ← couleur du timer */
+    color: #666457;                           /* ← couleur de la police du timer */
+    opacity: 0.90;                            /* ← opacité de la police du timer */
     font-weight: 200;
     font-size: 24px;                          /* ← taille de la police du timer */
-    text-shadow: -1 1 0px var(--accent-glow1), 0 0 0px var(--accent-glow2);  /* ← effet néon sur le timer */
+    text-shadow: 0 0 0px var(--accent-glow1), 0 0 0px var(--accent-glow2);  /* ← effet néon sur le timer */
+    filter: drop-shadow(-2px 2px 0.3px rgba(102, 100, 87, 0.2));            /* ← effet ombre sur le timer */
   }
   .timer strong {
     font-weight: 700;                         /* ← gras sur les numéros du timer */
@@ -190,7 +195,7 @@
     position: relative;
     will-change: transform, color, text-shadow;
     transition: color 0.25s ease, text-shadow 0.25s ease;
-    margin-left: 2px;                         /* ← marge à gauche du symbol */
+    margin-left: 3px;                         /* ← marge à gauche du symbol */
   }
   .flame.active {
     /* léger glow progressif (couleur contrôlée en :root) */
@@ -212,7 +217,7 @@
     font-weight: 700;
     color: var(--accent);
     white-space: nowrap;                      /* ← évite le wrapping */
-    text-shadow: -1 1 0px var(--accent-glow1), 0 0 1px var(--accent-glow2);    /* ← effet néon sur la cagnotte */
+    text-shadow: 0 0 0px var(--accent-glow1), 0 0 6px var(--accent-glow2);    /* ← effet néon sur la cagnotte */
   }
   .f-points span {
     font-weight: 400;
@@ -263,8 +268,8 @@
     <!-- Ligne 2 -->
     <div class="controls">
       <div class="btn-group">
-        <img src="PLAY.png" alt="Play" class="img-btn" id="playBtn">
-        <img src="STOP.png" alt="Stop" class="img-btn" id="stopBtn">
+        <img src="https://raw.githubusercontent.com/NationEight/XP-Science/main/PLAY.png" alt="Play" class="img-btn" id="playBtn">
+        <img src="https://raw.githubusercontent.com/NationEight/XP-Science/main/STOP.png" alt="Stop" class="img-btn" id="stopBtn">
         <!-- Bouton bascule clair/sombre (pas d'image pour l'instant) -->
         <button id="bgBtn" class="img-btn" title="Mode clair/sombre">◑</button>
       </div>
