@@ -15,15 +15,15 @@
 
   :root {
     --bg-main: #191919;
-    --primary: #51B5D6;                       /* ← couleur principale (barres, bordures, minutes-box) */
-    --accent: #51B5D6;                        /* ← couleur cagnotte et du symbol active */
-    --accent-glow1: #666457;                  /* ← glow interne */
-    --accent-glow2: #666457;                  /* ← glow externe */
+    --primary: #14FFFB;                       /* ← couleur principale (barres, bordures, minutes-box) */
+    --accent: #14FFFB6;                        /* ← couleur cagnotte et du symbol active */
+    --accent-glow1: #14FFFB;                  /* ← glow interne */
+    --accent-glow2: #14FFFB;                  /* ← glow externe */
     --text-light: #ffffff;                    /* ← texte clair */
     --text-dark: #191919;                     /* ← texte sombre */
-    --logo-on: #51B5D6;                       /* ← couleur symbol quand timer ON */
+    --logo-on: #14FFFB;                       /* ← couleur symbol quand timer ON */
     --logo-off: #ffffff;                      /* ← couleur symbol quand timer OFF */
-    --gain-color: #51B5D6;                    /* ← couleur du +1 */
+    --gain-color: #14FFFB;                    /* ← couleur du +1 */
   }
 
   /* Light mode override (toggle via JS en ajoutant la classe "light-mode" sur body) */
@@ -79,11 +79,11 @@
     font-weight: 700;                         /* ← gras sur les chiffres du % */
   }
 
-  /* === Bloc Timer + Symbol === */
+  /* BLOC TIMER */
   .timer-flame-block {
-    height: 63px;                             /* ← hauteur du bloc timer */
-    background-color: #CED6B8;                /* ← couleur du bloc timer */
-    box-shadow: 0 0 0px var(--primary);       /* ← effet néon sur le gros bloc timer */
+    height: 85px;                             /* ← hauteur du bloc timer */
+    background-color: #262626;                /* ← couleur du bloc timer */
+    box-shadow: 0 0 4px var(--primary);       /* ← effet néon sur le gros bloc timer */
     padding: 6px;                             /* ← marge du bloc timer (de tout ce qui est à l'intérieur) */
     display: flex;
     flex-direction: column;
@@ -163,15 +163,32 @@
     margin-left: 1px;                         /* ← marge dans la box entre la valeur et le "m" */
     opacity: 0.32;
   }
-
+  
+ /* TIMER */
   .timer {
-    color: #666457;                           /* ← couleur de la police du timer */
+    color: #14FFFB;                           /* ← couleur de la police du timer */
     opacity: 0.90;                            /* ← opacité de la police du timer */
     font-weight: 200;
-    font-size: 24px;                          /* ← taille de la police du timer */
-    text-shadow: 0 0 0px var(--accent-glow1), 0 0 0px var(--accent-glow2);  /* ← effet néon sur le timer */
-    filter: drop-shadow(-2px 2px 0.3px rgba(102, 100, 87, 0.2));            /* ← effet ombre sur le timer */
+    font-size: 44px;                          /* ← taille de la police du timer */
+    text-shadow: 0 0 0px var(--accent-glow1), 0 0 4px var(--accent-glow2);  /* ← effet néon sur le timer */
+    filter: drop-shadow(-0px 0px 0px rgba(102, 100, 87, 0));                /* ← effet ombre sur le timer (opacité sur la dernière valeur) */
   }
+  
+  /* COUCHE SECONDAIRE DU TIMER */
+  .timer::before {
+    content: "00:00:00";      /* affichage des zéros fixes */
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #666457;           /* même couleur ou plus claire pour effet “LCD éteint” */
+    opacity: 0.15;            /* opacité faible */
+    pointer-events: none;     /* pour ne pas gêner l’interaction avec le timer */
+    font-weight: 200;
+    font-size: 44px;
+    white-space: nowrap;      /* empêche le passage à la ligne */
+    z-index: -1;              /* derrière le vrai timer */
+  }
+    
   .timer strong {
     font-weight: 700;                         /* ← gras sur les numéros du timer */
   }
