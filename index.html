@@ -102,7 +102,7 @@
   /* BLOC TIMER */
   .timer-flame-block {
     position: relative;                         /* ← pour contenir le ::after */
-    height: 65px;                               /* ← hauteur du bloc timer */
+    height: 57px;                               /* ← hauteur du bloc timer */
     background-color: #262626;                  /* ← couleur du bloc timer */
     box-shadow: 0 0 4px rgba(38, 38, 38, 0.8);  /* ← effet néon/ombre sur le gros bloc timer */
     padding: 8px;                               /* ← marge du bloc timer (de tout ce qui est à l'intérieur) */
@@ -317,10 +317,11 @@
   /* Animation +1 : plus fluide, start plus haut, easing agréable */
   .gain-popup {
    font-family: 'digital-7 (mono)', monospace;                                   /* ← police du +1 */
+   font-weight: regular;
    position: absolute;
    left: 100%;
    top: 0;
-   font-size: 22px;                                                             /* ← taille de la police du +1 */
+   font-size: 24px;                                                             /* ← taille de la police du +1 */
    color: #FF146E;                                                              /* ← couleur de la police du +1 */
    font-weight: 700;
    transform-origin: left bottom;
@@ -368,7 +369,7 @@
       <div class="timer-wrapper">
         <div class="minutes-box">
           <input type="number" class="minutes-input" id="minutesInput" min="1" value="50" maxlength="3"> <!-- blocage des 3 chiffres dans la box -->
-          <span>➥</span>
+          <span>❱❱</span>
         </div>
         <div class="timer" id="timerDisplay">
           <strong>00</strong>:<strong>00</strong>:<strong>00</strong>
@@ -379,7 +380,7 @@
     <!-- Ligne 3 -->
     <div class="score">
       <div class="flame" id="flameLogo">
-        処理 
+        処理
         <div id="gainContainer" style="position:relative; margin-left:6px;"></div>
       </div>
       <div class="f-points" id="fPoints"></div>
@@ -447,11 +448,11 @@
     // popup inséré dans gainContainer (position relative) pour un placement stable
     const popup = document.createElement("div");
     popup.className = "gain-popup";
-    popup.textContent = "+1";
+    popup.textContent = "+1";                                                   /* ← affichage du +1 */   
     // positionnement ajusté : on l'ajoute directement à gainContainer (à côté de la flamme)
     gainContainer.appendChild(popup);
     // suppression après animation (durée CSS ~1.4s)
-    setTimeout(() => popup.remove(), 2200);       /* ← durée de l'animation du +1 */ 
+    setTimeout(() => popup.remove(), 2200);                                     /* ← durée de l'animation du +1 */ 
   }
 
   function updateTimerDisplay(sec) {
