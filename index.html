@@ -63,14 +63,19 @@
     position: relative;
     overflow: hidden;
     width: 100%;                              /* ← prend toute la largeur de .container */
+    border-radius: 4px;
   }
+  
+  /* PROGRESS BAR REMPLISSAGE */
   .progress-fill {
     background-color: var(--primary);
     height: 100%;
     width: 0%;
     box-shadow: 0 0 5px var(--primary);
     transition: width 0.12s linear;           /* ← animation fluide et réactive */
+    border-radius: 4px;
   }
+  
   .progress-text {
     font-size: 22px;
     position: absolute;
@@ -78,6 +83,7 @@
     color: var(--text-dark);
     font-weight: 200;
   }
+  
   .progress-text strong {
     font-weight: 700;                         /* ← gras sur les chiffres du % */
   }
@@ -93,6 +99,7 @@
     flex-direction: column;
     gap: 4px;                                   /* ← marge entre la première et deuxième ligne du bloc timer */
     overflow: hidden;                           /* ← coupe tout ce qui dépasse */
+    border-radius: 4px;
   }
   
   /* BLOC TIMER LIGNES DE BALAYAGES HORIZONTALES */
@@ -112,6 +119,7 @@
       transparent 2px                         /* épaisseur des lignes sombres */
     );
     z-index: 2;                               /* au-dessus du fond mais derrière le texte si nécessaire */
+    border-radius: 4px;
   }
   
   /* BLOC TIMER LIGNES DE BALAYAGES VERTICALES */
@@ -131,6 +139,7 @@
      transparent 2px
    );
    z-index: 2;
+   border-radius: 4px;
   }
 
   /* Boutons + Timer */
