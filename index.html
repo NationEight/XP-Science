@@ -16,7 +16,7 @@
   :root {
     --bg-main: #191919;
     --primary: #14FFFB;                       /* ← couleur principale (barres, bordures, minutes-box) */
-    --accent: #14FFFB6;                        /* ← couleur cagnotte et du symbol active */
+    --accent: #14FFFB6;                       /* ← couleur cagnotte et du symbol active */
     --accent-glow1: #14FFFB;                  /* ← glow interne */
     --accent-glow2: #14FFFB;                  /* ← glow externe */
     --text-light: #ffffff;                    /* ← texte clair */
@@ -81,14 +81,33 @@
 
   /* BLOC TIMER */
   .timer-flame-block {
-    height: 85px;                             /* ← hauteur du bloc timer */
+    height: 70px;                             /* ← hauteur du bloc timer */
     background-color: #262626;                /* ← couleur du bloc timer */
-    box-shadow: 0 0 4px var(--primary);       /* ← effet néon sur le gros bloc timer */
+    box-shadow: 0 0 4px #262626;              /* ← effet néon sur le gros bloc timer */
     padding: 6px;                             /* ← marge du bloc timer (de tout ce qui est à l'intérieur) */
     display: flex;
     flex-direction: column;
     gap: 4px;                                 /* ← marge entre la première et deuxième ligne du bloc timer */
   }
+  
+  /* BLOC TIMER LIGNES DE BALAYAGES */
+  .timer-flame-block::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;                    /* ne bloque pas le timer */
+    background-image: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.03),              /* ligne très claire */
+        rgba(255,255,255,0.03) 1px,
+        transparent 1px,
+        transparent 3px
+    );
+    z-index: 2;                             /* au-dessus du fond mais derrière le texte si nécessaire */
+}
 
   /* Boutons + Timer */
   .controls {
@@ -96,12 +115,13 @@
     align-items: center;
     justify-content: space-between;
   }
+  
   .btn-group {
     display: flex;
     gap: 4px;                                 /* ← marge entre les deux boutons (PLAY & STOP) */
   }
 
-  /* .img-btn utilisé pour images ET bouton toggle (même taille / hover) */
+  /* .BOUTONS */
   .img-btn {
     width: 23px;                              /* ← changer ici la taille des boutons */
     height: 23px;                             /* ← changer ici la taille des boutons */
@@ -114,6 +134,7 @@
     align-items: center;
     justify-content: center;
   }
+  
   .img-btn:hover {
     transform: scale(1.12);                   /* ← effet grossissement des boutons */
   }
@@ -137,25 +158,27 @@
     flex-shrink: 0;
   }
   .minutes-input {
-    width: 42px;                              /* ← longueur des nombres dans la box */
-    font-size: 24px;                          /* ← taille des chiffres dans la box */
+    width: 50px;                              /* ← longueur des nombres dans la box */
+    font-size: 30px;                          /* ← taille des chiffres dans la box */
     font-family: 'digital-7 (mono)', monospace;     /* ← police dans la box */
     text-align: center;
     border: none;
     outline: none;
-    height: 23px;                             /* ← hauteur du fond des minutes */
+    height: 30px;                             /* ← hauteur du fond des minutes */
     background: transparent;                  /* ← couleur du fond des nombres de la box */
-    color: #666457;                           /* ← couleur de la police dans la box */
+    color: #14FFFB;                           /* ← couleur de la police dans la box */
     opacity: 0.90;                            /* ← opacité de la police dans la box */
-    text-shadow: 0 0 0px var(--accent-glow1), 0 0 0px var(--accent-glow2);  /* ← effet néon sur la police de la box */
+    text-shadow: 0 0 0px var(--accent-glow1), 0 0 4px var(--accent-glow2);  /* ← effet néon sur la police de la box */
     filter: drop-shadow(-2px 2px 0.3px rgba(102, 100, 87, 0.2));            /* ← effet ombre sur la police de la box */
     font-weight: 700;
   }
+  
   .minutes-input::-webkit-outer-spin-button,
   .minutes-input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
+  
   .minutes-box span {
     color: #666457;                           /* ← couleur du symbol dans la box */
     text-shadow: 0 0 0px var(--accent-glow1), 0 0 0px var(--accent-glow2);  /* ← effet neon sur le symbol dans la box */
@@ -169,7 +192,7 @@
     color: #14FFFB;                           /* ← couleur de la police du timer */
     opacity: 0.90;                            /* ← opacité de la police du timer */
     font-weight: 200;
-    font-size: 44px;                          /* ← taille de la police du timer */
+    font-size: 30px;                          /* ← taille de la police du timer */
     text-shadow: 0 0 0px var(--accent-glow1), 0 0 4px var(--accent-glow2);  /* ← effet néon sur le timer */
     filter: drop-shadow(-0px 0px 0px rgba(102, 100, 87, 0));                /* ← effet ombre sur le timer (opacité sur la dernière valeur) */
   }
@@ -180,11 +203,11 @@
     position: absolute;
     top: 0;
     left: 0;
-    color: #666457;           /* même couleur ou plus claire pour effet “LCD éteint” */
-    opacity: 0.15;            /* opacité faible */
+    color: #14FFFB;           /* même couleur ou plus claire pour effet “LCD éteint” */
+    opacity: 0.20;            /* opacité faible */
     pointer-events: none;     /* pour ne pas gêner l’interaction avec le timer */
     font-weight: 200;
-    font-size: 44px;
+    font-size: 30px;
     white-space: nowrap;      /* empêche le passage à la ligne */
     z-index: -1;              /* derrière le vrai timer */
   }
@@ -204,15 +227,15 @@
   .flame {
     display: flex;
     align-items: center;
-    font-size: 16px;                          /* ← taille du symbol (en ON et en OFF) */
-    font-family: 'digital-7 (mono)', monospace;     /* ← police du symbol */
-    font-weight: regular;                     /* ← regular ou bold */
+    font-size: 16px;                                                            /* ← taille du symbol (en ON et en OFF) */
+    font-family: 'digital-7 (mono)', monospace;                                 /* ← police du symbol */
+    font-weight: regular;                                                       /* ← regular ou bold */
     color: var(--logo-off);
     text-shadow: none;
     position: relative;
     will-change: transform, color, text-shadow;
     transition: color 0.25s ease, text-shadow 0.25s ease;
-    margin-left: 3px;                         /* ← marge à gauche du symbol */
+    margin-left: 3px;                                                           /* ← marge à gauche du symbol */
   }
   .flame.active {
     /* léger glow progressif (couleur contrôlée en :root) */
@@ -223,18 +246,19 @@
   }
   @keyframes pulseFlame {
     0%, 100% { transform: translateZ(0) scale3d(1,1,1); }
-    50% { transform: translateZ(0) scale3d(1.080,1.080,1); }    /* ← puissance du pulse effect, modifier la valeur scale3d */
+    50% { transform: translateZ(0) scale3d(1.080,1.080,1); }                    /* ← puissance du pulse effect, modifier la valeur scale3d */
   }
 
   .flame-count {
     display: none;                            /* ← valeur affichée seulement dans la cagnotte */
   }
+  
   .f-points {
     font-size: 24px;                          /* ← taille de la police de la cagnotte */
     font-weight: 700;
-    color: var(--accent);
+    color: #FFFFFF;
     white-space: nowrap;                      /* ← évite le wrapping */
-    text-shadow: 0 0 0px var(--accent-glow1), 0 0 6px var(--accent-glow2);    /* ← effet néon sur la cagnotte */
+    text-shadow: 0 0 0px var(--accent-glow1), 0 0 4px #FFFFFF;    /* ← effet néon sur la cagnotte */
   }
   .f-points span {
     font-weight: 400;
