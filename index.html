@@ -24,7 +24,7 @@
     --text-light: #ffffff;                                                   /* ← texte clair */
     --text-dark: #191919;                                                    /* ← texte sombre */
     --logo-on: #14FFFB;                                                      /* ← couleur symbol quand timer ON */
-    --logo-off: #ffffff;                                                     /* ← couleur symbol quand timer OFF */
+    --logo-off: transparent;                                                     /* ← couleur symbol quand timer OFF */
     --gain-color: #14FFFB;                                                   /* ← couleur du +1 */
   }
 
@@ -102,7 +102,6 @@
     left: 0;
     width: 100%;
     height: 100%;
-    padding: 4px;                             /* ← marge globale des lignes de balayages */
     pointer-events: none;                    /* ne bloque pas le timer */
     background-image: repeating-linear-gradient(
         to bottom,
@@ -112,7 +111,26 @@
         transparent 3px
     );
     z-index: 0;                             /* au-dessus du fond mais derrière le texte si nécessaire */
-}
+  }
+  
+  /* Lignes verticales */
+  .timer-flame-block::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: repeating-linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.03) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  pointer-events: none;
+  z-index: 0;
+  }
 
   /* Boutons + Timer */
   .controls {
@@ -163,17 +181,18 @@
     flex-shrink: 0;
   }
   .minutes-input {
-    width: 50px;                              /* ← longueur des nombres dans la box */
+    width: 80px;                              /* ← longueur des nombres dans la box */
+    font-weight: 200;
     font-size: 30px;                          /* ← taille des chiffres dans la box */
     font-family: 'digital-7 (mono)', monospace;     /* ← police dans la box */
     text-align: center;
     border: none;
     outline: none;
-    height: 30px;                             /* ← hauteur du fond des minutes */
+    height: 50px;                             /* ← hauteur du fond des minutes */
     background: transparent;                  /* ← couleur du fond des nombres de la box */
     color: #14FFFB;                           /* ← couleur de la police dans la box */
     opacity: 0.90;                            /* ← opacité de la police dans la box */
-    text-shadow: 0 0 0px var(--accent-glow1), 0 0 4px var(--accent-glow2);  /* ← effet néon sur la police de la box */
+    text-shadow: 0 0 0px var(--accent-glow1), 0 0 10px var(--accent-glow2);  /* ← effet néon sur la police de la box */
     filter: drop-shadow(-2px 2px 0.3px rgba(102, 100, 87, 0.2));            /* ← effet ombre sur la police de la box */
     font-weight: 700;
   }
@@ -186,7 +205,6 @@
   
   .minutes-box span {
     color: #666457;                           /* ← couleur du symbol dans la box */
-    text-shadow: 0 0 0px var(--accent-glow1), 0 0 0px var(--accent-glow2);  /* ← effet neon sur le symbol dans la box */
     font-weight: 400;
     margin-left: 1px;                         /* ← marge dans la box entre la valeur et le "m" */
     opacity: 0.32;
@@ -198,7 +216,7 @@
     opacity: 0.90;                            /* ← opacité de la police du timer */
     font-weight: 200;
     font-size: 30px;                          /* ← taille de la police du timer */
-    text-shadow: 0 0 0px var(--accent-glow1), 0 0 4px var(--accent-glow2);  /* ← effet néon sur le timer */
+    text-shadow: 0 0 0px var(--accent-glow1), 0 0 10px var(--accent-glow2);  /* ← effet néon sur le timer */
     filter: drop-shadow(-0px 0px 0px rgba(102, 100, 87, 0));                /* ← effet ombre sur le timer (opacité sur la dernière valeur) */
   }
   
