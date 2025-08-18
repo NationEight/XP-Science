@@ -8,15 +8,15 @@
 
   /* 1st POLICE */
   @font-face {
-    font-family: 'digital-7 (mono)';
-    src: url('https://raw.githubusercontent.com/NationEight/XP-Science/main/digital-7 (mono).ttf') format('truetype');
+    font-family: '1st font';
+    src: url('https://raw.githubusercontent.com/NationEight/XP-Science/main/Normal%20Fonts/digital-7%20(mono).ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
   }
   
   /* 2nd POLICE (SYMBOL) */
   @font-face {
-    font-family: 'MochiyPopOne-Regular';
+    font-family: '2nd font';
     src: url('https://raw.githubusercontent.com/NationEight/XP-Science/main/JP%20Fonts/MochiyPopOne-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
@@ -24,8 +24,8 @@
   
   /* 3rd POLICE (+1) */
   @font-face {
-    font-family: 'MochiyPopOne-Regular';
-    src: url('https://raw.githubusercontent.com/NationEight/XP-Science/main/JP%20Fonts/MochiyPopOne-Regular.ttf') format('truetype');
+    font-family: '3rd font';
+    src: url('https://raw.githubusercontent.com/NationEight/XP-Science/main/Normal%20Fonts/Square.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
   }
@@ -55,7 +55,7 @@
   body {
     margin: 0;
     background-color: var(--bg-main);
-    font-family: 'digital-7 (mono)', monospace;
+    font-family: '1st font', monospace;
     color: var(--text-light);
     font-size: 27px;
   }
@@ -215,7 +215,7 @@
     width: 30px;                              /* ← longueur de la box */
     font-weight: 200;
     font-size: 27px;                          /* ← taille des chiffres dans la box */
-    font-family: 'digital-7 (mono)', monospace;     /* ← police dans la box */
+    font-family: '1st font', monospace;     /* ← police dans la box */
     text-align: center;
     border: none;
     outline: none;
@@ -283,7 +283,7 @@
     display: flex;
     align-items: center;
     font-size: 18px;                                                             /* ← taille du symbol (en ON et en OFF) */
-    font-family: 'MochiyPopOne-Regular', sans-serif;                                 /* ← police du symbol */
+    font-family: '2nd font', sans-serif;                                 /* ← police du symbol */
     font-weight: normal;                                                        /* ← Symbol en regular ou bold */
     color: var(--logo-off);
     text-shadow: none;
@@ -324,14 +324,14 @@
 
   /* Animation +1 : plus fluide, start plus haut, easing agréable */
   .gain-popup {
-   font-family: 'digital-7 (mono)', monospace;                                   /* ← police du +1 */
+   font-family: '3rd font', monospace;                                   /* ← police du +1 */
    font-weight: regular;
    position: absolute;
    left: 100%;
    top: 0;
    font-size: 24px;                                                             /* ← taille de la police du +1 */
    color: #FF146E;                                                              /* ← couleur de la police du +1 */
-   font-weight: 700;
+   font-weight: 500;
    transform-origin: left bottom;
    will-change: transform, opacity;
    animation: popFadeSmooth 2.2s linear forwards;
@@ -377,7 +377,7 @@
       <div class="timer-wrapper">
         <div class="minutes-box">
           <input type="number" class="minutes-input" id="minutesInput" min="1" value="50" maxlength="3"> <!-- blocage des 3 chiffres dans la box -->
-          <span>⎇</span>
+          <span>⮩</span>
         </div>
         <div class="timer" id="timerDisplay">
           <strong>00</strong>:<strong>00</strong>:<strong>00</strong>
