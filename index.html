@@ -204,16 +204,15 @@
     height: 27px;                             /* ← hauteur de la box */
     display: flex;
     align-items: center;
-    background-color: transparent;            /* ← couleur du fond de la box */
-    border: 0.5px solid var(--primary);       /* ← bordure de la box à ajouter si besoin */
-    padding: 0 0px;                           /* ← marge entre la box et le timer */                 
+    background-color: white;            /* ← couleur du fond de la box */
+    /* border: 0.5px solid var(--primary);    /* ← bordure de la box à ajouter si besoin */
+    padding: 0 0px;                           /* ← marge entre la box et le timer */      
     flex-shrink: 0;
-    overflow: visible; 
+    border-radius: 4px;                       /* ← coins arrondis de la box */
   }
   
   .minutes-input {
     width: 38px;                              /* ← longueur de la box */
-    font-weight: 200;
     font-size: 27px;                          /* ← taille des chiffres dans la box */
     font-family: '1st font', monospace;       /* ← police dans la box */
     text-align: center;
@@ -222,7 +221,7 @@
     background: transparent;                                    /* ← couleur de fond de la box */
     color: #14DCFF;                                             /* ← couleur de la police dans la box */
     opacity: 1;                                                 /* ← opacité de la police dans la box */
-    text-shadow: 0 0 10px rgba(20, 255, 251, 0.2);              /* ← effet néon sur le texte de la box */
+    text-shadow: 0 0 10px rgba(20, 255, 251, 0.9);              /* ← effet néon sur le texte de la box */
     filter: drop-shadow(-2px 2px 0.3px rgba(102, 100, 87, 0));  /* ← effet ombre sur la police de la box */
     font-weight: 700;
   }
