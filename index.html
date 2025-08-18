@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <title>Pomodoro Widget</title>
-<!-- Polices locales -->
+
 <style>
-  /* Import de la police Technology depuis le fichier local */
+
+  /* POLICE */
   @font-face {
     font-family: 'digital-7 (mono)';
     src: url('https://raw.githubusercontent.com/NationEight/XP-Science/main/digital-7 (mono).ttf') format('truetype');
@@ -13,22 +14,23 @@
     font-style: normal;
   }
 
+  /* COULEURS */
   :root {
-    --bg-main: #191919;
-    --primary: #14FFFB;                       /* ← couleur principale (barres, bordures, minutes-box) */
-    --accent: #14FFFB6;                       /* ← couleur cagnotte et du symbol active */
-    --accent-glow1: #14FFFB;                  /* ← glow interne */
-    --accent-glow2: #14FFFB;                  /* ← glow externe */
-    --text-light: #ffffff;                    /* ← texte clair */
-    --text-dark: #191919;                     /* ← texte sombre */
-    --logo-on: #14FFFB;                       /* ← couleur symbol quand timer ON */
-    --logo-off: #ffffff;                      /* ← couleur symbol quand timer OFF */
-    --gain-color: #14FFFB;                    /* ← couleur du +1 */
+    --bg-main: #191919;                                                      /* ← couleur background (sombre) */
+    --primary: #14FFFB;                                                      /* ← couleur primaire */
+    --accent: #14FFFB;                                                       /* ← couleur cagnotte et du symbol ON */
+    --accent-glow1: #14FFFB;                                                 /* ← glow interne */
+    --accent-glow2: #14FFFB;                                                 /* ← glow externe */
+    --text-light: #ffffff;                                                   /* ← texte clair */
+    --text-dark: #191919;                                                    /* ← texte sombre */
+    --logo-on: #14FFFB;                                                      /* ← couleur symbol quand timer ON */
+    --logo-off: #ffffff;                                                     /* ← couleur symbol quand timer OFF */
+    --gain-color: #14FFFB;                                                   /* ← couleur du +1 */
   }
 
-  /* Light mode override (toggle via JS en ajoutant la classe "light-mode" sur body) */
+  /* LIGHT MODE */
   .light-mode {
-    --bg-main: #ffffff;                       /* ← couleur de fond en mode clair */
+    --bg-main: #ffffff;                                                      /* ← couleur de fond en mode clair */
     --text-light: #191919;
     --logo-off: #191919;
   }
@@ -81,6 +83,7 @@
 
   /* BLOC TIMER */
   .timer-flame-block {
+    position: relative;                         /* ← pour contenir le ::after */
     height: 70px;                             /* ← hauteur du bloc timer */
     background-color: #262626;                /* ← couleur du bloc timer */
     box-shadow: 0 0 4px #262626;              /* ← effet néon sur le gros bloc timer */
@@ -88,6 +91,7 @@
     display: flex;
     flex-direction: column;
     gap: 4px;                                 /* ← marge entre la première et deuxième ligne du bloc timer */
+    overflow: hidden;                           /* ← coupe tout ce qui dépasse */
   }
   
   /* BLOC TIMER LIGNES DE BALAYAGES */
@@ -98,6 +102,7 @@
     left: 0;
     width: 100%;
     height: 100%;
+    padding: 4px;                             /* ← marge globale des lignes de balayages */
     pointer-events: none;                    /* ne bloque pas le timer */
     background-image: repeating-linear-gradient(
         to bottom,
@@ -106,7 +111,7 @@
         transparent 1px,
         transparent 3px
     );
-    z-index: 2;                             /* au-dessus du fond mais derrière le texte si nécessaire */
+    z-index: 0;                             /* au-dessus du fond mais derrière le texte si nécessaire */
 }
 
   /* Boutons + Timer */
