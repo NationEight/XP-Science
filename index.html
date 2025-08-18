@@ -435,16 +435,15 @@
 
   // affichage initial de la cagnotte
   function formatPoints(value) {
-    const str = String(value).padStart(18, "0"); // 18 chiffres affichés
+    const str = String(value).padStart(18, "0");                              /* ← 18 chiffres affichés */
     const firstNonZero = str.search(/[^0]/);
-    // les zéros avant le premier non-zero sont moins opaques (span)
     return str.split("").map((digit, i) =>
-      i < firstNonZero ? `<span>${digit}</span>` : digit
+    i < firstNonZero ? `<span>${digit}</span>` : digit
     ).join("");
   }
+  
   fPointsDisplay.innerHTML = formatPoints(fPoints);
 
-  // fonctions utiles
   function addPoints(amount) {
     if (!amount) return;
     fPoints = Math.min(fPoints + amount, MAX_POINTS);
@@ -453,13 +452,10 @@
   }
 
   function showGainAnimation() {
-    // popup inséré dans gainContainer (position relative) pour un placement stable
     const popup = document.createElement("div");
     popup.className = "gain-popup";
     popup.textContent = "+1";                                                   /* ← affichage du +1 */   
-    // positionnement ajusté : on l'ajoute directement à gainContainer (à côté de la flamme)
     gainContainer.appendChild(popup);
-    // suppression après animation (durée CSS ~1.4s)
     setTimeout(() => popup.remove(), 2200);                                     /* ← durée de l'animation du +1 */ 
   }
 
@@ -475,10 +471,8 @@
   }
 
   function updateProgressBar(remaining) {
-    // targetPercent calculé sur base remainingSeconds (pas de lissage fragile)
     let targetPercent = totalSeconds > 0 ? ((totalSeconds - remaining) / totalSeconds) * 100 : 0;
     targetPercent = Math.max(0, Math.min(100, targetPercent));
-    // On applique directement pour que la barre suive précisément le temps restant
     progressFill.style.width = targetPercent + '%';
     progressText.innerHTML = `<strong>${Math.floor(targetPercent)}</strong>%`;
   }
@@ -500,116 +494,77 @@
     if (!lastTimestamp) lastTimestamp = ts;
     const delta = (ts - lastTimestamp) / 1000; // en secondes (float)
     lastTimestamp = ts;
-
-    // décrémente temps restant
     remainingSeconds -= delta;
-    // accumulateur pour +1 pendant que le timer tourne
     gainTimer += delta;
-
-    // si on dépasse les intervalles de gain (ex: plusieurs gains à la suite), on cumule
     if (gainTimer >= GAIN_INTERVAL_SEC) {
-      const gains = Math.floor(gainTimer / GAIN_INTERVAL_SEC);
-      gainTimer -= gains * GAIN_INTERVAL_SEC;
-      addPoints(gains);
-      for (let i = 0; i < gains; i++) showGainAnimation();
-    }
+    const gains = Math.floor(gainTimer / GAIN_INTERVAL_SEC);
+    gainTimer -= gains * GAIN_INTERVAL_SEC;
+    addPoints(gains);
+    for (let i = 0; i < gains; i++) showGainAnimation();
+  }
 
-    // fin du timer
     if (remainingSeconds <= 0) {
-      remainingSeconds = 0;
-      isRunning = false;
-      lastTimestamp = null;
-      flameLogo.classList.remove('active');
-      playBtn.src = "PLAY.png"; // image de play (gardée comme avant)
-      updateTimerDisplay(0);
-      updateProgressBar(0);
-      // joue la sonnerie si disponible (peut être bloqué par navigateur si pas d'interaction)
-      try { ringtone.currentTime = 0; ringtone.play().catch(()=>{}); } catch(e){}
-      return;
-    }
+    remainingSeconds = 0;
+    isRunning = false;
+    lastTimestamp = null;
+    flameLogo.classList.remove('active');
+    playBtn.src = "PLAY.png";
+    updateTimerDisplay(0);
+    updateProgressBar(0);
+    try { ringtone.currentTime = 0; ringtone.play().catch(()=>{}); } catch(e){}
+    return;
+  }
 
-    // mise à jour affichage
     updateTimerDisplay(remainingSeconds);
     updateProgressBar(remainingSeconds);
-
     requestAnimationFrame(tick);
   }
 
-  /* =========================
-     ÉVÉNEMENTS
-     - Important : la modification de la box (minutesInput) NE DOIT PAS arrêter le timer.
-       On applique la nouvelle valeur uniquement si le timer est déjà arrêté (STOP ou jamais démarré).
-       Si tu veux qu'une modification while running prenne effet, dis-le et j'ajoute un bouton "Appliquer".
-     ========================= */
-
   minutesInput.addEventListener('input', () => {                  
-  if (minutesInput.value.length > 3) {                      /* blocage de la box à 3 chiffres */    
+    if (minutesInput.value.length > 3) {                      /* blocage de la box à 3 chiffres */    
     minutesInput.value = minutesInput.value.slice(0,3);         
   }                                                             
+  
   if (!isRunning) {
     resetTimerToBoxValue();
   }
   });
 
-  // Play / Pause
   playBtn.addEventListener('click', () => {
     if (!isRunning) {
-      // démarrage : si remainingSeconds est vide (=0), on initialise depuis la box
-      if (remainingSeconds <= 0) resetTimerToBoxValue();
-      if (remainingSeconds <= 0) return; // rien à faire si valeur invalide
-      isRunning = true;
-      lastTimestamp = null;
-      playBtn.src = "PAUSE.png"; // remplace icône si tu as PAUSE.png
-      flameLogo.classList.add('active');
-      requestAnimationFrame(tick);
+    if (remainingSeconds <= 0) resetTimerToBoxValue();
+    if (remainingSeconds <= 0) return; 
+    isRunning = true;
+    lastTimestamp = null;
+    playBtn.src = "PAUSE.png";
+    flameLogo.classList.add('active');
+    requestAnimationFrame(tick);
     } else {
-      // pause
-      isRunning = false;
-      playBtn.src = "PLAY.png";
-      flameLogo.classList.remove('active');
-      lastTimestamp = null;
-      // note : on ne remet pas à zéro gainTimer ; il garde le temps excédentaire pour le prochain play
-    }
+    isRunning = false;
+    playBtn.src = "PLAY.png";
+    flameLogo.classList.remove('active');
+    lastTimestamp = null;
+  }
   });
 
-  // STOP : remet la durée à la valeur de la box et réinitialise toute l'UI (barre à 0 instantanément)
   stopBtn.addEventListener('click', () => {
     isRunning = false;
     playBtn.src = "PLAY.png";
     flameLogo.classList.remove('active');
-    // applique la valeur en box et remet tout à zéro proprement
     resetTimerToBoxValue();
-    // reset visuel immédiat
-    progressFill.style.transition = 'none';       // désactive transition courte pour reset instantané
+    progressFill.style.transition = 'none';       
     progressFill.style.width = '0%';
     progressText.innerHTML = `<strong>0</strong>%`;
-    // remise de la transition au prochain tick pour ne pas bloquer l'animation continue
     setTimeout(()=>{ progressFill.style.transition = 'width 0.12s linear'; }, 40);
-    gainTimer = 0; // on réinitialise le compteur d'intervalle (le joueur veut tout réinitialiser)
+    gainTimer = 0; 
   });
 
-  // Toggle background clair/sombre (bouton à droite du STOP)
   bgBtn.addEventListener('click', () => {
     document.body.classList.toggle('light-mode');
   });
 
-  /* =========================
-     Initialisation
-     - on prend la valeur par défaut dans la box et on affiche tout propre
-     ========================= */
   resetTimerToBoxValue();
-  // affichage initial de la cagnotte (déjà appelé plus haut, mais on refresh)
   fPointsDisplay.innerHTML = formatPoints(fPoints);
-
-  /* =========================
-     Notes / endroits à modifier facilement :
-     - Couleurs : change les variables dans :root (--primary, --accent, --logo-on, --gain-color, etc.)
-     - Taille des boutons : .img-btn { width: XXpx; height: XXpx; }
-     - Effet grossissement au hover : .img-btn:hover { transform: scale(1.15); }
-     - Taille des chiffres de la box : .minutes-input { font-size: 16px; } (changer cette valeur)
-     - Effet néon : box-shadow dans .progress-fill et .timer-flame-block (var(--primary) etc.)
-     - Sonnerie : remplacer NotionRingtone.mp3 par ton fichier (même nom) dans le dossier
-     ========================= */
 
 </script>
 
