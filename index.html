@@ -6,10 +6,18 @@
 
 <style>
 
-  /* POLICE */
+  /* 1st POLICE */
   @font-face {
     font-family: 'digital-7 (mono)';
     src: url('https://raw.githubusercontent.com/NationEight/XP-Science/main/digital-7 (mono).ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  /* 2nd POLICE */
+  @font-face {
+    font-family: 'MochiyPopOne-Regular';
+    src: url('https://raw.githubusercontent.com/NationEight/XP-Science/main/JP%20Fonts/MochiyPopOne-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
   }
@@ -17,15 +25,15 @@
   /* COULEURS */
   :root {
     --bg-main: #191919;                                                                                       /* ← couleur background (sombre) */
-    --primary: #14FFFB;                                                      /* ← couleur primaire */
-    --accent: #14FFFB;                                                       /* ← couleur cagnotte et du symbol ON */
+    --primary: #14DCFF;                                                      /* ← couleur primaire */
+    --accent: #14DCFF;                                                       /* ← couleur cagnotte et du symbol ON */
     --accent-glow1: #FFFFFF;                                                 /* ← glow interne */
-    --accent-glow2: #14FFFB;                                                 /* ← glow externe */
+    --accent-glow2: #14DCFF;                                                 /* ← glow externe */
     --text-light: #ffffff;                                                   /* ← texte clair */
     --text-dark: #191919;                                                    /* ← texte sombre */
-    --logo-on: #14FFFB;                                                      /* ← couleur symbol quand timer ON */
+    --logo-on: #14DCFF;                                                       /* ← couleur symbol quand timer ON */
     --logo-off: transparent;                                                 /* ← couleur symbol quand timer OFF */
-    --gain-color: #14FFFB;                                                   /* ← couleur du +1 */
+    --gain-color: #14DCFF;                                                    /* ← couleur du +1 */
   }
 
   /* LIGHT MODE */
@@ -205,9 +213,9 @@
     outline: none;
     height: auto;                             /* ← hauteur du fond des minutes */
     background: transparent;                  /* ← couleur du fond des nombres de la box */
-    color: #14FFFB;                           /* ← couleur de la police dans la box */
+    color: #14DCFF;                           /* ← couleur de la police dans la box */
     opacity: 1;                            /* ← opacité de la police dans la box */
-    text-shadow: 0 0 10px rgba(20, 255, 251, 0.6);                          /* ← effet néon sur le texte de la box */
+    text-shadow: 0 0 10px rgba(20, 255, 251, 0.4);                          /* ← effet néon sur le texte de la box */
     filter: drop-shadow(-2px 2px 0.3px rgba(102, 100, 87, 0));              /* ← effet ombre sur la police de la box */
     font-weight: 700;
   }
@@ -228,11 +236,11 @@
   
   /* TIMER */
   .timer {
-    color: #14FFFB;                                                         /* ← couleur de la police du timer */
+    color: #14DCFF;                                                          /* ← couleur de la police du timer */
     opacity: 1;                                                          /* ← opacité de la police du timer */
     font-weight: 200;
     font-size: 27px;                                                        /* ← taille de la police du timer */
-    text-shadow: 0 0 10px rgba(20, 255, 251, 0.6);                          /* ← effet néon sur le timer */
+    text-shadow: 0 0 10px rgba(20, 255, 251, 0.4);                          /* ← effet néon sur le timer */
     filter: drop-shadow(-0px 0px 0px rgba(102, 100, 87, 0));                /* ← effet ombre sur le timer (opacité sur la dernière valeur) */
   }
   
@@ -242,7 +250,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    color: #14FFFB;           /* même couleur ou plus claire pour effet “LCD éteint” */
+    color: #14DCFF;           /* même couleur ou plus claire pour effet “LCD éteint” */
     opacity: 0.20;            /* opacité faible */
     pointer-events: none;     /* pour ne pas gêner l’interaction avec le timer */
     font-weight: 200;
@@ -266,22 +274,22 @@
   .flame {
     display: flex;
     align-items: center;
-    font-size: 16px;                                                            /* ← taille du symbol (en ON et en OFF) */
-    font-family: 'digital-7 (mono)', monospace;                                 /* ← police du symbol */
-    font-weight: regular;                                                         /* ← Symbol en regular ou bold */
+    font-size: 18px;                                                             /* ← taille du symbol (en ON et en OFF) */
+    font-family: 'MochiyPopOne-Regular', sans-serif;                                 /* ← police du symbol */
+    font-weight: regular;                                                        /* ← Symbol en regular ou bold */
     color: var(--logo-off);
     text-shadow: none;
     position: relative;
     will-change: transform, color, text-shadow;
-    transition: color 0.25s ease, text-shadow 0.25s ease;
+    transition: color 0.60s ease, text-shadow 0.60s ease;                       /* ← transition ON/OFF */
     margin-left: 3px;                                                           /* ← marge à gauche du symbol */
   }
   .flame.active {
     /* léger glow progressif (couleur contrôlée en :root) */
-    color: #14FFFB; 
-    text-shadow: 0 0 10px rgba(20, 255, 251, 0.6);
+    color: #FF146E; 
+    text-shadow: 0 0 6px rgba(255, 20, 110, 0.4);
     /* pulse CSS minimisé (n'affecte plus la taille globale) */
-    animation: pulseFlame 1.4s ease-in-out infinite;
+    animation: pulseFlame 1.8s ease-in-out infinite;
   }
   @keyframes pulseFlame {
     0%, 100% { transform: translateZ(0) scale3d(1,1,1); }
@@ -298,7 +306,7 @@
     font-weight: 700;
     color: #FFFFFF;
     white-space: nowrap;                                                        /* ← évite le wrapping */
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);                             /* ← effet néon sur le timer */
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);                             /* ← effet néon sur le timer */
   }
   
   .f-points span {
@@ -308,25 +316,26 @@
 
   /* Animation +1 : plus fluide, start plus haut, easing agréable */
   .gain-popup {
+   font-family: 'digital-7 (mono)', monospace;                                   /* ← police du +1 */
    position: absolute;
    left: 100%;
    top: 0;
-   font-size: 18px;
-   color: var(--gain-color);
+   font-size: 22px;                                                             /* ← taille de la police du +1 */
+   color: #FF146E;                                                              /* ← couleur de la police du +1 */
    font-weight: 700;
    transform-origin: left bottom;
    will-change: transform, opacity;
-   animation: popFadeSmooth 2s linear forwards;
+   animation: popFadeSmooth 2.2s linear forwards;
    pointer-events: none;
   }
 
 @keyframes popFadeSmooth {
-   0%   { opacity: 0;   transform: translateY(-10px) scale(0.85); }   /* fade in */
-   20%  { opacity: 0.5; transform: translateY(-12px) scale(0.90); }   /* fade in */
+   0%   { opacity: 0;   transform: translateY(-10px) scale(0.80); }   /* fade in */
+   20%  { opacity: 0.5; transform: translateY(-12px) scale(0.85); }   /* fade in */
    40%  { opacity: 1;   transform: translateY(-14px) scale(0.90); }  
    60%  { opacity: 0.8; transform: translateY(-16px) scale(0.90); }  
-   80%  { opacity: 0.4; transform: translateY(-18px) scale(0.90); }  /* fade out */
-   100% { opacity: 0;   transform: translateY(-20px) scale(0.85); }  /* fade out */
+   80%  { opacity: 0.4; transform: translateY(-18px) scale(0.85); }  /* fade out */
+   100% { opacity: 0;   transform: translateY(-20px) scale(0.80); }  /* fade out */
   }
 
   /* petit reset pour boutons et images */
@@ -370,7 +379,7 @@
     <!-- Ligne 3 -->
     <div class="score">
       <div class="flame" id="flameLogo">
-        働
+        処理 
         <div id="gainContainer" style="position:relative; margin-left:6px;"></div>
       </div>
       <div class="f-points" id="fPoints"></div>
@@ -442,7 +451,7 @@
     // positionnement ajusté : on l'ajoute directement à gainContainer (à côté de la flamme)
     gainContainer.appendChild(popup);
     // suppression après animation (durée CSS ~1.4s)
-    setTimeout(() => popup.remove(), 2000);       /* ← durée de l'animation du +1 */ 
+    setTimeout(() => popup.remove(), 2200);       /* ← durée de l'animation du +1 */ 
   }
 
   function updateTimerDisplay(sec) {
