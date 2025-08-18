@@ -157,7 +157,7 @@
     gap: 4px;                                 /* ← marge entre les deux boutons (PLAY & STOP) */
   }
 
-  /* .BOUTONS */
+  /* BOUTONS */
   .img-btn {
     width: 23px;                              /* ← changer ici la taille des boutons */
     height: 23px;                             /* ← changer ici la taille des boutons */
@@ -183,25 +183,27 @@
     justify-content: flex-end;                /* ← garde le timer à droite sur la même ligne que la barre */
   }
 
+  /* BOX */
   .minutes-box {
-    height: 23px;                             /* ← hauteur de la box */
+    height: 27px;                             /* ← hauteur de la box */
     display: flex;
     align-items: center;
     background-color: transparent;            /* ← couleur du fond de la box */
-    border: 0px solid var(--primary);      
-    box-shadow: 0 0 0px var(--primary);       /* ← effet néon sur la box */
-    padding: 0 4px;                           /* ← longueur de la box */                 
+    /* border: 1px solid var(--primary); */   /* ← bordure de la box à ajouter si besoin */
+    padding: 0 0px;                           /* ← marge entre la box et le timer */                 
     flex-shrink: 0;
+    overflow: visible; 
   }
+  
   .minutes-input {
-    width: 50px;                              /* ← longueur des nombres dans la box */
+    width: 30px;                              /* ← longueur de la box */
     font-weight: 200;
     font-size: 27px;                          /* ← taille des chiffres dans la box */
     font-family: 'digital-7 (mono)', monospace;     /* ← police dans la box */
     text-align: center;
     border: none;
     outline: none;
-    height: 80px;                             /* ← hauteur du fond des minutes */
+    height: auto;                             /* ← hauteur du fond des minutes */
     background: transparent;                  /* ← couleur du fond des nombres de la box */
     color: #14FFFB;                           /* ← couleur de la police dans la box */
     opacity: 1;                            /* ← opacité de la police dans la box */
