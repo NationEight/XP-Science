@@ -54,12 +54,12 @@
     box-sizing: border-box;
   }
 
-  /* === Barre de progression === */
+  /* PROGRESS BAR */
   .progress-bar {
     display: flex;
     align-items: center;
     background-color: #323232;
-    height: 32px;                             /* ← hauteur de la progress-bar */
+    height: 28px;                             /* ← hauteur de la progress-bar */
     position: relative;
     overflow: hidden;
     width: 100%;                              /* ← prend toute la largeur de .container */
@@ -72,6 +72,7 @@
     transition: width 0.12s linear;           /* ← animation fluide et réactive */
   }
   .progress-text {
+    font-size: 22px;
     position: absolute;
     left: 6px;
     color: var(--text-dark);
@@ -94,7 +95,7 @@
     overflow: hidden;                           /* ← coupe tout ce qui dépasse */
   }
   
-  /* BLOC TIMER LIGNES DE BALAYAGES */
+  /* BLOC TIMER LIGNES DE BALAYAGES HORIZONTALES */
   .timer-flame-block::after {
     content: "";
     position: absolute;
@@ -113,7 +114,7 @@
     z-index: 0;                             /* au-dessus du fond mais derrière le texte si nécessaire */
   }
   
-  /* Lignes verticales */
+  /* BLOC TIMER LIGNES DE BALAYAGES VERTICALES */
   .timer-flame-block::after {
   content: "";
   position: absolute;
