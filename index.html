@@ -205,14 +205,14 @@
     display: flex;
     align-items: center;
     background-color: transparent;            /* ← couleur du fond de la box */
-    /* border: 1px solid var(--primary); */   /* ← bordure de la box à ajouter si besoin */
+    border: 0.5px solid var(--primary);   /* ← bordure de la box à ajouter si besoin */
     padding: 0 0px;                           /* ← marge entre la box et le timer */                 
     flex-shrink: 0;
     overflow: visible; 
   }
   
   .minutes-input {
-    width: 30px;                              /* ← longueur de la box */
+    width: 38px;                              /* ← longueur de la box */
     font-weight: 200;
     font-size: 27px;                          /* ← taille des chiffres dans la box */
     font-family: '1st font', monospace;     /* ← police dans la box */
@@ -370,8 +370,7 @@
       <div class="btn-group">
         <img src="https://raw.githubusercontent.com/NationEight/XP-Science/main/PLAY.png" alt="Play" class="img-btn" id="playBtn">
         <img src="https://raw.githubusercontent.com/NationEight/XP-Science/main/STOP.png" alt="Stop" class="img-btn" id="stopBtn">
-        <!-- Bouton bascule clair/sombre (pas d'image pour l'instant) -->
-        <button id="bgBtn" class="img-btn" title="Mode clair/sombre">◑</button>
+        <button id="bgBtn" class="img-btn" title="Mode clair/sombre">◑</button>  <!-- Bouton bascule clair/sombre (pas d'image pour l'instant) -->
       </div>
 
       <div class="timer-wrapper">
@@ -397,27 +396,21 @@
 
 </div>
 
-<!-- Sonnerie (mettre NotionRingtone.mp3 dans le même dossier) -->
-<audio id="ringtone" src="NotionRingtone.mp3" preload="auto"></audio>
+
+<audio id="ringtone" src="NotionRingtone.mp3" preload="auto"></audio>      <!-- Sonnerie (mettre NotionRingtone.mp3 dans le même dossier) -->
 
 <script>
-  /* =========================
-     Paramètres modifiables (ou garder ceux par défaut)
-     - GAIN_INTERVAL_SEC : intervalle (s) pour le +1
-     - MAX_POINTS : plafond de la cagnotte (18 chiffres)
-     - ANIM_DURATION_POP : durée interne du popup (contrôlée par CSS aussi)
-     - minutes-input font-size : changer dans le CSS .minutes-input
-     ========================= */
-  const GAIN_INTERVAL_SEC = 3; // Intervalle de gain en secondes
-  const MAX_POINTS = 999999999999999999; // 18 chiffres max
-  const LOCALSTORAGE_KEY = "pomodoro_cagnotte"; // Clé stockage local
+  
+  const GAIN_INTERVAL_SEC = 7;                                              // Intervalle de gain en secondes
+  const MAX_POINTS = 999999999999999999;                                   // 18 chiffres max
+  const LOCALSTORAGE_KEY = "pomodoro_cagnotte";                            // Clé stockage local
 
   // Variables temps / état
-  let totalSeconds = 0;          // durée initiale (en s) pris depuis la box
-  let remainingSeconds = 0;      // temps restant (en s, flottant)
-  let isRunning = false;         // état play/pause
-  let lastTimestamp = null;      // utilisé par requestAnimationFrame
-  let gainTimer = 0;             // accumulateur pour +1
+  let totalSeconds = 0;          
+  let remainingSeconds = 0;      
+  let isRunning = false;         
+  let lastTimestamp = null;      
+  let gainTimer = 0;             
   let fPoints = parseInt(localStorage.getItem(LOCALSTORAGE_KEY) || "0", 10);
 
   // Références DOM
