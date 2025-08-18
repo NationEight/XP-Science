@@ -268,7 +268,7 @@
     align-items: center;
     font-size: 16px;                                                            /* ← taille du symbol (en ON et en OFF) */
     font-family: 'digital-7 (mono)', monospace;                                 /* ← police du symbol */
-    font-weight: regular;                                                       /* ← regular ou bold */
+    font-weight: regular;                                                         /* ← Symbol en regular ou bold */
     color: var(--logo-off);
     text-shadow: none;
     position: relative;
@@ -278,8 +278,8 @@
   }
   .flame.active {
     /* léger glow progressif (couleur contrôlée en :root) */
-    color: var(--logo-on); 
-    text-shadow: 0 0 2px var(--accent-glow1), 0 0 6px var(--accent-glow2);
+    color: #14FFFB; 
+    text-shadow: 0 0 10px rgba(20, 255, 251, 0.6);
     /* pulse CSS minimisé (n'affecte plus la taille globale) */
     animation: pulseFlame 1.4s ease-in-out infinite;
   }
@@ -370,7 +370,7 @@
     <!-- Ligne 3 -->
     <div class="score">
       <div class="flame" id="flameLogo">
-        REC
+        働
         <div id="gainContainer" style="position:relative; margin-left:6px;"></div>
       </div>
       <div class="f-points" id="fPoints"></div>
