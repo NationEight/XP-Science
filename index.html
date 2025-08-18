@@ -14,7 +14,15 @@
     font-style: normal;
   }
   
-  /* 2nd POLICE */
+  /* 2nd POLICE (SYMBOL) */
+  @font-face {
+    font-family: 'MochiyPopOne-Regular';
+    src: url('https://raw.githubusercontent.com/NationEight/XP-Science/main/JP%20Fonts/MochiyPopOne-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  /* 3rd POLICE (+1) */
   @font-face {
     font-family: 'MochiyPopOne-Regular';
     src: url('https://raw.githubusercontent.com/NationEight/XP-Science/main/JP%20Fonts/MochiyPopOne-Regular.ttf') format('truetype');
@@ -24,16 +32,16 @@
 
   /* COULEURS */
   :root {
-    --bg-main: #191919;                                                                                       /* ← couleur background (sombre) */
-    --primary: #14DCFF;                                                      /* ← couleur primaire */
-    --accent: #14DCFF;                                                       /* ← couleur cagnotte et du symbol ON */
-    --accent-glow1: #FFFFFF;                                                 /* ← glow interne */
-    --accent-glow2: #14DCFF;                                                 /* ← glow externe */
-    --text-light: #ffffff;                                                   /* ← texte clair */
-    --text-dark: #191919;                                                    /* ← texte sombre */
-    --logo-on: #14DCFF;                                                       /* ← couleur symbol quand timer ON */
-    --logo-off: transparent;                                                 /* ← couleur symbol quand timer OFF */
-    --gain-color: #14DCFF;                                                    /* ← couleur du +1 */
+    --bg-main: #191919;        /* ← couleur background (sombre) */
+    --primary: #14DCFF;        /* ← couleur primaire */
+    --accent: #14DCFF;         /* ← couleur cagnotte et du symbol ON */
+    --accent-glow1: #FFFFFF;   /* ← glow interne */
+    --accent-glow2: #14DCFF;   /* ← glow externe */
+    --text-light: #ffffff;     /* ← texte clair */
+    --text-dark: #191919;      /* ← texte sombre */
+    --logo-on: #14DCFF;        /* ← couleur symbol quand timer ON */
+    --logo-off: transparent;   /* ← couleur symbol quand timer OFF */
+    --gain-color: #14DCFF;     /* ← couleur du +1 */
   }
 
   /* LIGHT MODE */
@@ -369,7 +377,7 @@
       <div class="timer-wrapper">
         <div class="minutes-box">
           <input type="number" class="minutes-input" id="minutesInput" min="1" value="50" maxlength="3"> <!-- blocage des 3 chiffres dans la box -->
-          <span>❱❱</span>
+          <span>⎇</span>
         </div>
         <div class="timer" id="timerDisplay">
           <strong>00</strong>:<strong>00</strong>:<strong>00</strong>
@@ -400,7 +408,7 @@
      - ANIM_DURATION_POP : durée interne du popup (contrôlée par CSS aussi)
      - minutes-input font-size : changer dans le CSS .minutes-input
      ========================= */
-  const GAIN_INTERVAL_SEC = 10; // Intervalle de gain en secondes
+  const GAIN_INTERVAL_SEC = 3; // Intervalle de gain en secondes
   const MAX_POINTS = 999999999999999999; // 18 chiffres max
   const LOCALSTORAGE_KEY = "pomodoro_cagnotte"; // Clé stockage local
 
