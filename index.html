@@ -19,7 +19,7 @@
     --bg-main: #191919;                                                      /* ← couleur background (sombre) */
     --primary: #14FFFB;                                                      /* ← couleur primaire */
     --accent: #14FFFB;                                                       /* ← couleur cagnotte et du symbol ON */
-    --accent-glow1: #14FFFB;                                                 /* ← glow interne */
+    --accent-glow1: #FFFFFF;                                                 /* ← glow interne */
     --accent-glow2: #14FFFB;                                                 /* ← glow externe */
     --text-light: #ffffff;                                                   /* ← texte clair */
     --text-dark: #191919;                                                    /* ← texte sombre */
@@ -193,7 +193,7 @@
     color: #14FFFB;                           /* ← couleur de la police dans la box */
     opacity: 0.90;                            /* ← opacité de la police dans la box */
     text-shadow: 0 0 0px var(--accent-glow1), 0 0 10px var(--accent-glow2);  /* ← effet néon sur la police de la box */
-    filter: drop-shadow(-2px 2px 0.3px rgba(102, 100, 87, 0.2));            /* ← effet ombre sur la police de la box */
+    filter: drop-shadow(-2px 2px 0.3px rgba(102, 100, 87, 0));            /* ← effet ombre sur la police de la box */
     font-weight: 700;
   }
   
@@ -203,6 +203,7 @@
     margin: 0;
   }
   
+  /* SYMBOL DANS LA BOX */
   .minutes-box span {
     color: #666457;                           /* ← couleur du symbol dans la box */
     font-weight: 400;
@@ -210,7 +211,7 @@
     opacity: 0.32;
   }
   
- /* TIMER */
+  /* TIMER */
   .timer {
     color: #14FFFB;                           /* ← couleur de la police du timer */
     opacity: 0.90;                            /* ← opacité de la police du timer */
@@ -276,12 +277,13 @@
     display: none;                            /* ← valeur affichée seulement dans la cagnotte */
   }
   
+  /* CAGNOTTE */
   .f-points {
     font-size: 24px;                          /* ← taille de la police de la cagnotte */
     font-weight: 700;
     color: #FFFFFF;
     white-space: nowrap;                      /* ← évite le wrapping */
-    text-shadow: 0 0 0px var(--accent-glow1), 0 0 4px #FFFFFF;    /* ← effet néon sur la cagnotte */
+    text-shadow: 0 0 0px var(--accent-glow1), 0 0 10px #FFFFFF;    /* ← effet néon sur la cagnotte */
   }
   .f-points span {
     font-weight: 400;
