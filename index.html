@@ -203,9 +203,9 @@
     height: 80px;                             /* ← hauteur du fond des minutes */
     background: transparent;                  /* ← couleur du fond des nombres de la box */
     color: #14FFFB;                           /* ← couleur de la police dans la box */
-    opacity: 0.90;                            /* ← opacité de la police dans la box */
-    text-shadow: 0 0 0px var(--accent-glow1), 0 0 10px var(--accent-glow2);  /* ← effet néon sur la police de la box */
-    filter: drop-shadow(-2px 2px 0.3px rgba(102, 100, 87, 0));            /* ← effet ombre sur la police de la box */
+    opacity: 1;                            /* ← opacité de la police dans la box */
+    text-shadow: 0 0 10px rgba(20, 255, 251, 0.6);                          /* ← effet néon sur le texte de la box */
+    filter: drop-shadow(-2px 2px 0.3px rgba(102, 100, 87, 0));              /* ← effet ombre sur la police de la box */
     font-weight: 700;
   }
   
@@ -226,10 +226,10 @@
   /* TIMER */
   .timer {
     color: #14FFFB;                                                         /* ← couleur de la police du timer */
-    opacity: 0.90;                                                          /* ← opacité de la police du timer */
+    opacity: 1;                                                          /* ← opacité de la police du timer */
     font-weight: 200;
     font-size: 30px;                                                        /* ← taille de la police du timer */
-    text-shadow: 0 0 10px rgba(20, 255, 251, 0.7);                          /* ← effet néon sur le timer */
+    text-shadow: 0 0 10px rgba(20, 255, 251, 0.6);                          /* ← effet néon sur le timer */
     filter: drop-shadow(-0px 0px 0px rgba(102, 100, 87, 0));                /* ← effet ombre sur le timer (opacité sur la dernière valeur) */
   }
   
@@ -286,17 +286,18 @@
   }
 
   .flame-count {
-    display: none;                            /* ← valeur affichée seulement dans la cagnotte */
+    display: none;                                                              /* ← valeur affichée seulement dans la cagnotte */
   }
   
   /* CAGNOTTE */
   .f-points {
-    font-size: 24px;                          /* ← taille de la police de la cagnotte */
+    font-size: 24px;                                                            /* ← taille de la police de la cagnotte */
     font-weight: 700;
     color: #FFFFFF;
-    white-space: nowrap;                      /* ← évite le wrapping */
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);                          /* ← effet néon sur le timer */
+    white-space: nowrap;                                                        /* ← évite le wrapping */
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);                             /* ← effet néon sur le timer */
   }
+  
   .f-points span {
     font-weight: 400;
     opacity: 0.32;                            /* ← zéros plus discrets */
