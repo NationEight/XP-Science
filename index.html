@@ -400,8 +400,8 @@
 <script>
   
   const GAIN_INTERVAL_SEC = 7;                                              // Intervalle de gain en secondes
-  const MAX_POINTS = 999999999999999999;                                   // 18 chiffres max
-  const LOCALSTORAGE_KEY = "pomodoro_cagnotte";                            // Clé stockage local
+  const MAX_POINTS = 9999999999999999;                                      // 16 chiffres max
+  const LOCALSTORAGE_KEY = "pomodoro_cagnotte";                             // Clé stockage local
 
   // Variables temps / état
   let totalSeconds = 0;          
@@ -426,7 +426,7 @@
 
   // affichage initial de la cagnotte
   function formatPoints(value) {
-    const str = String(value).padStart(18, "0");                              /* ← 18 chiffres affichés */
+    const str = String(value).padStart(16, "0");                              /* ← 18 chiffres affichés */
     const firstNonZero = str.search(/[^0]/);
     return str.split("").map((digit, i) =>
     i < firstNonZero ? `<span>${digit}</span>` : digit
