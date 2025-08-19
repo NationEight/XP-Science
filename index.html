@@ -187,11 +187,12 @@
     cursor: pointer;
     transition: transform 0.18s ease, box-shadow 0.18s ease;
     background: none;
-    border: none;
+    border: 1px solid #333333;                /* ← bordure de la box à ajouter si besoin */
     padding: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    border-radius: 4px;                       /* ← coins arrondis des boutons */
   }
   
   .img-btn:hover {
@@ -506,7 +507,7 @@
     isRunning = false;
     lastTimestamp = null;
     flameLogo.classList.remove('active');
-    playBtn.src = "PLAY.png";
+    playBtn.src = "https://raw.githubusercontent.com/NationEight/XP-Science/main/Buttons/PLAY.png";  /* source du boutton PLAY */
     updateTimerDisplay(0);
     updateProgressBar(0);
     try { ringtone.currentTime = 0; ringtone.play().catch(()=>{}); } catch(e){}
@@ -539,7 +540,7 @@
     requestAnimationFrame(tick);
     } else {
     isRunning = false;
-    playBtn.src = "PLAY.png";
+    playBtn.src = "https://raw.githubusercontent.com/NationEight/XP-Science/main/Buttons/PLAY.png";  /* source du boutton PLAY */
     flameLogo.classList.remove('active');
     lastTimestamp = null;
   }
@@ -547,7 +548,7 @@
 
   stopBtn.addEventListener('click', () => {
     isRunning = false;
-    playBtn.src = "PLAY.png";
+    playBtn.src = "https://raw.githubusercontent.com/NationEight/XP-Science/main/Buttons/PLAY.png";  /* source du boutton PLAY */
     flameLogo.classList.remove('active');
     resetTimerToBoxValue();
     progressFill.style.transition = 'none';       
