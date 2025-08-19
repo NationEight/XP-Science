@@ -62,49 +62,49 @@
 
   /* CONTAINER */
   .container {
-    width: 100%;                              /* ← rend la largeur adaptative à l'encadré */
-    max-width: 1000px;                        /* ← modifiable pour un maximum fixe */
-    padding: 4px;                             /* ← marge globale */
+    width: 100%;               /* ← rend la largeur adaptative à l'encadré */
+    max-width: 1000px;         /* ← modifiable pour un maximum fixe */
+    padding: 4px;              /* ← marge globale */
     display: flex;
     flex-direction: column;
-    gap: 6px;                                 /* ← espace entre les deux blocs (progress bar & timer) */
+    gap: 6px;                  /* ← espace entre les deux blocs (progress bar & timer) */
     box-sizing: border-box;
   }
 
-  /* PROGRESS BAR VIDE */
+  /* PROGRESS BAR EMPTY */
   .progress-bar {
     display: flex;
     align-items: center;
-    background-color: #323232;                /* ← couleur de la progress bar vide */
-    box-shadow: 0 0 4px rgba(38, 38, 38, 0.0);/* ← effet néon/ombre sur la progress bar */
-    height: 28px;                             /* ← hauteur de la progress-bar */
+    background-color: #323232;                  /* ← couleur de la progress bar vide */
+    box-shadow: 0 0 4px rgba(38, 38, 38, 0.0);  /* ← effet néon/ombre sur la progress bar vide */
+    height: 28px;                               /* ← hauteur de la progress-bar */
     position: relative;
     overflow: hidden;
-    width: 100%;                              /* ← prend toute la largeur du container */
-    border-radius: 4px;                       /* ← coins arrondis sur la progress bar vide */
+    width: 100%;                                /* ← prend toute la largeur du container */
+    border-radius: 4px;                         /* ← coins arrondis sur la progress bar vide */
   }
   
-  /* PROGRESS BAR REMPLISSAGE */
+  /* PROGRESS BAR FILL */
   .progress-fill {
-    background-color: var(--primary);         /* ← couleur de la progress bar remplie */
+    background-color: var(--primary);               /* ← couleur de la progress bar remplie */
     height: 100%;
     width: 0%;
-    box-shadow: 0 0 10px rgba(20, 255, 251, 0.6);             /* ← effet néon de la progress bar remplie */
-    transition: width 0.12s linear;                           /* ← animation fluide et réactive */
-    border-radius: 4px;                                       /* ← coins arrondis sur la progress bar remplie */
+    box-shadow: 0 0 10px rgba(20, 255, 251, 0.6);   /* ← effet néon de la progress bar remplie */
+    transition: width 0.12s linear;                 /* ← animation fluide et réactive */
+    border-radius: 4px;                             /* ← coins arrondis sur la progress bar remplie */
   }
   
   /* PROGRESS BAR TEXT */
   .progress-text {
-    font-size: 21px;                          /* ← taille de la police de la progress bar */
+    font-size: 21px;          /* ← taille de la police de la progress bar */
     position: absolute;
-    left: 6px;
-    color: var(--text-dark);                  /* ← couleur de la police de la progress bar */
+    left: 6px;                /* ← marge à gauche du texte de la progress bar */
+    color: var(--text-dark);  /* ← couleur de la police de la progress bar */
     font-weight: 200;
   }
   
   .progress-text strong {
-    font-weight: 700;                         /* ← gras sur les chiffres du % */
+    font-weight: 700;         /* ← gras sur les chiffres du % de la progress bar */
   }
 
   /* BLOC TIMER */
@@ -113,7 +113,7 @@
     height: 57px;                               /* ← hauteur du bloc timer */
     background: radial-gradient(                /* ← dégradé */
       circle at center,
-      rgba(48, 52, 50, 0.40),                   /* centre lumineux */
+      rgba(49, 52, 50, 0.40),                   /* centre lumineux */
       rgba(30, 30, 30, 0.95)                    /* fondu sombre */
     ),
     #262626;                                    /* couleur de base en fallback */
@@ -125,7 +125,7 @@
     gap: 4px;                                   /* ← marge entre la première et deuxième ligne du bloc timer */
     overflow: hidden;                           /* ← coupe tout ce qui dépasse */
     border-radius: 4px;                         /* ← coins arrondis sur le bloc timer */
-    border: 1px solid #333333;                /* ← bordure de la box à ajouter si besoin */
+    border: 1px solid #333333;                  /* ← bordure de la box à ajouter si besoin */
   }
   
   /* BLOC TIMER LIGNES DE BALAYAGES HORIZONTALES */
@@ -228,7 +228,7 @@
     background: transparent;                                    /* ← couleur de fond de la box */
     color: #14DCFF;                                             /* ← couleur de la police dans la box */
     opacity: 1;                                                 /* ← opacité de la police dans la box */
-    text-shadow: 0 0 2px rgba(20, 255, 251, 0.2);              /* ← effet néon sur le texte de la box */
+    text-shadow: 0 0 2px rgba(20, 255, 251, 0.2);               /* ← effet néon sur le texte de la box */
     filter: drop-shadow(-2px 2px 0.3px rgba(102, 100, 87, 0));  /* ← effet ombre sur la police de la box */
     font-weight: 700;
   }
@@ -253,7 +253,7 @@
     opacity: 1;                                                          /* ← opacité de la police du timer */
     font-weight: 200;
     font-size: 25px;                                                        /* ← taille de la police du timer */
-    text-shadow: 0 0 10px rgba(20, 255, 251, 0.4);                          /* ← effet néon sur le timer */
+    text-shadow: 0 0 10px rgba(20, 255, 251, 0.3);                          /* ← effet néon sur le timer */
     filter: drop-shadow(-0px 0px 0px rgba(102, 100, 87, 0));                /* ← effet ombre sur le timer (opacité sur la dernière valeur) */
   }
   
@@ -300,7 +300,7 @@
   .flame.active {
     /* léger glow progressif (couleur contrôlée en :root) */
     color: #FF146E; 
-    text-shadow: 0 0 6px rgba(255, 20, 110, 0.4);
+    text-shadow: 0 0 6px rgba(255, 20, 110, 0.3);
     /* pulse CSS minimisé (n'affecte plus la taille globale) */
     animation: pulseFlame 1.8s ease-in-out infinite;
   }
@@ -319,7 +319,7 @@
     font-weight: 700;
     color: #FFFFFF;
     white-space: nowrap;                                                        /* ← évite le wrapping */
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);                             /* ← effet néon sur le timer */
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);                             /* ← effet néon sur la cagnotte */
   }
   
   .f-points span {
