@@ -113,10 +113,10 @@
     height: 57px;                               /* ← hauteur du bloc timer */
     background: radial-gradient(                /* ← dégradé */
       circle at center,
-      rgba(49, 52, 50, 0.40),                   /* centre lumineux */
-      rgba(30, 30, 30, 0.95)                    /* fondu sombre */
+      rgba(49, 52, 50, 0.20),                   /* ← centre lumineux */
+      rgba(30, 30, 30, 0.95)                    /* ← fondu sombre */
     ),
-    #262626;                                    /* couleur de base en fallback */
+    #262626;                                    /* ← couleur de base en fallback */
     background-color: #262626;                  /* ← couleur du bloc timer */
     box-shadow: 0 0 4px rgba(38, 38, 38, 0.8);  /* ← effet néon/ombre sur le gros bloc timer */
     padding: 8px;                               /* ← marge du bloc timer (de tout ce qui est à l'intérieur) */
@@ -125,10 +125,10 @@
     gap: 4px;                                   /* ← marge entre la première et deuxième ligne du bloc timer */
     overflow: hidden;                           /* ← coupe tout ce qui dépasse */
     border-radius: 4px;                         /* ← coins arrondis sur le bloc timer */
-    border: 1px solid #333333;                  /* ← bordure de la box à ajouter si besoin */
+    border: 1px solid #2E2E2E;                  /* ← bordure du bloc timer à ajouter si besoin */
   }
   
-  /* BLOC TIMER LIGNES DE BALAYAGES HORIZONTALES */
+  /* BLOC TIMER HORIZONTAL SCAN LINE */
   .timer-flame-block::before {
     content: "";
     position: absolute;
@@ -136,19 +136,19 @@
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none;                    /* ne bloque pas le timer */
+    pointer-events: none;             /* ← ne bloque pas le timer */
     background-image: repeating-linear-gradient(
       to bottom,
-      rgba(255, 255, 255, 0.06),              /* lignes claires */
-      rgba(255, 255, 255, 0.00) 1px,          /* lignes sombres */
-      transparent 1px,                        /* épaisseur des lignes clair */
-      transparent 2px                         /* épaisseur des lignes sombres */
+      rgba(255, 255, 255, 0.06),      /* ← lignes claires */
+      rgba(255, 255, 255, 0.00) 1px,  /* ← lignes sombres */
+      transparent 1px,                /* ← épaisseur des lignes clair */
+      transparent 2px                 /* ← épaisseur des lignes sombres */
     );
-    z-index: 2;                               /* au-dessus du fond mais derrière le texte si nécessaire */
-    border-radius: 4px;                       /* ← coins arrondis sur les lignes de balayages horizontales */
+    z-index: 2;                       /* ← au-dessus du fond mais derrière le texte si nécessaire */
+    border-radius: 4px;               /* ← coins arrondis sur les lignes de balayages horizontales */
   }
   
-  /* BLOC TIMER LIGNES DE BALAYAGES VERTICALES */
+  /* BLOC TIMER VERTICALE SCAN LINE */
   .timer-flame-block::after {
     content: "";
     position: absolute;
@@ -159,16 +159,16 @@
     pointer-events: none;
     background-image: repeating-linear-gradient(
      to right,
-     rgba(255, 255, 255, 0.01),
+     rgba(255, 255, 255, 0.02),
      rgba(255, 255, 255, 0.00) 1px,
      transparent 1px,
      transparent 2px
    );
    z-index: 2;
-   border-radius: 4px;                       /* ← coins arrondis sur les lignes de balayages verticales */
+   border-radius: 4px;                /* ← coins arrondis sur les lignes de balayages verticales */
   }
 
-  /* Boutons + Timer */
+  /* BUTTONS */
   .controls {
     display: flex;
     align-items: center;
