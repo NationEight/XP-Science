@@ -374,8 +374,9 @@
     <!-- Ligne 2 -->
     <div class="controls">
       <div class="btn-group">
-        <img src="https://raw.githubusercontent.com/NationEight/XP-Science/main/PLAY.png" alt="Play" class="img-btn" id="playBtn">
-        <img src="https://raw.githubusercontent.com/NationEight/XP-Science/main/STOP.png" alt="Stop" class="img-btn" id="stopBtn">
+        <!-- sources des boutons -->
+        <img src="https://raw.githubusercontent.com/NationEight/XP-Science/main/Buttons/PLAY.png" alt="Play" class="img-btn" id="playBtn">
+        <img src="https://raw.githubusercontent.com/NationEight/XP-Science/main/Buttons/STOP.png" alt="Stop" class="img-btn" id="stopBtn">
         <button id="bgBtn" class="img-btn" title="Mode clair/sombre">◑</button>  <!-- Bouton bascule clair/sombre (pas d'image pour l'instant) -->
       </div>
 
@@ -535,7 +536,7 @@
     if (remainingSeconds <= 0) return; 
     isRunning = true;
     lastTimestamp = null;
-    playBtn.src = "PAUSE.png";
+    playBtn.src = "https://raw.githubusercontent.com/NationEight/XP-Science/main/Buttons/PAUSE.png";  /* source du boutton PLAY */
     flameLogo.classList.add('active');
     requestAnimationFrame(tick);
     } else {
