@@ -407,17 +407,18 @@
 <audio id="ringtone" src="https://raw.githubusercontent.com/NationEight/XP-Science/main/Sounds/NotionRingtone.mp3" preload="auto"></audio> 
 
 <script>
-  
-  const GAIN_INTERVAL_SEC = 7;                                              // Intervalle de gain en secondes
-  const MAX_POINTS = 9999999999999999;                                      // 16 chiffres max
-  const LOCALSTORAGE_KEY = "pomodoro_cagnotte";                             // Clé stockage local
+  const GAIN_INTERVAL_SEC = 7;                               // Intervalle de gain en secondes
+  const MAX_POINTS = 9999999999999999;                       // 16 chiffres max
+  const LOCALSTORAGE_KEY = "pomodoro_cagnotte";              // Clé stockage local
 
   // Variables temps / état
-  let totalSeconds = 0;          
-  let remainingSeconds = 0;      
-  let isRunning = false;         
-  let lastTimestamp = null;      
-  let gainTimer = 0;             
+  let totalSeconds = 0;
+  let remainingSeconds = 0;
+  let isRunning = false;
+  let lastTimestamp = null; // optionnel (plus utilisé)
+  let intervalId = null;
+  let endTime = null;
+  let gainTimer = 0;
   let fPoints = parseInt(localStorage.getItem(LOCALSTORAGE_KEY) || "0", 10);
 
   // Références DOM
@@ -435,13 +436,12 @@
 
   // affichage initial de la cagnotte
   function formatPoints(value) {
-    const str = String(value).padStart(16, "0");                              /* ← 18 chiffres affichés */
+    const str = String(value).padStart(16, "0");
     const firstNonZero = str.search(/[^0]/);
     return str.split("").map((digit, i) =>
-    i < firstNonZero ? `<span>${digit}</span>` : digit
+      i < firstNonZero ? `<span>${digit}</span>` : digit
     ).join("");
   }
-  
   fPointsDisplay.innerHTML = formatPoints(fPoints);
 
   function addPoints(amount) {
@@ -454,9 +454,9 @@
   function showGainAnimation() {
     const popup = document.createElement("div");
     popup.className = "gain-popup";
-    popup.textContent = "+1";                                                   /* ← affichage du +1 */   
+    popup.textContent = "+1";
     gainContainer.appendChild(popup);
-    setTimeout(() => popup.remove(), 2200);                                     /* ← durée de l'animation du +1 */ 
+    setTimeout(() => popup.remove(), 2200);
   }
 
   function updateTimerDisplay(sec) {
@@ -483,90 +483,84 @@
     totalSeconds = Math.max(0, mins * 60);
     remainingSeconds = totalSeconds;
     gainTimer = 0;
-    lastTimestamp = null;
+    lastTimestamp = null; // optionnel
     updateTimerDisplay(remainingSeconds);
     updateProgressBar(remainingSeconds);
   }
 
-  // TICK principal (ultra-stable) : utilise delta depuis lastTimestamp
-  function tick(ts) {
-    if (!isRunning) return;
-    if (!lastTimestamp) lastTimestamp = ts;
-    const delta = (ts - lastTimestamp) / 1000; // en secondes (float)
-    lastTimestamp = ts;
-    remainingSeconds -= delta;
-    gainTimer += delta;
-    if (gainTimer >= GAIN_INTERVAL_SEC) {
-    const gains = Math.floor(gainTimer / GAIN_INTERVAL_SEC);
-    gainTimer -= gains * GAIN_INTERVAL_SEC;
-    addPoints(gains);
-    for (let i = 0; i < gains; i++) showGainAnimation();
+  // -------- LOGIQUE DECOMPTE BASÉE SUR Date.now() --------
+  function startTimer() {
+    if (isRunning) return;
+    if (remainingSeconds <= 0) resetTimerToBoxValue();
+    if (remainingSeconds <= 0) return;
+
+    isRunning = true;
+    endTime = Date.now() + remainingSeconds * 1000;
+
+    flameLogo.classList.add('active');
+    playBtn.src = "https://raw.githubusercontent.com/NationEight/XP-Science/main/Buttons/PAUSE.png";
+
+    intervalId = setInterval(() => {
+      const now = Date.now();
+      remainingSeconds = Math.max(0, Math.round((endTime - now) / 1000));
+
+      updateTimerDisplay(remainingSeconds);
+      updateProgressBar(remainingSeconds);
+
+      // gestion +1
+      gainTimer++;
+      if (gainTimer >= GAIN_INTERVAL_SEC) {
+        addPoints(1);
+        showGainAnimation();
+        gainTimer = 0;
+      }
+
+      if (remainingSeconds <= 0) {
+        stopTimer(false);
+        try { ringtone.currentTime = 0; ringtone.play().catch(()=>{}); } catch(e){}
+      }
+    }, 1000);
   }
 
-    if (remainingSeconds <= 0) {
-    remainingSeconds = 0;
+  function stopTimer(reset = true) {
+    clearInterval(intervalId);
+    intervalId = null;
     isRunning = false;
-    lastTimestamp = null;
     flameLogo.classList.remove('active');
-    playBtn.src = "https://raw.githubusercontent.com/NationEight/XP-Science/main/Buttons/PLAY.png";  /* source du boutton PLAY */
-    updateTimerDisplay(0);
-    updateProgressBar(0);
-    try { ringtone.currentTime = 0; ringtone.play().catch(()=>{}); } catch(e){}
-    return;
+    playBtn.src = "https://raw.githubusercontent.com/NationEight/XP-Science/main/Buttons/PLAY.png";
+    if (reset) resetTimerToBoxValue();
   }
 
-    updateTimerDisplay(remainingSeconds);
-    updateProgressBar(remainingSeconds);
-    requestAnimationFrame(tick);
-  }
-
-  minutesInput.addEventListener('input', () => {                  
-    if (minutesInput.value.length > 3) {                      /* blocage de la box à 3 chiffres */    
-    minutesInput.value = minutesInput.value.slice(0,3);         
-  }                                                             
-  
-  if (!isRunning) {
-    resetTimerToBoxValue();
-  }
+  // -------- LISTENERS --------
+  minutesInput.addEventListener('input', () => {
+    if (minutesInput.value.length > 3) {
+      minutesInput.value = minutesInput.value.slice(0,3);
+    }
+    if (!isRunning) {
+      resetTimerToBoxValue();
+    }
   });
 
   playBtn.addEventListener('click', () => {
-    if (!isRunning) {
-    if (remainingSeconds <= 0) resetTimerToBoxValue();
-    if (remainingSeconds <= 0) return; 
-    isRunning = true;
-    lastTimestamp = null;
-    playBtn.src = "https://raw.githubusercontent.com/NationEight/XP-Science/main/Buttons/PAUSE.png";  /* source du boutton PLAY */
-    flameLogo.classList.add('active');
-    requestAnimationFrame(tick);
-    } else {
-    isRunning = false;
-    playBtn.src = "https://raw.githubusercontent.com/NationEight/XP-Science/main/Buttons/PLAY.png";  /* source du boutton PLAY */
-    flameLogo.classList.remove('active');
-    lastTimestamp = null;
-  }
+    if (!isRunning) startTimer();
+    else stopTimer(false); // pause
   });
 
+  // ✅ Garde ce listener-là uniquement (supprime tout doublon)
   stopBtn.addEventListener('click', () => {
-    isRunning = false;
-    playBtn.src = "https://raw.githubusercontent.com/NationEight/XP-Science/main/Buttons/PLAY.png";  /* source du boutton PLAY */
-    flameLogo.classList.remove('active');
-    resetTimerToBoxValue();
-    progressFill.style.transition = 'none';       
+    stopTimer(true); // stop + reset
+    progressFill.style.transition = 'none';
     progressFill.style.width = '0%';
     progressText.innerHTML = `<strong>0</strong>%`;
     setTimeout(()=>{ progressFill.style.transition = 'width 0.12s linear'; }, 40);
-    gainTimer = 0; 
+    gainTimer = 0;
   });
 
   bgBtn.addEventListener('click', () => {
     document.body.classList.toggle('light-mode');
   });
 
+  // init
   resetTimerToBoxValue();
   fPointsDisplay.innerHTML = formatPoints(fPoints);
-
 </script>
-
-</body>
-</html>
